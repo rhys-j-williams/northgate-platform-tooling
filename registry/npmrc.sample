@@ -1,0 +1,23 @@
+# Sample ~/.npmrc for a CSWT engineer or build agent. Copy to $HOME/.npmrc. The token is issued
+# by Artifactory (Profile -> Generate Identity Token) and expires after 90 days (GIS-STD-030).
+# Never commit this file with a token in it; the repo hook and CX-SEC-006 both catch it.
+#
+# Only npm-virtual is allowed. See governance/DEPENDENCY_POLICY.md. Pointing npm at
+# registry.npmjs.org does not work from the build VLAN anyway.
+registry=https://artifactory.meridian.internal/artifactory/api/npm/npm-virtual/
+//artifactory.meridian.internal/artifactory/api/npm/npm-virtual/:_authToken=CHANGEME-artifactory-identity-token
+//artifactory.meridian.internal/artifactory/api/npm/npm-virtual/:always-auth=true
+always-auth=true
+
+# Scoped packages: @meridian goes to the same virtual, which resolves it from npm-cswt-local.
+@meridian:registry=https://artifactory.meridian.internal/artifactory/api/npm/npm-virtual/
+
+strict-ssl=true
+cafile=/etc/pki/tls/certs/ca-bundle.crt
+audit=false
+fund=false
+update-notifier=false
+save-exact=true
+
+# Do NOT put legacy-peer-deps here. It belongs in the component .npmrc that needs it
+# (CONTRIBUTING.md in each repo), so a fresh laptop behaves like the agent.
