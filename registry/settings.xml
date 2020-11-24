@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven settings for CSWT engineers and build agents. ~/.m2/settings.xml.
+  Everything resolves through maven-virtual in Artifactory; the mirrorOf * below makes any
+  <repository> declared in a pom irrelevant, which is the point (DEPENDENCY_POLICY.md s3).
+  Credentials are the Artifactory identity token, encrypted with the master password
+  (mvn -emp / -ep). CHANGEME values are placeholders.
+
+  Owner: Platform Engineering. The Jenkins library injects this file with the token from Vault
+  (secret/cswt/build/artifactory/maven) at the Maven stage, so agents have no persistent copy.
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+
+  <interactiveMode>false</interactiveMode>
+
+  <servers>
+    <server>
+      <id>meridian-maven-virtual</id>
+      <username>CHANGEME-artifactory-username</username>
+      <password>{CHANGEME-artifactory-encrypted-token}</password>
+    </server>
+    <server>
+      <id>meridian-maven-cswt-local</id>
+      <username>CHANGEME-artifactory-username</username>
+      <password>{CHANGEME-artifactory-encrypted-token}</password>
+    </server>
+    <server>
+      <id>meridian-maven-snapshots-local</id>
+      <username>CHANGEME-artifactory-username</username>
+      <password>{CHANGEME-artifactory-encrypted-token}</password>
+    </server>
+  </servers>
+
+  <mirrors>
+    <mirror>
+      <id>meridian-maven-virtual</id>
+      <name>Artifactory maven-virtual (all external and internal)</name>
+      <url>https://artifactory.meridian.internal/artifactory/maven-virtual</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>meridian</id>
+      <repositories>
+        <repository>
+          <id>meridian-maven-virtual</id>
+          <url>https://artifactory.meridian.internal/artifactory/maven-virtual</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled><updatePolicy>always</updatePolicy></snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>meridian-maven-virtual</id>
+          <url>https://artifactory.meridian.internal/artifactory/maven-virtual</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+      <properties>
+        <!-- distributionManagement ids in the parent poms -->
+        <meridian.releases.repo>https://artifactory.meridian.internal/artifactory/maven-cswt-local</meridian.releases.repo>
+        <meridian.snapshots.repo>https://artifactory.meridian.internal/artifactory/maven-snapshots-local</meridian.snapshots.repo>
+        <!-- JDK 11 line still needs this or the TLS handshake to Artifactory fails on RHEL 8 agents (TOOL-1207) -->
+        <https.protocols>TLSv1.2,TLSv1.3</https.protocols>
+      </properties>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>meridian</activeProfile>
+  </activeProfiles>
+</settings>
