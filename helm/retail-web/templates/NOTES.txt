@@ -1,0 +1,7 @@
+{{ .Chart.Name }} {{ .Values.image.tag | default .Chart.AppVersion }} deployed to {{ .Release.Namespace }} ({{ .Values.environment }}).
+
+Route: https://{{ .Values.route.host }}{{ .Values.route.path }}
+env.json: oc -n {{ .Release.Namespace }} get cm {{ include "retail-web.fullname" . }}-env -o jsonpath='{.data.env\.json}'
+
+If the login redirect loops, check idpClientId matches the Keystone client for this environment
+before raising anything with the identity team (MOL-4102, three times now).
