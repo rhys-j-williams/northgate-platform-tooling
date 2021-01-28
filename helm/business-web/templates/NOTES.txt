@@ -1,0 +1,2 @@
+{{ .Chart.Name }} {{ .Values.image.tag | default .Chart.AppVersion }} -> {{ .Release.Namespace }}
+Route https://{{ .Values.route.host }}
