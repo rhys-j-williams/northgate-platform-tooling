@@ -1,0 +1,133 @@
+# statements-api has two deployment paths: this chart (uat, prod since 2024.03) and the legacy
+# DeploymentConfig template in platform-tooling/openshift/ which dev still uses because the
+# documents team never finished DOC-1988. Keep the two in step by hand until that closes.
+environment: dev
+partOf: platform-services
+
+cmdb:
+  appId: "APP-12054"
+  owner: documents
+  dataClassification: internal
+
+replicaCount: 2
+
+image:
+  registry: artifactory.meridian.internal/docker-cswt-local
+  repository: platform-services/statements-api
+  tag: ""
+  pullPolicy: IfNotPresent
+imagePullSecrets:
+  - name: artifactory-pull
+
+containerPort: 8080
+managementPort: 8080
+
+service:
+  port: 8080
+
+route:
+  # Most services are cluster internal and only reached through the BFFs. Set to true in the
+  # environment file for the ones that are exposed.
+  enabled: false
+  host: ""
+  path: ""
+  timeout: 30s
+  tls:
+    termination: reencrypt
+  annotations: {}
+
+# Non-secret configuration. Rendered to a ConfigMap as env.json (the Node services read the
+# file, the Java ones get the same keys through envFrom, Python reads env vars). Secrets come
+# from Vault Agent, never from here. See platform-tooling/vault/README.md.
+env:
+  SERVICE_NAME: statements-api
+  PORT: "8080"
+  ENVIRONMENT: "{{ .Values.environment }}"
+  PYTHONUNBUFFERED: "1"
+  WEB_CONCURRENCY: "2"
+  LOG_FORMAT: json
+  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/services/collector
+  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian/protocol/openid-connect/certs
+  FEATURE_FLAGS_URL: http://semaphore.cswt-shared.svc.cluster.local:8080/api/flags
+
+vault:
+  enabled: true
+  role: statements-api
+  # Paths are relative to the kv-v2 mount 'secret/'. The agent renders each to
+  # /vault/secrets/<name>.env and the container sources them at start.
+  secrets:
+    - app-secrets
+
+probes:
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    path: /healthz
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+  startup:
+    path: /healthz
+    periodSeconds: 5
+    failureThreshold: 12
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 0
+  scaleDownStabilizationSeconds: 600
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+  maxUnavailable: ""
+
+networkPolicy:
+  enabled: true
+  allowFromNamespaces: []
+  egress:
+    - namespace: cswt-shared
+      port: 8080
+
+
+  egressCidrs: []
+
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: ocs-storagecluster-cephfs
+  mountPath: /var/lib/meridian/documents
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: /metrics
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+terminationGracePeriodSeconds: 30
+nodeSelector: {}
+tolerations: []
+affinity: {}
