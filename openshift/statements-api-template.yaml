@@ -1,0 +1,263 @@
+# Legacy OpenShift template for statements-api. Predates the Helm charts (2021, DOC-1104) and is
+# still what the dev namespace runs because the documents team's oc apply job was never moved
+# (DOC-1988). uat and prod use platform-tooling/helm/statements-api. If you change a parameter
+# here, change the chart too, and vice versa. Yes, by hand.
+#
+#   oc process -f statements-api-template.yaml -p IMAGE_TAG=<tag> -p ENVIRONMENT=dev | oc apply -f -
+#
+# DeploymentConfig is deprecated in OCP 4.14 and the cluster team has said they will not carry it
+# past 4.16 (OCP-4471). That is the forcing function for DOC-1988, if anything is.
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: statements-api
+  annotations:
+    description: statements-api (FastAPI, reportlab) statement PDF generator. Legacy template, see header.
+    openshift.io/display-name: statements-api
+    tags: meridian,documents,python
+    meridian.bank/owner: documents
+    meridian.bank/ticket-key: DOC
+labels:
+  app: statements-api
+  template: statements-api
+  meridian.bank/app-id: APP-12087
+parameters:
+  - name: NAME
+    value: statements-api
+    required: true
+  - name: ENVIRONMENT
+    description: dev, uat or prod. Only dev should be using this template any more.
+    value: dev
+    required: true
+  - name: IMAGE_REGISTRY
+    value: artifactory.meridian.internal/docker-cswt-local
+  - name: IMAGE_TAG
+    description: Build tag from Jenkins. Never latest.
+    required: true
+  - name: REPLICAS
+    value: "1"
+  - name: MEMORY_LIMIT
+    value: 512Mi
+  - name: CPU_LIMIT
+    value: 500m
+  - name: STORAGE_SIZE
+    value: 10Gi
+  - name: STORAGE_CLASS
+    value: ocs-storagecluster-cephfs
+  - name: DOCUMENTS_SERVICE_URL
+    value: http://documents-service:8080
+  - name: BEDROCK_ADAPTER_URL
+    value: http://bedrock-adapter:8080
+  - name: SPLUNK_HEC_URL
+    value: https://splunk-hec-dev.apps.ocp-dev.meridian.internal/services/collector
+  - name: VAULT_ROLE
+    value: statements-api
+objects:
+  - apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${NAME}-env
+      labels:
+        app: ${NAME}
+    data:
+      SERVICE_NAME: ${NAME}
+      ENVIRONMENT: ${ENVIRONMENT}
+      PORT: "8080"
+      PYTHONUNBUFFERED: "1"
+      WEB_CONCURRENCY: "2"
+      LOG_FORMAT: json
+      DOCUMENTS_SERVICE_URL: ${DOCUMENTS_SERVICE_URL}
+      BEDROCK_ADAPTER_URL: ${BEDROCK_ADAPTER_URL}
+      SPLUNK_HEC_URL: ${SPLUNK_HEC_URL}
+      STATEMENTS_OUTPUT_DIR: /var/lib/meridian/statements
+      # The FastAPI app reads env.json for parity with the Node services; it only uses two keys.
+      env.json: |
+        {
+          "serviceName": "${NAME}",
+          "environment": "${ENVIRONMENT}",
+          "documentsServiceUrl": "${DOCUMENTS_SERVICE_URL}",
+          "bedrockAdapterUrl": "${BEDROCK_ADAPTER_URL}"
+        }
+
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${NAME}-data
+      labels:
+        app: ${NAME}
+    spec:
+      accessModes:
+        - ReadWriteMany
+      storageClassName: ${STORAGE_CLASS}
+      resources:
+        requests:
+          storage: ${STORAGE_SIZE}
+
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+        meridian.bank/environment: ${ENVIRONMENT}
+      annotations:
+        # ImageChange trigger was removed after INC0039920 (dev redeployed itself off a retagged
+        # image during a release). ConfigChange stays so a cm edit rolls the pods.
+        meridian.bank/notes: triggers reduced to ConfigChange only, see INC0039920
+    spec:
+      replicas: ${{REPLICAS}}
+      revisionHistoryLimit: 3
+      selector:
+        app: ${NAME}
+        deploymentconfig: ${NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          intervalSeconds: 1
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 0
+      triggers:
+        - type: ConfigChange
+      template:
+        metadata:
+          labels:
+            app: ${NAME}
+            deploymentconfig: ${NAME}
+          annotations:
+            vault.hashicorp.com/agent-inject: "true"
+            vault.hashicorp.com/agent-init-first: "true"
+            vault.hashicorp.com/role: ${VAULT_ROLE}
+            vault.hashicorp.com/agent-inject-secret-app-secrets.env: secret/data/cswt/${ENVIRONMENT}/${VAULT_ROLE}/app-secrets
+            vault.hashicorp.com/agent-inject-template-app-secrets.env: |
+              {{- with secret "secret/data/cswt/${ENVIRONMENT}/${VAULT_ROLE}/app-secrets" }}
+              {{- range $k, $v := .Data.data }}
+              export {{ $k }}={{ $v | quote }}
+              {{- end }}
+              {{- end }}
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "8080"
+            prometheus.io/path: /metrics
+        spec:
+          serviceAccountName: ${NAME}
+          securityContext:
+            runAsNonRoot: true
+          containers:
+            - name: statements-api
+              image: ${IMAGE_REGISTRY}/platform-services/statements-api:${IMAGE_TAG}
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  for f in /vault/secrets/*.env; do [ -f "$f" ] && . "$f"; done
+                  exec uvicorn statements_api.main:app --host 0.0.0.0 --port 8080 --workers "${WEB_CONCURRENCY:-2}"
+              ports:
+                - name: http
+                  containerPort: 8080
+                  protocol: TCP
+              envFrom:
+                - configMapRef:
+                    name: ${NAME}-env
+              env:
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+              readinessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8080
+                initialDelaySeconds: 5
+                periodSeconds: 10
+              livenessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8080
+                initialDelaySeconds: 15
+                periodSeconds: 20
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+              volumeMounts:
+                - name: data
+                  mountPath: /var/lib/meridian/statements
+                - name: env
+                  mountPath: /etc/meridian/env.json
+                  subPath: env.json
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: ${NAME}-data
+            - name: env
+              configMap:
+                name: ${NAME}-env
+            - name: tmp
+              emptyDir: {}
+          imagePullSecrets:
+            - name: artifactory-pull
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+    spec:
+      ports:
+        - name: http
+          port: 8080
+          targetPort: 8080
+          protocol: TCP
+      selector:
+        app: ${NAME}
+        deploymentconfig: ${NAME}
+
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+    spec:
+      podSelector:
+        matchLabels:
+          app: ${NAME}
+      policyTypes:
+        - Ingress
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: documents-service
+          ports:
+            - protocol: TCP
+              port: 8080
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: openshift-monitoring
+          ports:
+            - protocol: TCP
+              port: 8080
+
+  # No Route on purpose: statements-api is only reached through documents-service. Someone added
+  # one in 2022 for "testing" and GIS found it in the external scan (GIS-2760).
