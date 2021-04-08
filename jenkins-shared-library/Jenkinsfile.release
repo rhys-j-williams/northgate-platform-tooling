@@ -1,0 +1,73 @@
+#!/usr/bin/env groovy
+/*
+ * Release variant. Copy this next to your Jenkinsfile as Jenkinsfile.release and point the
+ * "<app>-release" job at it. It wraps the standard pipeline with the change advisory board checks
+ * that production deploys need.
+ *
+ * Rules, from the CSWT release process and CAB_TEMPLATE.md:
+ *   - CAB_REFERENCE is mandatory and must look like CHG followed by seven digits
+ *   - the job only runs from release/* or hotfix/* branches, or a tag on main
+ *   - during a quarter end freeze the CAB record must be an emergency change (CHG with an E suffix)
+ *   - a second human approves the deploy inside Jenkins; the approver may not be the person who
+ *     started the build
+ *
+ * The change record itself lives in the ITSM tool. This job does not talk to it (TOOL-1290 would
+ * make it do so, unfunded). It just refuses to run without a reference so that the audit trail in
+ * the build log matches the one in the CAB minutes.
+ */
+
+@Library('meridian-pipeline@v3') _
+
+import com.meridian.pipeline.ReleaseGuard
+
+properties([
+    parameters([
+        string(name: 'CAB_REFERENCE', defaultValue: '',
+               description: 'Change advisory board reference, CHG0000000 or CHG0000000E for an emergency change. Mandatory.'),
+        string(name: 'RELEASE_TRAIN', defaultValue: '2026.09.1',
+               description: 'Train identifier from RELEASE_CALENDAR.md, e.g. 2026.09.1'),
+        choice(name: 'TARGET_ENV', choices: ['uat', 'prod'], description: 'prod requires a CAB reference and an approver.'),
+        string(name: 'AGENT_LABEL', defaultValue: 'nodejs16-rhel8', description: 'Build agent label.'),
+        string(name: 'NODE_VERSION', defaultValue: '16.20.2', description: 'Node version, must match .nvmrc.'),
+        string(name: 'COVERAGE_THRESHOLD', defaultValue: '30', description: 'Coverage gate. Failing this on a release branch fails the build.'),
+    ])
+])
+
+node(params.AGENT_LABEL) {
+    stage('CAB check') {
+        List<String> problems = ReleaseGuard.validate(params.CAB_REFERENCE, params.TARGET_ENV, env.BRANCH_NAME, new Date())
+        if (problems) {
+            error("Release preconditions not met:\n - ${problems.join('\n - ')}")
+        }
+        echo "CAB ${params.CAB_REFERENCE} accepted for train ${params.RELEASE_TRAIN} to ${params.TARGET_ENV}"
+        currentBuild.description = "${params.CAB_REFERENCE} train ${params.RELEASE_TRAIN} -> ${params.TARGET_ENV}"
+    }
+
+    stage('Approval') {
+        if (params.TARGET_ENV == 'prod') {
+            timeout(time: 4, unit: 'HOURS') {
+                def approver = input(message: "Deploy ${env.JOB_NAME} to prod under ${params.CAB_REFERENCE}?",
+                                     ok: 'Approve', submitter: 'cswt-release-managers', submitterParameter: 'APPROVER')
+                if (approver == env.BUILD_USER_ID) {
+                    error('Four eyes: the approver may not be the person who started the build.')
+                }
+                echo "Approved by ${approver}"
+            }
+        } else {
+            echo 'uat deploy, no approval step'
+        }
+    }
+}
+
+// Everything below is the ordinary pipeline. The release specific bits are the two stages above
+// and the fact that TARGET_ENV may be prod, which the normal Jenkinsfile does not allow.
+meridianNodePipeline(
+    agentLabel:        params.AGENT_LABEL,
+    nodeVersion:       params.NODE_VERSION,
+    coverageThreshold: params.COVERAGE_THRESHOLD as Integer,
+    appName:           env.JOB_BASE_NAME.replace('-release', ''),
+    helmChart:         "platform-tooling/helm/${env.JOB_BASE_NAME.replace('-release', '')}",
+    notifyChannel:     '#cswt-release-desk',
+    releaseMode:       true,
+    cabReference:      params.CAB_REFERENCE,
+)
