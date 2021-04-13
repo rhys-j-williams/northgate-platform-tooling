@@ -1,0 +1,52 @@
+---
+# Build agent baseline. Runs weekly from the platform Jenkins (job platform-tooling/ansible-agents)
+# and by hand after an image refresh. TOOL-1019.
+#
+#   ansible-playbook build-agent.yml --limit nodejs16_rhel8 --check --diff
+#
+# The out_of_support group is included deliberately; those hosts still build business-web and
+# still need to be forwarding logs. Removing them from the play was reverted (TOOL-1290).
+
+- name: Build agent baseline
+  hosts: build_agents
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Refuse to run against hosts whose RHEL major does not match the inventory
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution_major_version'] | int == rhel_major | int
+        fail_msg: >-
+          {{ inventory_hostname }} reports RHEL {{ ansible_facts['distribution_major_version'] }}
+          but the inventory says {{ rhel_major }}. Fix the inventory before continuing.
+      tags: [always]
+
+    - name: Warn about out of support agents
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }} ({{ jenkins_label }}) is out of vendor support. Image refresh is
+          blocked on business-web (MBZ-2231). Applying baseline anyway.
+      when: "'out_of_support' in group_names"
+      tags: [always]
+
+  roles:
+    - role: build_agent_common
+      tags: [common]
+    - role: nginx_hardening
+      tags: [nginx, security]
+    - role: log_forwarder
+      tags: [logging]
+
+  post_tasks:
+    - name: Record baseline run
+      ansible.builtin.copy:
+        dest: /etc/meridian/baseline-applied
+        content: |
+          applied={{ ansible_date_time.iso8601 }}
+          label={{ jenkins_label }}
+          playbook=platform-tooling/ansible/build-agent.yml
+        owner: root
+        group: root
+        mode: "0644"
+      tags: [always]

@@ -1,0 +1,54 @@
+---
+- name: Ensure meridian config directory
+  ansible.builtin.file:
+    path: /etc/meridian
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Base packages
+  ansible.builtin.package:
+    name: "{{ build_agent_common_packages }}"
+    state: present
+  # RHEL 7 does not have buildah/skopeo in the internal repo. Ignore there, fail elsewhere.
+  ignore_errors: "{{ rhel_major | int == 7 }}"
+
+- name: Jenkins agent user
+  ansible.builtin.user:
+    name: "{{ jenkins_agent_user }}"
+    home: "{{ jenkins_agent_home }}"
+    shell: /bin/bash
+    create_home: true
+    system: true
+
+- name: Internal root CA in the system trust store
+  ansible.builtin.copy:
+    src: "{{ build_agent_common_ca_bundle_src }}"
+    dest: /etc/pki/ca-trust/source/anchors/meridian-root-ca.pem
+    owner: root
+    group: root
+    mode: "0644"
+  notify: update ca trust
+
+- name: npm and Maven point at Artifactory (registry/ has the canonical copies)
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ jenkins_agent_home }}/{{ item.dest }}"
+    owner: "{{ jenkins_agent_user }}"
+    group: "{{ jenkins_agent_user }}"
+    mode: "0600"
+  loop:
+    - { src: ../../../../registry/npmrc.sample, dest: .npmrc }
+    - { src: ../../../../registry/settings.xml, dest: .m2/settings.xml }
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Login banner
+  ansible.builtin.copy:
+    dest: /etc/motd
+    content: |
+      Meridian Trust Bank - CSWT build agent ({{ jenkins_label }})
+      Managed by platform-tooling/ansible. Manual changes are overwritten weekly.
+      Authorised users only. Activity is logged and forwarded (GIS-STD-009).
+    mode: "0644"
