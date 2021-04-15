@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+# GIS-STD-014. Included by every server block on this host. Changing a value here needs an
+# AppSec reviewer on the PR (CODEOWNERS).
+add_header Strict-Transport-Security "max-age={{ nginx_hsts_max_age }}; includeSubDomains" always;
+{% for name, value in nginx_security_headers.items() %}
+add_header {{ name }} "{{ value }}" always;
+{% endfor %}
+add_header Content-Security-Policy "{{ nginx_csp }}" always;
