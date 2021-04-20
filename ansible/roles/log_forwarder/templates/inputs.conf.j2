@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+[default]
+host = {{ inventory_hostname }}
+
+{% for path in log_forwarder_paths %}
+[monitor://{{ path }}]
+index = {{ log_forwarder_index }}
+sourcetype = {{ 'nginx:access' if 'access.log' in path else ('linux:audit' if 'audit' in path else ('linux:secure' if 'secure' in path else log_forwarder_sourcetype)) }}
+disabled = false
+{% if 'jenkins-agent' in path %}
+crcSalt = <SOURCE>
+{% endif %}
+
+{% endfor %}

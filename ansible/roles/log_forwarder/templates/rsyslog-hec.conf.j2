@@ -1,0 +1,31 @@
+# {{ ansible_managed }}
+# RHEL 7 only. rsyslog -> Splunk HEC via omhttp. SPLK-902 for why this exists at all.
+module(load="omhttp")
+module(load="imfile")
+
+{% for path in log_forwarder_paths if '*' not in path %}
+input(type="imfile" File="{{ path }}" Tag="meridian-build" Severity="info" Facility="local6")
+{% endfor %}
+
+template(name="hec" type="list") {
+  constant(value="{\"time\":\"") property(name="timegenerated" dateFormat="unixtimestamp")
+  constant(value="\",\"host\":\"") property(name="hostname")
+  constant(value="\",\"index\":\"{{ log_forwarder_index }}\",\"sourcetype\":\"{{ log_forwarder_sourcetype }}\"")
+  constant(value=",\"event\":\"") property(name="msg" format="json")
+  constant(value="\"}")
+}
+
+local6.* action(
+  type="omhttp"
+  server="{{ log_forwarder_hec_url | urlsplit('hostname') }}"
+  serverport="{{ log_forwarder_hec_url | urlsplit('port') }}"
+  restpath="services/collector/event"
+  usehttps="on"
+  httpheaders=["Authorization: Splunk {{ log_forwarder_hec_token_effective }}"]
+  template="hec"
+  batch="on"
+  batch.maxsize="200"
+  queue.type="LinkedList"
+  queue.size="10000"
+  action.resumeRetryCount="-1"
+)
