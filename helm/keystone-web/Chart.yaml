@@ -1,0 +1,19 @@
+apiVersion: v2
+name: keystone-web
+description: Keystone identity portal. Static Angular bundle served by unprivileged nginx on OpenShift.
+type: application
+version: 1.6.0
+appVersion: "2024.11.1"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/CSWT/repos/keystone-web
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: identity-platform
+    email: identity-platform@example.com
+annotations:
+  meridian.bank/ticket-key: KEY
+  meridian.bank/pipeline: meridianNodePipeline
+  meridian.bank/node-version: "16.20.2"
