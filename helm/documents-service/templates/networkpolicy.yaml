@@ -1,0 +1,78 @@
+{{- if .Values.networkPolicy.enabled }}
+# Default deny is applied at namespace level by the cluster team (OCP-2201). This policy opens
+# only what the app needs. Egress to the bank network (Bedrock, MQ, Oracle) goes through the
+# egress firewall, not here; see the namespace's EgressNetworkPolicy.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "documents-service.fullname" . }}
+  labels:
+    {{- include "documents-service.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "documents-service.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              network.openshift.io/policy-group: ingress
+      ports:
+        - protocol: TCP
+          port: {{ .Values.containerPort }}
+    {{- range .Values.networkPolicy.allowFromNamespaces }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ . }}
+      ports:
+        - protocol: TCP
+          port: {{ $.Values.containerPort }}
+    {{- end }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-monitoring
+      ports:
+        - protocol: TCP
+          port: {{ .Values.containerPort }}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-dns
+      ports:
+        - protocol: UDP
+          port: 5353
+        - protocol: TCP
+          port: 5353
+    {{- range .Values.networkPolicy.egress }}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .namespace }}
+          {{- with .podSelector }}
+          podSelector:
+            matchLabels:
+              {{- toYaml . | nindent 14 }}
+          {{- end }}
+      ports:
+        - protocol: TCP
+          port: {{ .port }}
+    {{- end }}
+    {{- with .Values.networkPolicy.egressCidrs }}
+    - to:
+        {{- range . }}
+        - ipBlock:
+            cidr: {{ .cidr }}
+        {{- end }}
+      ports:
+        {{- range . }}
+        - protocol: TCP
+          port: {{ .port }}
+        {{- end }}
+    {{- end }}
+{{- end }}
