@@ -1,0 +1,163 @@
+{
+  "$comment": "Artifactory repository inventory for CSWT. Exported from the Artifactory REST API (GET /api/repositories, filtered to the cswt project) and annotated by hand. Owner: Platform Engineering; the remote allow lists are owned by GIS (GIS-STD-022). Regenerate with scripts/export-repositories.sh, then re-apply the notes. Last export 2024-11-04.",
+  "artifactory": {
+    "baseUrl": "https://artifactory.meridian.internal/artifactory",
+    "version": "7.77.10",
+    "project": "cswt",
+    "xrayIntegration": true,
+    "xrayPolicy": "cswt-block-critical-high"
+  },
+  "repositories": [
+    {
+      "key": "npm-virtual",
+      "type": "virtual",
+      "packageType": "npm",
+      "url": "https://artifactory.meridian.internal/artifactory/api/npm/npm-virtual/",
+      "includes": ["npm-cswt-local", "npm-remote"],
+      "defaultDeploymentRepo": "npm-cswt-local",
+      "notes": "The only npm registry permitted by DEPENDENCY_POLICY.md. Every component .npmrc points here. Resolution order is local first so an @meridian scoped package never falls through to the public mirror (GIS-2601 was a dependency-confusion finding before the scope was reserved)."
+    },
+    {
+      "key": "npm-cswt-local",
+      "type": "local",
+      "packageType": "npm",
+      "url": "https://artifactory.meridian.internal/artifactory/api/npm/npm-cswt-local/",
+      "deployers": ["jenkins-cswt"],
+      "notes": "@meridian/* packages: canopy-ui, iris-widget, domain-fixtures. Published only by the Jenkins library's publish stage, never from a laptop (that used to work; TOOL-1122 removed the permission)."
+    },
+    {
+      "key": "npm-remote",
+      "type": "remote",
+      "packageType": "npm",
+      "upstream": "https://registry.npmjs.org",
+      "url": "https://artifactory.meridian.internal/artifactory/api/npm/npm-remote/",
+      "cachePeriodDays": 365,
+      "xrayScan": true,
+      "blockMismatchingMimeTypes": true,
+      "notes": "Public npm mirror. Xray blocks download of anything failing cswt-block-critical-high, which is why some upgrades 'do not exist' when you npm install them: the package is there, the download was blocked. Check the Xray tab in Artifactory before raising a ticket. Retention 365 days since TOOL-1288; before that the cache was purged at 90 days and rebuilding old Angular 12 workspaces broke because the versions had gone."
+    },
+    {
+      "key": "maven-virtual",
+      "type": "virtual",
+      "packageType": "maven",
+      "url": "https://artifactory.meridian.internal/artifactory/maven-virtual",
+      "includes": ["maven-cswt-local", "maven-snapshots-local", "maven-central-remote", "maven-redhat-ga-remote", "maven-confluent-remote"],
+      "defaultDeploymentRepo": "maven-cswt-local",
+      "notes": "mirrorOf * in settings.xml. Adding an upstream is a GIS-STD-022 change with a 10 day SLA; jcenter was removed in 2021 when it shut down and the Gradle projects (there were two) were converted to Maven rather than find a replacement."
+    },
+    {
+      "key": "maven-cswt-local",
+      "type": "local",
+      "packageType": "maven",
+      "url": "https://artifactory.meridian.internal/artifactory/maven-cswt-local",
+      "handleSnapshots": false,
+      "notes": "Release artifacts for the Spring Boot services and the shared libraries (meridian-platform-parent, meridian-audit-starter)."
+    },
+    {
+      "key": "maven-snapshots-local",
+      "type": "local",
+      "packageType": "maven",
+      "url": "https://artifactory.meridian.internal/artifactory/maven-snapshots-local",
+      "handleReleases": false,
+      "maxUniqueSnapshots": 5,
+      "notes": "Cleaned weekly."
+    },
+    {
+      "key": "maven-central-remote",
+      "type": "remote",
+      "packageType": "maven",
+      "upstream": "https://repo1.maven.org/maven2/",
+      "xrayScan": true,
+      "notes": "Maven Central."
+    },
+    {
+      "key": "maven-redhat-ga-remote",
+      "type": "remote",
+      "packageType": "maven",
+      "upstream": "https://maven.repository.redhat.com/ga/",
+      "notes": "Red Hat GA. Needed for the ubi based Boot images and the MQ RA."
+    },
+    {
+      "key": "maven-confluent-remote",
+      "type": "remote",
+      "packageType": "maven",
+      "upstream": "https://packages.confluent.io/maven/",
+      "notes": "Added for the Beacon Kafka spike in 2023. Nothing in prod uses it; left in place pending the Beacon decision."
+    },
+    {
+      "key": "docker-virtual",
+      "type": "virtual",
+      "packageType": "docker",
+      "url": "artifactory.meridian.internal/docker-virtual",
+      "includes": ["docker-cswt-local", "docker-redhat-remote", "docker-remote"],
+      "notes": "Pull-through for the agents and the cluster. The Dockerfiles in ../docker reference the underlying repos by name rather than the virtual because the Xray block on docker-remote is stricter and we want the build to fail there, not at deploy."
+    },
+    {
+      "key": "docker-cswt-local",
+      "type": "local",
+      "packageType": "docker",
+      "url": "artifactory.meridian.internal/docker-cswt-local",
+      "notes": "Built images. Tag is the Jenkins build tag; 'latest' is refused by a user plugin (TOOL-1041)."
+    },
+    {
+      "key": "docker-redhat-remote",
+      "type": "remote",
+      "packageType": "docker",
+      "upstream": "https://registry.access.redhat.com",
+      "notes": "UBI base images. GIS-STD-021 appendix B lists the approved paths."
+    },
+    {
+      "key": "docker-remote",
+      "type": "remote",
+      "packageType": "docker",
+      "upstream": "https://registry-1.docker.io",
+      "xrayScan": true,
+      "includePatterns": ["library/node/**", "library/postgres/**", "library/redis/**", "verdaccio/**"],
+      "notes": "Docker Hub, allow listed. library/nginx is deliberately not on the list (ADR-0007). Node images are build-stage only."
+    },
+    {
+      "key": "pypi-virtual",
+      "type": "virtual",
+      "packageType": "pypi",
+      "url": "https://artifactory.meridian.internal/artifactory/api/pypi/pypi-virtual/simple",
+      "includes": ["pypi-cswt-local", "pypi-remote"],
+      "notes": "statements-api and exposure-calc. No publish pipeline yet (TOOL-1444)."
+    },
+    {
+      "key": "pypi-remote",
+      "type": "remote",
+      "packageType": "pypi",
+      "upstream": "https://pypi.org",
+      "xrayScan": true
+    },
+    {
+      "key": "helm-cswt-local",
+      "type": "local",
+      "packageType": "helm",
+      "url": "https://artifactory.meridian.internal/artifactory/api/helm/helm-cswt-local",
+      "notes": "Packaged charts from ../helm, pushed by the library's Helm package stage. The deploy stage pulls the chart from here, not from the workspace, so the deployed chart is the scanned one."
+    },
+    {
+      "key": "generic-cswt-release-evidence",
+      "type": "local",
+      "packageType": "generic",
+      "url": "https://artifactory.meridian.internal/artifactory/generic-cswt-release-evidence",
+      "retentionDays": 2555,
+      "notes": "CAB evidence bundles from Jenkinsfile.release (scan reports, test results, approvals). Seven year retention per records policy. Read by audit; do not clean."
+    }
+  ],
+  "local": {
+    "$comment": "Demo estate equivalents. Verdaccio on the port from PORTS.md stands in for npm-virtual; there is no local Maven or Docker proxy.",
+    "npm": {
+      "url": "http://localhost:4873/",
+      "implementation": "verdaccio",
+      "config": "verdaccio/config.yaml",
+      "standsInFor": "npm-virtual"
+    },
+    "maven": {
+      "url": "https://repo1.maven.org/maven2/",
+      "standsInFor": "maven-virtual",
+      "settings": "settings.local.xml"
+    }
+  }
+}
