@@ -1,0 +1,137 @@
+environment: dev
+partOf: platform-services
+
+cmdb:
+  appId: "APP-12078"
+  owner: identity-platform
+  dataClassification: confidential
+
+replicaCount: 2
+
+image:
+  registry: artifactory.meridian.internal/docker-cswt-local
+  repository: platform-services/entitlements-service
+  tag: ""
+  pullPolicy: IfNotPresent
+imagePullSecrets:
+  - name: artifactory-pull
+
+containerPort: 8080
+managementPort: 8081
+
+service:
+  port: 8080
+
+route:
+  # Most services are cluster internal and only reached through the BFFs. Set to true in the
+  # environment file for the ones that are exposed.
+  enabled: false
+  host: ""
+  path: ""
+  timeout: 30s
+  tls:
+    termination: reencrypt
+  annotations: {}
+
+# Non-secret configuration. Rendered to a ConfigMap as env.json (the Node services read the
+# file, the Java ones get the same keys through envFrom, Python reads env vars). Secrets come
+# from Vault Agent, never from here. See platform-tooling/vault/README.md.
+env:
+  SERVICE_NAME: entitlements-service
+  PORT: "8080"
+  ENVIRONMENT: "{{ .Values.environment }}"
+  JAVA_TOOL_OPTIONS: >-
+    -XX:MaxRAMPercentage=70 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom
+    -Dlog4j2.formatMsgNoLookups=true
+  SPRING_PROFILES_ACTIVE: openshift
+  MANAGEMENT_SERVER_PORT: "8081"
+  MERIDIAN_CORRELATION_HEADER: X-Meridian-Correlation-Id
+  KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka.cswt-shared.svc.cluster.local:9092
+  SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//ora-{{ .Values.environment }}.core.meridian.internal:1521/MERIDIAN
+  SPRING_FLYWAY_ENABLED: "true"
+  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/services/collector
+  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian/protocol/openid-connect/certs
+  FEATURE_FLAGS_URL: http://semaphore.cswt-shared.svc.cluster.local:8080/api/flags
+
+vault:
+  enabled: true
+  role: entitlements-service
+  # Paths are relative to the kv-v2 mount 'secret/'. The agent renders each to
+  # /vault/secrets/<name>.env and the container sources them at start.
+  secrets:
+    - db-credentials
+    - kafka-credentials
+    - app-secrets
+
+probes:
+  liveness:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 45
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
+  startup:
+    path: /actuator/health/liveness
+    periodSeconds: 5
+    failureThreshold: 36
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 768Mi
+  limits:
+    cpu: 1
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+  scaleDownStabilizationSeconds: 600
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+  maxUnavailable: ""
+
+networkPolicy:
+  enabled: true
+  allowFromNamespaces: []
+  egress:
+    - namespace: cswt-shared
+      port: 8080
+
+    - namespace: cswt-shared
+      podSelector: {app: kafka}
+      port: 9092
+  egressCidrs: []
+
+persistence:
+  enabled: false
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8081"
+  prometheus.io/path: /actuator/prometheus
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop: [ALL]
+
+terminationGracePeriodSeconds: 30
+nodeSelector: {}
+tolerations: []
+affinity: {}

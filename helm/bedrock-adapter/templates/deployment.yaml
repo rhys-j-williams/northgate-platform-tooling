@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bedrock-adapter.fullname" . }}
+  labels:
+    {{- include "bedrock-adapter.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "bedrock-adapter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bedrock-adapter.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
+        {{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-init-first: "true"
+        vault.hashicorp.com/role: {{ .Values.vault.role }}
+        vault.hashicorp.com/agent-pre-populate-only: "false"
+        {{- range .Values.vault.secrets }}
+        vault.hashicorp.com/agent-inject-secret-{{ . }}.env: secret/data/cswt/{{ $.Values.environment }}/{{ $.Values.vault.role }}/{{ . }}
+        vault.hashicorp.com/agent-inject-template-{{ . }}.env: |
+          {{ "{{" }}- with secret "secret/data/cswt/{{ $.Values.environment }}/{{ $.Values.vault.role }}/{{ . }}" {{ "}}" }}
+          {{ "{{" }}- range $k, $v := .Data.data {{ "}}" }}
+          export {{ "{{" }} $k {{ "}}" }}={{ "{{" }} $v | quote {{ "}}" }}
+          {{ "{{" }}- end {{ "}}" }}
+          {{ "{{" }}- end {{ "}}" }}
+        {{- end }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "bedrock-adapter.fullname" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: bedrock-adapter
+          image: {{ include "bedrock-adapter.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.vault.enabled }}
+          # Source the rendered env files before exec'ing the real entrypoint. The image's
+          # ENTRYPOINT is preserved via /entrypoint.sh, see the Dockerfile.
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              for f in /vault/secrets/*.env; do [ -f "$f" ] && . "$f"; done
+              exec /entrypoint.sh
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+            {{- if ne (int .Values.managementPort) (int .Values.containerPort) }}
+            - name: management
+              containerPort: {{ .Values.managementPort }}
+              protocol: TCP
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "bedrock-adapter.fullname" . }}-env
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: HOSTNAME_FQDN
+              value: {{ include "bedrock-adapter.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.path }}
+              port: {{ ternary "management" "http" (ne (int .Values.managementPort) (int .Values.containerPort)) }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ ternary "management" "http" (ne (int .Values.managementPort) (int .Values.containerPort)) }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ ternary "management" "http" (ne (int .Values.managementPort) (int .Values.containerPort)) }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: env
+              mountPath: /etc/meridian/env.json
+              subPath: env.json
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+      volumes:
+        - name: env
+          configMap:
+            name: {{ include "bedrock-adapter.fullname" . }}-env
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "bedrock-adapter.fullname" . }}-data
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
