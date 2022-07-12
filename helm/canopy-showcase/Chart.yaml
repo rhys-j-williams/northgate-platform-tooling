@@ -1,0 +1,19 @@
+apiVersion: v2
+name: canopy-showcase
+description: Canopy design system showcase. Static Angular bundle served by unprivileged nginx on OpenShift.
+type: application
+version: 1.4.0
+appVersion: "3.7.2"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/CSWT/repos/canopy-showcase
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: cswt-design-system
+    email: cswt-design-system@example.com
+annotations:
+  meridian.bank/ticket-key: CNPY
+  meridian.bank/pipeline: meridianNodePipeline
+  meridian.bank/node-version: "16.20.2"
