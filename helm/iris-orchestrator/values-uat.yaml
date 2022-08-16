@@ -1,0 +1,12 @@
+environment: uat
+replicaCount: 2
+route:
+  host: iris-orchestrator-uat.apps.ocp-uat.meridian.internal
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-uat
+    - cswt-uat-tools
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
