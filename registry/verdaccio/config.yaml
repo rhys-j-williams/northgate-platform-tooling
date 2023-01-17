@@ -1,0 +1,59 @@
+# Verdaccio config for the demo estate. Stands in for Artifactory npm-virtual (see
+# ../repositories.json "local"). Port 4873 is allocated in PORTS.md; do not change it here.
+#
+#   npx verdaccio@5.29.2 --config platform-tooling/registry/verdaccio/config.yaml
+#   npm publish --registry http://localhost:4873/     (from canopy-ui, iris-widget, domain-fixtures)
+#
+# Mirrors the Artifactory shape: @meridian resolves locally and never proxies (GIS-2601), everything
+# else proxies to npmjs. There is no Xray here so nothing is blocked; that is the one behaviour the
+# local setup cannot reproduce.
+
+storage: ./storage
+plugins: ./plugins
+
+web:
+  enable: true
+  title: Meridian npm (local stand-in for npm-virtual)
+
+auth:
+  htpasswd:
+    file: ./htpasswd
+    max_users: -1   # publishing needs a user; create one with npm adduser, or use the CHANGEME token
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    cache: true
+    maxage: 30m
+    timeout: 60s
+    max_fails: 5
+    fail_timeout: 5m
+
+packages:
+  '@meridian/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+    # no proxy on purpose: a typo in a scoped name must 404, not fall through to the public registry
+
+  '@*/*':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+
+  '**':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+
+server:
+  keepAliveTimeout: 60
+
+listen: 0.0.0.0:4873
+
+middlewares:
+  audit:
+    enabled: true
+
+logs:
+  - { type: stdout, format: pretty, level: warn }
