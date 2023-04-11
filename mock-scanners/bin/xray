@@ -1,0 +1,387 @@
+#!/usr/bin/env node
+'use strict';
+/*
+ * xray - stand in for the Artifactory Xray / JFrog CLI dependency audit (`jf audit`) used by the CSWT pipelines.
+ *
+ *   xray audit [--dir DIR] [--type npm|maven] [--tree FILE] [--output DIR] [--fail-on critical|high|medium|low|none] [--online] [--quiet]
+ *   xray version
+ *
+ * `xray scan` is accepted as an alias of `audit` because the shared library still calls it that way.
+ *
+ * What it does:
+ *   npm projects   - reads package-lock.json (v1, v2 or v3) or, failing that, package.json, and
+ *                    resolves every installed version against the offline advisory mirror in
+ *                    ../rules/advisories.json. With --online (or XRAY_ONLINE=1) it also runs
+ *                    `npm audit --json` against the configured registry and merges the result,
+ *                    which is what happens on the bank network where Artifactory proxies the
+ *                    npm audit endpoint.
+ *   Maven projects - reads target/dependency-tree.txt (from `mvn dependency:tree -DoutputFile=`)
+ *                    or, failing that, the <dependency> blocks in pom.xml, and resolves against
+ *                    the maven section of the same mirror.
+ *   runtime        - reports the Node engine (.nvmrc, engines.node) and Java target against the
+ *                    end of life entries GIS maintains in the mirror.
+ *
+ * Emits .xray-reports/report.json, report.html and violations.txt. Exit 0 when nothing at or above
+ * --fail-on (default: high), 1 otherwise, 2 for usage errors. Deterministic without --online.
+ *
+ * Owner: @meridian/platform-engineering. Advisory mirror: @meridian/gis-appsec.
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const common = require('../lib/common');
+
+const VERSION = '3.9.4-meridian';
+const HERE = path.dirname(fs.realpathSync(__filename));
+const ADVISORIES = path.join(HERE, '..', 'rules', 'advisories.json');
+const WATCH = 'meridian-cswt-prod';
+const POLICY = 'GIS-STD-021 dependency hygiene, rev 6';
+
+function usage(code) {
+  const out = code === 0 ? console.log : console.error;
+  out('usage: xray audit [--dir DIR] [--type npm|maven] [--tree FILE] [--output DIR] [--fail-on critical|high|medium|low|none] [--online] [--quiet]');
+  out('       xray version');
+  process.exit(code);
+}
+
+// ---------------------------------------------------------------- npm
+
+function readNpmLock(dir) {
+  const lockPath = path.join(dir, 'package-lock.json');
+  const text = common.readIfExists(lockPath);
+  const deps = new Map(); // name -> Set(version)
+  let source = null;
+  const add = (name, version, dev) => {
+    if (!name || !version || /^(file|link|git|http|workspace):/.test(version)) return;
+    if (!deps.has(name)) deps.set(name, new Map());
+    const versions = deps.get(name);
+    if (!versions.has(version)) versions.set(version, { dev: !!dev });
+    else if (!dev) versions.get(version).dev = false;
+  };
+  if (text) {
+    source = 'package-lock.json';
+    let lock;
+    try { lock = JSON.parse(text); } catch (e) { lock = null; }
+    if (lock) {
+      if (lock.packages) {
+        Object.keys(lock.packages).forEach((k) => {
+          if (!k) return;
+          const name = k.slice(k.lastIndexOf('node_modules/') + 'node_modules/'.length);
+          add(name, lock.packages[k].version, lock.packages[k].dev);
+        });
+      } else if (lock.dependencies) {
+        const visit = (tree, dev) => Object.keys(tree).forEach((name) => {
+          const d = tree[name];
+          add(name, d.version, dev || d.dev);
+          if (d.dependencies) visit(d.dependencies, dev || d.dev);
+        });
+        visit(lock.dependencies, false);
+      }
+    }
+  }
+  if (deps.size === 0) {
+    const pkgText = common.readIfExists(path.join(dir, 'package.json'));
+    if (pkgText) {
+      source = 'package.json (no lockfile; declared versions only)';
+      try {
+        const pkg = JSON.parse(pkgText);
+        Object.entries(pkg.dependencies || {}).forEach(([n, v]) => add(n, String(v).replace(/^[\^~]/, ''), false));
+        Object.entries(pkg.devDependencies || {}).forEach(([n, v]) => add(n, String(v).replace(/^[\^~]/, ''), true));
+      } catch (e) { /* unreadable package.json, fall through */ }
+    }
+  }
+  return { deps, source };
+}
+
+function npmAuditOnline(dir) {
+  const r = spawnSync('npm', ['audit', '--json', '--audit-level=low'], { cwd: dir, encoding: 'utf8', timeout: 60000 });
+  if (!r.stdout) return { error: (r.stderr || 'npm audit produced no output').trim().split('\n')[0] };
+  try {
+    const j = JSON.parse(r.stdout);
+    const out = [];
+    const vulns = j.vulnerabilities || {};
+    Object.keys(vulns).forEach((name) => {
+      const v = vulns[name];
+      (v.via || []).forEach((via) => {
+        if (typeof via !== 'object') return;
+        out.push({ id: 'GHSA:' + (via.source || via.url || via.title), cve: via.url || '', package: name, version: v.range, severity: common.normaliseSeverity(via.severity), title: via.title, fixedIn: v.fixAvailable && v.fixAvailable.version ? v.fixAvailable.version : null, dev: false, origin: 'npm audit' });
+      });
+    });
+    return { findings: out };
+  } catch (e) {
+    return { error: 'npm audit output was not JSON: ' + e.message };
+  }
+}
+
+// ---------------------------------------------------------------- maven
+
+function readMavenTree(dir, treeFile) {
+  const deps = new Map();
+  const treePath = treeFile ? path.resolve(dir, treeFile) : path.join(dir, 'target', 'dependency-tree.txt');
+  let text = common.readIfExists(treePath);
+  let source = null;
+  const add = (ga, version, scope) => {
+    if (!deps.has(ga)) deps.set(ga, new Map());
+    if (!deps.get(ga).has(version)) deps.get(ga).set(version, { dev: scope === 'test' });
+  };
+  if (text) {
+    source = 'target/dependency-tree.txt';
+    text.split(/\r?\n/).forEach((line, i) => {
+      const m = /([A-Za-z0-9_.-]+):([A-Za-z0-9_.-]+):(?:[a-z-]+:)?(?:[A-Za-z0-9_.-]+:)?([0-9][A-Za-z0-9_.-]*)(?::([a-z]+))?\s*$/.exec(line.trim());
+      if (!m || i === 0) return; // first line is the project itself
+      add(m[1] + ':' + m[2], m[3], m[4] || 'compile');
+    });
+  } else {
+    const pom = common.readIfExists(path.join(dir, 'pom.xml'));
+    if (pom) {
+      source = 'pom.xml (declared dependencies only; run mvn dependency:tree for transitive coverage)';
+      const props = {};
+      [...pom.matchAll(/<([A-Za-z0-9_.-]+)>([^<]+)<\/\1>/g)].forEach((m) => { props[m[1]] = m[2].trim(); });
+      [...pom.matchAll(/<dependency>([\s\S]*?)<\/dependency>/g)].forEach((m) => {
+        const g = /<groupId>([^<]+)<\/groupId>/.exec(m[1]);
+        const a = /<artifactId>([^<]+)<\/artifactId>/.exec(m[1]);
+        const v = /<version>([^<]+)<\/version>/.exec(m[1]);
+        const s = /<scope>([^<]+)<\/scope>/.exec(m[1]);
+        if (!g || !a || !v) return;
+        const version = v[1].replace(/\$\{([^}]+)\}/g, (_, k) => props[k] || '0');
+        add(g[1].trim() + ':' + a[1].trim(), version, s ? s[1] : 'compile');
+      });
+    }
+  }
+  return { deps, source };
+}
+
+function readJavaTarget(dir) {
+  const pom = common.readIfExists(path.join(dir, 'pom.xml'));
+  if (!pom) return null;
+  const m = /<(?:java\.version|maven\.compiler\.(?:release|target|source))>\s*(?:1\.)?(\d+)\s*</.exec(pom);
+  return m ? m[1] : null;
+}
+
+function readNodeTarget(dir) {
+  const nvmrc = common.readIfExists(path.join(dir, '.nvmrc'));
+  if (nvmrc) return { version: nvmrc.trim().replace(/^v/, ''), source: '.nvmrc' };
+  const pkg = common.readIfExists(path.join(dir, 'package.json'));
+  if (pkg) {
+    try {
+      const engines = JSON.parse(pkg).engines || {};
+      if (engines.node) {
+        const m = /(\d+(\.\d+){0,2})/.exec(engines.node);
+        if (m) return { version: m[1], source: 'package.json engines.node (' + engines.node + ')' };
+      }
+    } catch (e) { /* ignore */ }
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------- matching
+
+function match(deps, advisories, ecosystem) {
+  const findings = [];
+  deps.forEach((versions, name) => {
+    versions.forEach((meta, version) => {
+      advisories.forEach((a) => {
+        if (a.package !== name) return;
+        if (!common.satisfies(version, a.range)) return;
+        findings.push({
+          id: a.id,
+          cve: a.cve,
+          package: name,
+          version,
+          ecosystem,
+          severity: a.severity,
+          cvss: a.cvss,
+          title: a.title,
+          fixedIn: a.fixedIn,
+          dev: meta.dev,
+          origin: 'advisory mirror',
+          policy: /^MERIDIAN-/.test(a.cve) ? 'lifecycle' : 'security',
+        });
+      });
+    });
+  });
+  return findings;
+}
+
+function dedupe(findings) {
+  const seen = new Set();
+  return findings.filter((f) => {
+    const k = f.id + '|' + f.package + '|' + f.version;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).sort((a, b) => common.severityRank(a.severity) - common.severityRank(b.severity)
+    || a.package.localeCompare(b.package) || common.compareVersions(a.version, b.version) || a.id.localeCompare(b.id));
+}
+
+function summarise(findings) {
+  const s = { critical: 0, high: 0, medium: 0, low: 0, info: 0, lifecycle: 0, dev: 0 };
+  findings.forEach((f) => {
+    s[f.severity.toLowerCase()] = (s[f.severity.toLowerCase()] || 0) + 1;
+    if (f.policy === 'lifecycle') s.lifecycle++;
+    if (f.dev) s.dev++;
+  });
+  return s;
+}
+
+function renderHtml(report) {
+  const e = common.escapeHtml;
+  const rows = report.findings.map((f) => `<tr class="sev-${f.severity.toLowerCase()}">
+   <td><span class="pill">${e(f.severity)}</span>${f.cvss ? '<br><small>CVSS ' + f.cvss + '</small>' : ''}</td>
+   <td><code>${e(f.package)}</code><br><small>${e(f.version)}${f.dev ? ' (dev)' : ''}</small></td>
+   <td>${e(f.id)}<br><small>${e(f.cve)}</small></td>
+   <td>${e(f.title)}</td>
+   <td>${f.fixedIn ? e(f.fixedIn) : '<i>no fix</i>'}</td>
+   <td>${e(f.policy)}</td></tr>`).join('');
+  const s = report.summary;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Xray audit - ${e(report.project)}</title>
+<style>body{font:14px/1.4 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:24px;color:#1b1b1b}h1{font-size:20px;margin:0}h2{font-size:16px;margin:24px 0 8px}.meta{color:#555;font-size:12px}
+table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border-bottom:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f4f4f4}
+.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;color:#fff}.sev-critical .pill{background:#7b1fa2}.sev-high .pill{background:#c62828}.sev-medium .pill{background:#ef6c00}.sev-low .pill{background:#1565c0}.sev-info .pill{background:#616161}
+.summary span{display:inline-block;margin-right:16px}.gate-fail{color:#c62828;font-weight:600}.gate-pass{color:#2e7d32;font-weight:600}</style></head><body>
+<h1>Xray dependency audit</h1>
+<div class="meta">${e(report.project)} &middot; ${e(report.ecosystem)} &middot; watch ${e(report.watch)} &middot; ${e(report.policy)} &middot; mirror ${e(report.advisoryRevision)} &middot; ${e(report.timestamp)}</div>
+<div class="meta">${report.componentsScanned} components from ${e(report.sources.join(', '))}${report.runtime ? ' &middot; runtime ' + e(report.runtime.name + ' ' + report.runtime.version) + ' (' + e(report.runtime.source) + ')' : ''}</div>
+<h2>Summary</h2>
+<div class="summary"><span>Critical <b>${s.critical}</b></span><span>High <b>${s.high}</b></span><span>Medium <b>${s.medium}</b></span><span>Low <b>${s.low}</b></span><span>of which lifecycle <b>${s.lifecycle}</b></span><span>dev only <b>${s.dev}</b></span></div>
+<p class="${report.gate.passed ? 'gate-pass' : 'gate-fail'}">Policy gate ${report.gate.passed ? 'PASSED' : 'FAILED'}: ${e(report.gate.reason)}</p>
+${report.warnings.length ? '<p class="meta">' + report.warnings.map(e).join('<br>') + '</p>' : ''}
+<h2>Violations</h2>
+<table><thead><tr><th>Severity</th><th>Component</th><th>Id</th><th>Summary</th><th>Fixed in</th><th>Type</th></tr></thead><tbody>${rows || '<tr><td colspan="6">No violations.</td></tr>'}</tbody></table>
+<p class="meta">Lifecycle entries (MERIDIAN-EOL-*) are not CVEs. They are GIS-STD-021 section 3 end of life rules and fail the gate at High like any other High. Waivers are recorded in the GIS exception register and applied on the Xray server, not here.</p>
+</body></html>
+`;
+}
+
+function cmdAudit(args) {
+  const started = Date.now();
+  const dir = path.resolve(args.dir || '.');
+  const output = path.resolve(args.output || path.join(dir, '.xray-reports'));
+  const failOn = (args['fail-on'] || process.env.XRAY_FAIL_ON || 'high').toLowerCase();
+  const online = !!args.online || process.env.XRAY_ONLINE === '1';
+  const advisories = JSON.parse(fs.readFileSync(ADVISORIES, 'utf8'));
+  const warnings = [];
+
+  if (!fs.existsSync(dir)) { console.error('xray: directory not found: ' + dir); process.exit(2); }
+
+  let ecosystem = null;
+  let findings = [];
+  const sources = [];
+  let components = 0;
+  let runtime = null;
+  let project = path.basename(dir);
+
+  const type = (args.type || '').toLowerCase();
+  const treeFile = args.tree || null;
+  const hasPom = type === 'maven' || (!type && (fs.existsSync(path.join(dir, 'pom.xml')) || fs.existsSync(path.join(dir, 'target', 'dependency-tree.txt'))));
+  const hasNpm = type === 'npm' || (!type && (fs.existsSync(path.join(dir, 'package.json')) || fs.existsSync(path.join(dir, 'package-lock.json'))));
+
+  if (hasNpm) {
+    ecosystem = 'npm';
+    const { deps, source } = readNpmLock(dir);
+    if (source) sources.push(source);
+    if (source && !/lock/.test(source)) warnings.push('No package-lock.json; transitive dependencies were not audited. DEPENDENCY_POLICY.md section 2 requires a committed lockfile.');
+    components += [...deps.values()].reduce((a, v) => a + v.size, 0);
+    findings = findings.concat(match(deps, advisories.npm, 'npm'));
+    try { project = JSON.parse(common.readIfExists(path.join(dir, 'package.json')) || '{}').name || project; } catch (e) { /* keep dir name */ }
+    const node = readNodeTarget(dir);
+    if (node) {
+      runtime = { name: 'node', version: node.version, source: node.source };
+      findings = findings.concat(match(new Map([['node', new Map([[node.version, { dev: false }]])]]), advisories.npm, 'runtime'));
+    }
+    if (online) {
+      const r = npmAuditOnline(dir);
+      if (r.error) warnings.push('npm audit skipped: ' + r.error);
+      else { findings = findings.concat(r.findings.map((f) => Object.assign({ ecosystem: 'npm', policy: 'security' }, f))); sources.push('npm audit'); }
+    }
+  }
+  if (hasPom) {
+    ecosystem = ecosystem ? 'npm+maven' : 'maven';
+    const { deps, source } = readMavenTree(dir, treeFile);
+    if (source) sources.push(source);
+    components += [...deps.values()].reduce((a, v) => a + v.size, 0);
+    findings = findings.concat(match(deps, advisories.maven, 'maven'));
+    const pomText = common.readIfExists(path.join(dir, 'pom.xml'));
+    if (pomText) {
+      const a = /<artifactId>([^<]+)<\/artifactId>/.exec(pomText);
+      if (a && !hasNpm) project = a[1];
+    }
+    const jdk = readJavaTarget(dir);
+    if (jdk) {
+      runtime = { name: 'jdk', version: jdk, source: 'pom.xml' };
+      findings = findings.concat(match(new Map([['jdk', new Map([[jdk, { dev: false }]])]]), advisories.maven, 'runtime'));
+    }
+  }
+  if (!ecosystem || sources.length === 0) {
+    console.error('xray: no package.json, package-lock.json, pom.xml or target/dependency-tree.txt in ' + dir);
+    process.exit(2);
+  }
+
+  findings = dedupe(findings);
+  const summary = summarise(findings);
+
+  let gatePassed = true;
+  let reason = 'no violations at or above ' + failOn;
+  if (failOn !== 'none') {
+    const threshold = common.severityRank(failOn);
+    const over = findings.filter((f) => common.severityRank(f.severity) <= threshold);
+    if (over.length) {
+      gatePassed = false;
+      reason = over.length + ' violation(s) at or above ' + failOn + ' (' + over.slice(0, 5).map((f) => f.package + '@' + f.version).join(', ') + (over.length > 5 ? ', ...' : '') + ')';
+    }
+  }
+
+  const report = {
+    tool: 'xray ' + VERSION,
+    project,
+    ecosystem,
+    watch: WATCH,
+    policy: POLICY,
+    advisoryRevision: advisories.revision,
+    online,
+    timestamp: common.timestamp(),
+    dir: path.relative(process.cwd(), dir) || '.',
+    sources,
+    componentsScanned: components,
+    runtime,
+    durationMs: 0,
+    failOn,
+    summary,
+    gate: { passed: gatePassed, reason },
+    warnings,
+    findings,
+  };
+  report.scanId = common.stableId('xray', project + '|' + findings.map((f) => f.id + f.version).join(','));
+  report.durationMs = common.elapsed(started);
+
+  common.ensureDir(output);
+  common.writeJson(path.join(output, 'report.json'), report);
+  fs.writeFileSync(path.join(output, 'report.html'), renderHtml(report));
+  fs.writeFileSync(path.join(output, 'violations.txt'), findings.map((f) => [f.severity.toUpperCase().padEnd(8), f.id.padEnd(13), (f.package + '@' + f.version).padEnd(48), f.cve, f.fixedIn ? 'fix ' + f.fixedIn : 'no fix', f.title].join('  ')).join('\n') + '\n');
+
+  if (!args.quiet) {
+    console.log('Xray ' + VERSION + ' (Meridian offline mirror ' + advisories.revision + (online ? ', plus npm audit' : '') + ')');
+    console.log('Project ' + project + ' [' + ecosystem + '] watch ' + WATCH);
+    console.log('Scanned ' + components + ' components from ' + sources.join(', ') + (runtime ? '; runtime ' + runtime.name + ' ' + runtime.version : '') + ' in ' + report.durationMs + ' ms');
+    warnings.forEach((w) => console.log('WARN ' + w));
+    console.log('');
+    console.log('  Critical ' + summary.critical + '  High ' + summary.high + '  Medium ' + summary.medium + '  Low ' + summary.low + '   (lifecycle ' + summary.lifecycle + ', dev only ' + summary.dev + ')');
+    console.log('');
+    findings.filter((f) => common.severityRank(f.severity) <= 1).forEach((f) => {
+      console.log('  [' + f.severity.padEnd(8) + '] ' + (f.package + '@' + f.version).padEnd(44) + ' ' + f.id + ' ' + f.cve + (f.fixedIn ? '  fix: ' + f.fixedIn : '  no fix'));
+    });
+    console.log('');
+    console.log('Reports written to ' + path.relative(process.cwd(), output));
+    console.log('Policy gate ' + (gatePassed ? 'PASSED' : 'FAILED') + ': ' + reason);
+  }
+  process.exit(gatePassed ? 0 : 1);
+}
+
+const args = common.parseArgs(process.argv.slice(2));
+switch (args._[0]) {
+  case 'audit': case 'scan': cmdAudit(args); break;
+  case 'version': console.log('xray ' + VERSION); break;
+  case 'help': usage(0); break;
+  default: usage(2);
+}
