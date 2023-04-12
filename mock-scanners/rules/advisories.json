@@ -1,0 +1,2359 @@
+{
+  "source": "Artifactory Xray vulnerability feed mirror, curated by GIS for the CSWT estate",
+  "revision": "2024-11-18",
+  "note": "Offline snapshot. The real Xray instance consults the vendor feed and the NVD; this file carries the advisories that actually matter to the Meridian dependency tree so that a scan is deterministic and works on a build agent with no egress. Ranges use plain comparison operators, one range per entry. XRAY-* identifiers are the bank's internal tracking ids; the CVE column is the upstream reference.",
+  "npm": [
+    {
+      "id": "XRAY-119231",
+      "cve": "CVE-2021-44906",
+      "package": "minimist",
+      "range": "<1.2.6",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype Pollution in minimist",
+      "fixedIn": "1.2.6"
+    },
+    {
+      "id": "XRAY-120045",
+      "cve": "CVE-2022-37601",
+      "package": "loader-utils",
+      "range": "<2.0.3",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype pollution in loader-utils parseQuery",
+      "fixedIn": "2.0.3"
+    },
+    {
+      "id": "XRAY-120046",
+      "cve": "CVE-2022-37599",
+      "package": "loader-utils",
+      "range": "<2.0.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in loader-utils interpolateName",
+      "fixedIn": "2.0.4"
+    },
+    {
+      "id": "XRAY-120047",
+      "cve": "CVE-2022-37603",
+      "package": "loader-utils",
+      "range": "<2.0.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in loader-utils url handling",
+      "fixedIn": "2.0.4"
+    },
+    {
+      "id": "XRAY-121002",
+      "cve": "CVE-2022-46175",
+      "package": "json5",
+      "range": "<2.2.2",
+      "severity": "High",
+      "cvss": 7.1,
+      "title": "Prototype pollution in JSON5 parse",
+      "fixedIn": "2.2.2"
+    },
+    {
+      "id": "XRAY-118810",
+      "cve": "CVE-2022-25858",
+      "package": "terser",
+      "range": "<5.14.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Insecure use of regular expressions in terser",
+      "fixedIn": "5.14.2"
+    },
+    {
+      "id": "XRAY-116450",
+      "cve": "CVE-2022-24785",
+      "package": "moment",
+      "range": "<2.29.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Path traversal in moment.locale",
+      "fixedIn": "2.29.2"
+    },
+    {
+      "id": "XRAY-118900",
+      "cve": "CVE-2022-31129",
+      "package": "moment",
+      "range": "<2.29.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Inefficient regular expression complexity in moment string parsing",
+      "fixedIn": "2.29.4"
+    },
+    {
+      "id": "XRAY-115121",
+      "cve": "CVE-2021-23337",
+      "package": "lodash",
+      "range": "<4.17.21",
+      "severity": "High",
+      "cvss": 7.2,
+      "title": "Command injection via lodash template",
+      "fixedIn": "4.17.21"
+    },
+    {
+      "id": "XRAY-115122",
+      "cve": "CVE-2020-28500",
+      "package": "lodash",
+      "range": "<4.17.21",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in lodash toNumber, trim and trimEnd",
+      "fixedIn": "4.17.21"
+    },
+    {
+      "id": "XRAY-122310",
+      "cve": "CVE-2022-25883",
+      "package": "semver",
+      "range": ">=7.0.0 <7.5.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in semver range parsing",
+      "fixedIn": "7.5.2"
+    },
+    {
+      "id": "XRAY-122318",
+      "cve": "CVE-2022-25883",
+      "package": "semver",
+      "range": "<5.7.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in semver range parsing (5.x line)",
+      "fixedIn": "5.7.2"
+    },
+    {
+      "id": "XRAY-122319",
+      "cve": "CVE-2022-25883",
+      "package": "semver",
+      "range": ">=6.0.0 <6.3.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in semver range parsing (6.x line)",
+      "fixedIn": "6.3.1"
+    },
+    {
+      "id": "XRAY-123001",
+      "cve": "CVE-2023-26136",
+      "package": "tough-cookie",
+      "range": "<4.1.3",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "Prototype pollution in tough-cookie cookie store",
+      "fixedIn": "4.1.3"
+    },
+    {
+      "id": "XRAY-123870",
+      "cve": "CVE-2023-45133",
+      "package": "@babel/traverse",
+      "range": "<7.23.2",
+      "severity": "Critical",
+      "cvss": 9.4,
+      "title": "Arbitrary code execution when compiling crafted code",
+      "fixedIn": "7.23.2"
+    },
+    {
+      "id": "XRAY-124120",
+      "cve": "CVE-2023-26159",
+      "package": "follow-redirects",
+      "range": "<1.15.4",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "Improper input validation in follow-redirects",
+      "fixedIn": "1.15.4"
+    },
+    {
+      "id": "XRAY-124121",
+      "cve": "CVE-2024-28849",
+      "package": "follow-redirects",
+      "range": "<1.15.6",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "Proxy-Authorization header leak on cross domain redirect",
+      "fixedIn": "1.15.6"
+    },
+    {
+      "id": "XRAY-124300",
+      "cve": "CVE-2024-4068",
+      "package": "braces",
+      "range": "<3.0.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Uncontrolled resource consumption in braces",
+      "fixedIn": "3.0.3"
+    },
+    {
+      "id": "XRAY-124310",
+      "cve": "CVE-2024-4067",
+      "package": "micromatch",
+      "range": "<4.0.8",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in micromatch",
+      "fixedIn": "4.0.8"
+    },
+    {
+      "id": "XRAY-124400",
+      "cve": "CVE-2024-37890",
+      "package": "ws",
+      "range": ">=8.0.0 <8.17.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS via many HTTP headers in ws",
+      "fixedIn": "8.17.1"
+    },
+    {
+      "id": "XRAY-124401",
+      "cve": "CVE-2024-37890",
+      "package": "ws",
+      "range": ">=7.0.0 <7.5.10",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS via many HTTP headers in ws (7.x line)",
+      "fixedIn": "7.5.10"
+    },
+    {
+      "id": "XRAY-124500",
+      "cve": "CVE-2024-29041",
+      "package": "express",
+      "range": "<4.19.2",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "Open redirect in express res.location",
+      "fixedIn": "4.19.2"
+    },
+    {
+      "id": "XRAY-124510",
+      "cve": "CVE-2024-43796",
+      "package": "express",
+      "range": "<4.20.0",
+      "severity": "Low",
+      "cvss": 5.0,
+      "title": "XSS via res.redirect with untrusted input",
+      "fixedIn": "4.20.0"
+    },
+    {
+      "id": "XRAY-124520",
+      "cve": "CVE-2024-45296",
+      "package": "path-to-regexp",
+      "range": "<0.1.10",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Backtracking regular expressions in path-to-regexp",
+      "fixedIn": "0.1.10"
+    },
+    {
+      "id": "XRAY-124530",
+      "cve": "CVE-2024-43799",
+      "package": "send",
+      "range": "<0.19.0",
+      "severity": "Medium",
+      "cvss": 5.0,
+      "title": "Template injection leading to XSS in send",
+      "fixedIn": "0.19.0"
+    },
+    {
+      "id": "XRAY-124540",
+      "cve": "CVE-2024-47764",
+      "package": "cookie",
+      "range": "<0.7.0",
+      "severity": "Low",
+      "cvss": 4.3,
+      "title": "Out of bounds characters accepted in cookie name and path",
+      "fixedIn": "0.7.0"
+    },
+    {
+      "id": "XRAY-124600",
+      "cve": "CVE-2024-21538",
+      "package": "cross-spawn",
+      "range": ">=7.0.0 <7.0.5",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in cross-spawn argument handling",
+      "fixedIn": "7.0.5"
+    },
+    {
+      "id": "XRAY-124610",
+      "cve": "CVE-2024-55565",
+      "package": "nanoid",
+      "range": "<3.3.8",
+      "severity": "Medium",
+      "cvss": 4.3,
+      "title": "Predictable results with non integer size in nanoid",
+      "fixedIn": "3.3.8"
+    },
+    {
+      "id": "XRAY-124620",
+      "cve": "CVE-2024-4367",
+      "package": "pdfjs-dist",
+      "range": "<4.2.67",
+      "severity": "High",
+      "cvss": 8.8,
+      "title": "Arbitrary JavaScript execution in PDF.js font handling",
+      "fixedIn": "4.2.67"
+    },
+    {
+      "id": "XRAY-123950",
+      "cve": "CVE-2023-42282",
+      "package": "ip",
+      "range": "<1.1.9",
+      "severity": "High",
+      "cvss": 8.1,
+      "title": "SSRF via isPublic in ip",
+      "fixedIn": "1.1.9"
+    },
+    {
+      "id": "XRAY-123960",
+      "cve": "CVE-2023-28155",
+      "package": "request",
+      "range": "<=2.88.2",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "SSRF in request via cross-protocol redirect. Package is deprecated; no fix.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-123970",
+      "cve": "CVE-2022-0155",
+      "package": "follow-redirects",
+      "range": "<1.14.7",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "Cookie leak on cross domain redirect",
+      "fixedIn": "1.14.7"
+    },
+    {
+      "id": "XRAY-121500",
+      "cve": "CVE-2022-24999",
+      "package": "qs",
+      "range": ">=6.5.0 <6.5.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Prototype pollution in qs",
+      "fixedIn": "6.5.3"
+    },
+    {
+      "id": "XRAY-121501",
+      "cve": "CVE-2022-24999",
+      "package": "qs",
+      "range": ">=6.7.0 <6.10.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Prototype pollution in qs (6.7-6.10 line)",
+      "fixedIn": "6.10.3"
+    },
+    {
+      "id": "XRAY-121600",
+      "cve": "CVE-2022-3517",
+      "package": "minimatch",
+      "range": "<3.0.5",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in minimatch braceExpand",
+      "fixedIn": "3.0.5"
+    },
+    {
+      "id": "XRAY-121700",
+      "cve": "CVE-2021-3803",
+      "package": "nth-check",
+      "range": "<2.0.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Inefficient regular expression complexity in nth-check",
+      "fixedIn": "2.0.1"
+    },
+    {
+      "id": "XRAY-121800",
+      "cve": "CVE-2022-3510",
+      "package": "protobufjs",
+      "range": ">=6.10.0 <6.11.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Prototype pollution in protobufjs",
+      "fixedIn": "6.11.3"
+    },
+    {
+      "id": "XRAY-121900",
+      "cve": "CVE-2022-21222",
+      "package": "css-what",
+      "range": "<5.0.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in css-what attribute parsing",
+      "fixedIn": "5.0.1"
+    },
+    {
+      "id": "XRAY-122000",
+      "cve": "CVE-2021-23382",
+      "package": "postcss",
+      "range": "<8.2.13",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in postcss getAnnotationURL",
+      "fixedIn": "8.2.13"
+    },
+    {
+      "id": "XRAY-122001",
+      "cve": "CVE-2023-44270",
+      "package": "postcss",
+      "range": "<8.4.31",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Line return parsing in postcss allows CSS injection",
+      "fixedIn": "8.4.31"
+    },
+    {
+      "id": "XRAY-122100",
+      "cve": "CVE-2022-0235",
+      "package": "node-fetch",
+      "range": "<2.6.7",
+      "severity": "High",
+      "cvss": 8.8,
+      "title": "Exposure of sensitive information to unauthorized actor in node-fetch",
+      "fixedIn": "2.6.7"
+    },
+    {
+      "id": "XRAY-122200",
+      "cve": "CVE-2022-29167",
+      "package": "hawk",
+      "range": "<9.0.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in Hawk header parsing",
+      "fixedIn": "9.0.1"
+    },
+    {
+      "id": "XRAY-122300",
+      "cve": "CVE-2021-43138",
+      "package": "async",
+      "range": ">=2.0.0 <2.6.4",
+      "severity": "High",
+      "cvss": 7.8,
+      "title": "Prototype pollution in async mapValues",
+      "fixedIn": "2.6.4"
+    },
+    {
+      "id": "XRAY-122400",
+      "cve": "CVE-2022-33987",
+      "package": "got",
+      "range": "<11.8.5",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Redirect to UNIX socket in got",
+      "fixedIn": "11.8.5"
+    },
+    {
+      "id": "XRAY-122500",
+      "cve": "CVE-2022-38900",
+      "package": "decode-uri-component",
+      "range": "<0.2.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Improper input validation in decode-uri-component",
+      "fixedIn": "0.2.1"
+    },
+    {
+      "id": "XRAY-122600",
+      "cve": "CVE-2023-0842",
+      "package": "xml2js",
+      "range": "<0.5.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Prototype pollution in xml2js",
+      "fixedIn": "0.5.0"
+    },
+    {
+      "id": "XRAY-122700",
+      "cve": "CVE-2022-24771",
+      "package": "node-forge",
+      "range": "<1.3.0",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Improper verification of RSA PKCS#1 signatures in node-forge",
+      "fixedIn": "1.3.0"
+    },
+    {
+      "id": "XRAY-122800",
+      "cve": "CVE-2021-3807",
+      "package": "ansi-regex",
+      "range": ">=3.0.0 <3.0.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in ansi-regex",
+      "fixedIn": "3.0.1"
+    },
+    {
+      "id": "XRAY-122801",
+      "cve": "CVE-2021-3807",
+      "package": "ansi-regex",
+      "range": ">=4.0.0 <4.1.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in ansi-regex (4.x line)",
+      "fixedIn": "4.1.1"
+    },
+    {
+      "id": "XRAY-122802",
+      "cve": "CVE-2021-3807",
+      "package": "ansi-regex",
+      "range": ">=5.0.0 <5.0.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in ansi-regex (5.x line)",
+      "fixedIn": "5.0.1"
+    },
+    {
+      "id": "XRAY-122900",
+      "cve": "CVE-2021-33502",
+      "package": "normalize-url",
+      "range": ">=4.3.0 <4.5.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in normalize-url",
+      "fixedIn": "4.5.1"
+    },
+    {
+      "id": "XRAY-123000",
+      "cve": "CVE-2021-23343",
+      "package": "path-parse",
+      "range": "<1.0.7",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in path-parse",
+      "fixedIn": "1.0.7"
+    },
+    {
+      "id": "XRAY-123100",
+      "cve": "CVE-2021-23364",
+      "package": "browserslist",
+      "range": ">=4.0.0 <4.16.5",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in browserslist",
+      "fixedIn": "4.16.5"
+    },
+    {
+      "id": "XRAY-123200",
+      "cve": "CVE-2021-23368",
+      "package": "postcss",
+      "range": ">=7.0.0 <7.0.36",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in postcss (7.x line)",
+      "fixedIn": "7.0.36"
+    },
+    {
+      "id": "XRAY-123300",
+      "cve": "CVE-2020-7774",
+      "package": "y18n",
+      "range": ">=4.0.0 <4.0.1",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Prototype pollution in y18n",
+      "fixedIn": "4.0.1"
+    },
+    {
+      "id": "XRAY-123400",
+      "cve": "CVE-2021-27290",
+      "package": "ssri",
+      "range": ">=5.2.2 <6.0.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in ssri",
+      "fixedIn": "6.0.2"
+    },
+    {
+      "id": "XRAY-123500",
+      "cve": "CVE-2021-23440",
+      "package": "set-value",
+      "range": "<4.0.1",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Prototype pollution in set-value",
+      "fixedIn": "4.0.1"
+    },
+    {
+      "id": "XRAY-123600",
+      "cve": "CVE-2020-8203",
+      "package": "lodash",
+      "range": "<4.17.19",
+      "severity": "High",
+      "cvss": 7.4,
+      "title": "Prototype pollution in lodash zipObjectDeep",
+      "fixedIn": "4.17.19"
+    },
+    {
+      "id": "XRAY-123700",
+      "cve": "CVE-2022-37620",
+      "package": "html-minifier",
+      "range": "<=4.0.0",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in html-minifier candidate whitespace handling. No fix.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-123800",
+      "cve": "CVE-2023-26115",
+      "package": "word-wrap",
+      "range": "<1.2.4",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in word-wrap",
+      "fixedIn": "1.2.4"
+    },
+    {
+      "id": "XRAY-124000",
+      "cve": "CVE-2024-29415",
+      "package": "ip",
+      "range": "<=2.0.1",
+      "severity": "High",
+      "cvss": 8.1,
+      "title": "SSRF via isPublic in ip (2.x line). No fix.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-124700",
+      "cve": "CVE-2024-21536",
+      "package": "http-proxy-middleware",
+      "range": "<2.0.7",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS via unhandled exception in http-proxy-middleware",
+      "fixedIn": "2.0.7"
+    },
+    {
+      "id": "XRAY-124710",
+      "cve": "CVE-2024-39338",
+      "package": "axios",
+      "range": ">=1.3.2 <1.7.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "SSRF via path relative URLs in axios",
+      "fixedIn": "1.7.4"
+    },
+    {
+      "id": "XRAY-124711",
+      "cve": "CVE-2023-45857",
+      "package": "axios",
+      "range": ">=0.8.1 <1.6.0",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "XSRF-TOKEN leaked to third party hosts by axios",
+      "fixedIn": "1.6.0"
+    },
+    {
+      "id": "XRAY-124800",
+      "cve": "CVE-2024-4068",
+      "package": "webpack-dev-middleware",
+      "range": ">=5.0.0 <5.3.4",
+      "severity": "High",
+      "cvss": 7.4,
+      "title": "Path traversal in webpack-dev-middleware",
+      "fixedIn": "5.3.4"
+    },
+    {
+      "id": "XRAY-124900",
+      "cve": "CVE-2023-28154",
+      "package": "webpack",
+      "range": ">=5.0.0 <5.76.0",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Cross realm object access in webpack ImportParserPlugin",
+      "fixedIn": "5.76.0"
+    },
+    {
+      "id": "XRAY-124910",
+      "cve": "CVE-2024-43788",
+      "package": "webpack",
+      "range": ">=5.0.0 <5.94.0",
+      "severity": "Medium",
+      "cvss": 6.4,
+      "title": "DOM clobbering in AutoPublicPathRuntimeModule",
+      "fixedIn": "5.94.0"
+    },
+    {
+      "id": "XRAY-125000",
+      "cve": "CVE-2024-4068",
+      "package": "socket.io",
+      "range": ">=3.0.0 <4.6.2",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Unhandled exception in socket.io packet handling",
+      "fixedIn": "4.6.2"
+    },
+    {
+      "id": "XRAY-125100",
+      "cve": "CVE-2023-32695",
+      "package": "socket.io-parser",
+      "range": ">=4.0.4 <4.2.3",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Insufficient validation in socket.io-parser",
+      "fixedIn": "4.2.3"
+    },
+    {
+      "id": "XRAY-125200",
+      "cve": "CVE-2022-41940",
+      "package": "engine.io",
+      "range": ">=6.0.0 <6.2.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Uncaught exception in engine.io",
+      "fixedIn": "6.2.1"
+    },
+    {
+      "id": "XRAY-125300",
+      "cve": "CVE-2023-8265",
+      "package": "karma",
+      "range": "<6.4.3",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "Open redirect in karma return_url",
+      "fixedIn": "6.4.3"
+    },
+    {
+      "id": "XRAY-125400",
+      "cve": "CVE-2022-25851",
+      "package": "jpeg-js",
+      "range": "<0.4.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Infinite loop in jpeg-js parse",
+      "fixedIn": "0.4.4"
+    },
+    {
+      "id": "XRAY-125500",
+      "cve": "CVE-2021-32640",
+      "package": "ws",
+      "range": ">=5.0.0 <7.4.6",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in ws Sec-Websocket-Protocol header handling",
+      "fixedIn": "7.4.6"
+    },
+    {
+      "id": "XRAY-125600",
+      "cve": "CVE-2023-26920",
+      "package": "fast-xml-parser",
+      "range": "<4.1.2",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Prototype pollution in fast-xml-parser",
+      "fixedIn": "4.1.2"
+    },
+    {
+      "id": "XRAY-125700",
+      "cve": "CVE-2024-45590",
+      "package": "body-parser",
+      "range": "<1.20.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS via url encoding in body-parser",
+      "fixedIn": "1.20.3"
+    },
+    {
+      "id": "XRAY-125800",
+      "cve": "CVE-2024-43800",
+      "package": "serve-static",
+      "range": "<1.16.0",
+      "severity": "Medium",
+      "cvss": 5.0,
+      "title": "Template injection in serve-static redirect",
+      "fixedIn": "1.16.0"
+    },
+    {
+      "id": "XRAY-125900",
+      "cve": "CVE-2024-6531",
+      "package": "bootstrap",
+      "range": ">=4.0.0 <5.0.0",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "XSS in Bootstrap 4 carousel data-slide attributes. No fix on 4.x.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-126000",
+      "cve": "CVE-2020-11023",
+      "package": "jquery",
+      "range": ">=1.0.3 <3.5.0",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "XSS when passing HTML containing option elements to jQuery DOM manipulation methods",
+      "fixedIn": "3.5.0"
+    },
+    {
+      "id": "XRAY-126100",
+      "cve": "CVE-2022-1650",
+      "package": "eventsource",
+      "range": "<1.1.1",
+      "severity": "Critical",
+      "cvss": 9.3,
+      "title": "Exposure of sensitive information in eventsource",
+      "fixedIn": "1.1.1"
+    },
+    {
+      "id": "XRAY-126200",
+      "cve": "CVE-2022-2421",
+      "package": "socket.io-parser",
+      "range": "<3.3.3",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Insufficient validation when decoding a socket.io packet",
+      "fixedIn": "3.3.3"
+    },
+    {
+      "id": "XRAY-126300",
+      "cve": "CVE-2021-23566",
+      "package": "nanoid",
+      "range": ">=3.0.0 <3.1.31",
+      "severity": "Medium",
+      "cvss": 5.5,
+      "title": "Information exposure in nanoid",
+      "fixedIn": "3.1.31"
+    },
+    {
+      "id": "XRAY-126400",
+      "cve": "CVE-2022-46175",
+      "package": "json5",
+      "range": ">=1.0.0 <1.0.2",
+      "severity": "High",
+      "cvss": 7.1,
+      "title": "Prototype pollution in JSON5 parse (1.x line)",
+      "fixedIn": "1.0.2"
+    },
+    {
+      "id": "XRAY-126500",
+      "cve": "CVE-2023-45857",
+      "package": "http-cache-semantics",
+      "range": "<4.1.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in http-cache-semantics",
+      "fixedIn": "4.1.1"
+    },
+    {
+      "id": "XRAY-126600",
+      "cve": "CVE-2022-25881",
+      "package": "http-cache-semantics",
+      "range": "<4.1.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in http-cache-semantics request cache-control parsing",
+      "fixedIn": "4.1.1"
+    },
+    {
+      "id": "XRAY-126700",
+      "cve": "CVE-2022-24773",
+      "package": "node-forge",
+      "range": "<1.3.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Improper verification of cryptographic signature in node-forge",
+      "fixedIn": "1.3.0"
+    },
+    {
+      "id": "XRAY-126800",
+      "cve": "CVE-2021-44907",
+      "package": "qs",
+      "range": "<6.2.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Prototype pollution in qs (legacy lines)",
+      "fixedIn": "6.2.4"
+    },
+    {
+      "id": "XRAY-126900",
+      "cve": "CVE-2019-10744",
+      "package": "lodash",
+      "range": "<4.17.12",
+      "severity": "Critical",
+      "cvss": 9.1,
+      "title": "Prototype pollution in lodash defaultsDeep",
+      "fixedIn": "4.17.12"
+    },
+    {
+      "id": "XRAY-127000",
+      "cve": "CVE-2023-46234",
+      "package": "browserify-sign",
+      "range": ">=2.6.0 <4.2.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Upper bound check in dsaVerify missing",
+      "fixedIn": "4.2.2"
+    },
+    {
+      "id": "XRAY-127100",
+      "cve": "CVE-2024-37168",
+      "package": "@grpc/grpc-js",
+      "range": ">=1.10.0 <1.10.9",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Memory allocation on receiving oversized message in grpc-js",
+      "fixedIn": "1.10.9"
+    },
+    {
+      "id": "XRAY-127200",
+      "cve": "CVE-2023-39333",
+      "package": "node",
+      "range": "<18.18.2",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Code injection via WebAssembly export names. Node runtime; reported when engines.node pins an affected version.",
+      "fixedIn": "18.18.2"
+    },
+    {
+      "id": "XRAY-127300",
+      "cve": "MERIDIAN-EOL-NODE14",
+      "package": "node",
+      "range": "<16.0.0",
+      "severity": "High",
+      "cvss": null,
+      "title": "Node.js 14 reached end of life 2023-04-30 and receives no security fixes. GIS-STD-021 section 3.",
+      "fixedIn": "16.20.2"
+    },
+    {
+      "id": "XRAY-127310",
+      "cve": "MERIDIAN-EOL-NODE16",
+      "package": "node",
+      "range": ">=16.0.0 <18.0.0",
+      "severity": "Medium",
+      "cvss": null,
+      "title": "Node.js 16 reached end of life 2023-09-11. Extended support waiver GIS-EX-2023-0114 expires 2025-06-30.",
+      "fixedIn": "18.19.0"
+    },
+    {
+      "id": "XRAY-127400",
+      "cve": "MERIDIAN-EOL-ANGULAR",
+      "package": "@angular/core",
+      "range": "<15.0.0",
+      "severity": "High",
+      "cvss": null,
+      "title": "Angular major out of long term support. Angular 14 LTS ended 2023-11-18. Tracked under the CSWT modernisation programme.",
+      "fixedIn": "18.2.13"
+    },
+    {
+      "id": "XRAY-127401",
+      "cve": "MERIDIAN-EOL-ANGULAR",
+      "package": "@angular/core",
+      "range": ">=15.0.0 <17.0.0",
+      "severity": "Medium",
+      "cvss": null,
+      "title": "Angular major out of long term support. Angular 15 LTS ended 2024-05-18, Angular 16 LTS ended 2024-11-08.",
+      "fixedIn": "18.2.13"
+    },
+    {
+      "id": "XRAY-127500",
+      "cve": "MERIDIAN-EOL-RXJS",
+      "package": "rxjs",
+      "range": "<7.0.0",
+      "severity": "Low",
+      "cvss": null,
+      "title": "RxJS 6 unsupported since 2021. Not a vulnerability; flagged for the modernisation register.",
+      "fixedIn": "7.8.1"
+    },
+    {
+      "id": "XRAY-127600",
+      "cve": "MERIDIAN-EOL-TSLINT",
+      "package": "tslint",
+      "range": "<=6.1.3",
+      "severity": "Low",
+      "cvss": null,
+      "title": "tslint deprecated since 2019-12; no releases. Replace with @angular-eslint.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-127700",
+      "cve": "MERIDIAN-EOL-MOMENT",
+      "package": "moment",
+      "range": "<=2.30.1",
+      "severity": "Low",
+      "cvss": null,
+      "title": "moment is in maintenance mode by its own announcement. Not a vulnerability; flagged for the modernisation register.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-127800",
+      "cve": "MERIDIAN-DEPRECATED-REQUEST",
+      "package": "request",
+      "range": "<=2.88.2",
+      "severity": "Low",
+      "cvss": null,
+      "title": "request is deprecated (Feb 2020) and receives no fixes.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-127900",
+      "cve": "MERIDIAN-LICENSE-GPL",
+      "package": "node-ipc",
+      "range": ">=10.1.1 <10.1.3",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Protestware: destructive payload in node-ipc (CVE-2022-23812).",
+      "fixedIn": "10.1.3"
+    },
+    {
+      "id": "XRAY-128000",
+      "cve": "CVE-2021-23445",
+      "package": "datatables.net",
+      "range": "<1.11.3",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "XSS in datatables.net",
+      "fixedIn": "1.11.3"
+    },
+    {
+      "id": "XRAY-128100",
+      "cve": "CVE-2024-29180",
+      "package": "webpack-dev-middleware",
+      "range": ">=6.0.0 <6.1.2",
+      "severity": "High",
+      "cvss": 7.4,
+      "title": "Path traversal in webpack-dev-middleware (6.x line)",
+      "fixedIn": "6.1.2"
+    },
+    {
+      "id": "XRAY-128200",
+      "cve": "CVE-2023-42282",
+      "package": "ip",
+      "range": ">=2.0.0 <2.0.1",
+      "severity": "High",
+      "cvss": 8.1,
+      "title": "SSRF via isPublic in ip (2.0.0)",
+      "fixedIn": "2.0.1"
+    },
+    {
+      "id": "XRAY-128300",
+      "cve": "CVE-2024-4068",
+      "package": "tar",
+      "range": "<6.2.1",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "DoS while parsing a tar file due to lack of folders count validation",
+      "fixedIn": "6.2.1"
+    },
+    {
+      "id": "XRAY-128400",
+      "cve": "CVE-2023-0842",
+      "package": "xml2js",
+      "range": ">=0.4.0 <0.5.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Prototype pollution in xml2js (0.4.x)",
+      "fixedIn": "0.5.0"
+    },
+    {
+      "id": "XRAY-128500",
+      "cve": "CVE-2024-4068",
+      "package": "ejs",
+      "range": "<3.1.10",
+      "severity": "Medium",
+      "cvss": 4.0,
+      "title": "Lack of pollution protection in ejs",
+      "fixedIn": "3.1.10"
+    },
+    {
+      "id": "XRAY-128600",
+      "cve": "CVE-2022-29078",
+      "package": "ejs",
+      "range": "<3.1.7",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Server side template injection in ejs",
+      "fixedIn": "3.1.7"
+    },
+    {
+      "id": "XRAY-128700",
+      "cve": "CVE-2021-3749",
+      "package": "axios",
+      "range": "<0.21.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "ReDoS in axios trim",
+      "fixedIn": "0.21.2"
+    },
+    {
+      "id": "XRAY-128800",
+      "cve": "CVE-2020-28168",
+      "package": "axios",
+      "range": "<0.21.1",
+      "severity": "Medium",
+      "cvss": 5.9,
+      "title": "SSRF in axios via redirect",
+      "fixedIn": "0.21.1"
+    },
+    {
+      "id": "XRAY-128900",
+      "cve": "CVE-2022-0536",
+      "package": "follow-redirects",
+      "range": "<1.14.8",
+      "severity": "Medium",
+      "cvss": 5.9,
+      "title": "Authorization header leak on cross domain redirect",
+      "fixedIn": "1.14.8"
+    },
+    {
+      "id": "XRAY-129000",
+      "cve": "CVE-2021-23807",
+      "package": "jsonpointer",
+      "range": "<5.0.0",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Prototype pollution in jsonpointer",
+      "fixedIn": "5.0.0"
+    },
+    {
+      "id": "XRAY-129100",
+      "cve": "CVE-2021-23434",
+      "package": "object-path",
+      "range": "<0.11.6",
+      "severity": "Medium",
+      "cvss": 5.6,
+      "title": "Prototype pollution in object-path",
+      "fixedIn": "0.11.6"
+    },
+    {
+      "id": "XRAY-129200",
+      "cve": "CVE-2022-21670",
+      "package": "markdown-it",
+      "range": "<12.3.2",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in markdown-it",
+      "fixedIn": "12.3.2"
+    },
+    {
+      "id": "XRAY-129300",
+      "cve": "CVE-2022-39353",
+      "package": "@xmldom/xmldom",
+      "range": "<0.8.4",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Multiple root nodes accepted in xmldom",
+      "fixedIn": "0.8.4"
+    },
+    {
+      "id": "XRAY-129400",
+      "cve": "CVE-2022-25878",
+      "package": "protobufjs",
+      "range": "<6.11.3",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype pollution in protobufjs util.setProperty",
+      "fixedIn": "6.11.3"
+    },
+    {
+      "id": "XRAY-129500",
+      "cve": "CVE-2021-23369",
+      "package": "handlebars",
+      "range": "<4.7.7",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Remote code execution in handlebars strict mode compile",
+      "fixedIn": "4.7.7"
+    },
+    {
+      "id": "XRAY-129600",
+      "cve": "CVE-2021-23383",
+      "package": "handlebars",
+      "range": "<4.7.7",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype pollution in handlebars",
+      "fixedIn": "4.7.7"
+    },
+    {
+      "id": "XRAY-129700",
+      "cve": "CVE-2022-0144",
+      "package": "shelljs",
+      "range": "<0.8.5",
+      "severity": "High",
+      "cvss": 7.1,
+      "title": "Improper privilege management in shelljs",
+      "fixedIn": "0.8.5"
+    },
+    {
+      "id": "XRAY-129800",
+      "cve": "CVE-2022-24434",
+      "package": "dicer",
+      "range": "<=0.3.0",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Crash in dicer HeaderParser. No fix.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-129900",
+      "cve": "CVE-2022-25896",
+      "package": "passport",
+      "range": "<0.6.0",
+      "severity": "Medium",
+      "cvss": 4.8,
+      "title": "Session fixation in passport",
+      "fixedIn": "0.6.0"
+    },
+    {
+      "id": "XRAY-130000",
+      "cve": "CVE-2022-24772",
+      "package": "node-forge",
+      "range": "<1.3.0",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Signature verification leniency in node-forge",
+      "fixedIn": "1.3.0"
+    },
+    {
+      "id": "XRAY-130100",
+      "cve": "CVE-2021-23358",
+      "package": "underscore",
+      "range": ">=1.3.2 <1.12.1",
+      "severity": "High",
+      "cvss": 7.2,
+      "title": "Arbitrary code execution in underscore template",
+      "fixedIn": "1.12.1"
+    },
+    {
+      "id": "XRAY-130300",
+      "cve": "CVE-2021-23337",
+      "package": "lodash-es",
+      "range": "<4.17.21",
+      "severity": "High",
+      "cvss": 7.2,
+      "title": "Command injection via lodash-es template",
+      "fixedIn": "4.17.21"
+    },
+    {
+      "id": "XRAY-130400",
+      "cve": "CVE-2022-24785",
+      "package": "moment-timezone",
+      "range": "<0.5.35",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Command injection via moment-timezone data packing scripts",
+      "fixedIn": "0.5.35"
+    },
+    {
+      "id": "XRAY-130500",
+      "cve": "CVE-2021-23436",
+      "package": "immer",
+      "range": "<9.0.6",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype pollution in immer",
+      "fixedIn": "9.0.6"
+    },
+    {
+      "id": "XRAY-130600",
+      "cve": "CVE-2021-43307",
+      "package": "simple-get",
+      "range": ">=4.0.0 <4.0.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Exposure of sensitive information in simple-get",
+      "fixedIn": "4.0.1"
+    },
+    {
+      "id": "XRAY-130700",
+      "cve": "CVE-2022-31159",
+      "package": "aws-sdk",
+      "range": "<2.1354.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Path traversal in aws-sdk S3 download helper",
+      "fixedIn": "2.1354.0"
+    },
+    {
+      "id": "XRAY-130800",
+      "cve": "CVE-2023-4863",
+      "package": "electron",
+      "range": "<22.3.24",
+      "severity": "Critical",
+      "cvss": 8.8,
+      "title": "Heap overflow in libwebp bundled with electron",
+      "fixedIn": "22.3.24"
+    },
+    {
+      "id": "XRAY-130900",
+      "cve": "CVE-2023-4863",
+      "package": "sharp",
+      "range": "<0.32.6",
+      "severity": "High",
+      "cvss": 8.8,
+      "title": "Heap overflow in libwebp bundled with sharp",
+      "fixedIn": "0.32.6"
+    },
+    {
+      "id": "XRAY-131000",
+      "cve": "CVE-2024-24758",
+      "package": "undici",
+      "range": "<5.28.3",
+      "severity": "Low",
+      "cvss": 3.9,
+      "title": "Proxy-Authorization header not cleared on cross origin redirect in undici",
+      "fixedIn": "5.28.3"
+    },
+    {
+      "id": "XRAY-131100",
+      "cve": "CVE-2024-30260",
+      "package": "undici",
+      "range": "<5.28.4",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "Proxy-Authorization header retained on cross origin redirect in undici",
+      "fixedIn": "5.28.4"
+    },
+    {
+      "id": "XRAY-131200",
+      "cve": "CVE-2022-25887",
+      "package": "sanitize-html",
+      "range": "<2.7.1",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Improper sanitisation of comments in sanitize-html",
+      "fixedIn": "2.7.1"
+    },
+    {
+      "id": "XRAY-131300",
+      "cve": "CVE-2024-45801",
+      "package": "dompurify",
+      "range": "<2.5.4",
+      "severity": "High",
+      "cvss": 7.3,
+      "title": "Prototype pollution in DOMPurify configuration",
+      "fixedIn": "2.5.4"
+    },
+    {
+      "id": "XRAY-131400",
+      "cve": "CVE-2024-47875",
+      "package": "dompurify",
+      "range": "<2.5.0",
+      "severity": "High",
+      "cvss": 8.0,
+      "title": "Nesting based mutation XSS in DOMPurify",
+      "fixedIn": "2.5.0"
+    },
+    {
+      "id": "XRAY-131500",
+      "cve": "CVE-2023-2251",
+      "package": "yaml",
+      "range": ">=2.0.0-5 <2.2.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Uncaught exception in yaml",
+      "fixedIn": "2.2.2"
+    },
+    {
+      "id": "XRAY-131600",
+      "cve": "CVE-2022-46175",
+      "package": "@types/json5",
+      "range": "<0.0.30",
+      "severity": "Low",
+      "cvss": 3.1,
+      "title": "Types package kept in step with json5 advisories. Informational.",
+      "fixedIn": "0.0.30"
+    },
+    {
+      "id": "XRAY-131700",
+      "cve": "CVE-2021-3918",
+      "package": "json-schema",
+      "range": "<0.4.0",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype pollution in json-schema",
+      "fixedIn": "0.4.0"
+    },
+    {
+      "id": "XRAY-131800",
+      "cve": "CVE-2021-3765",
+      "package": "validator",
+      "range": "<13.7.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in validator rtrim",
+      "fixedIn": "13.7.0"
+    },
+    {
+      "id": "XRAY-131900",
+      "cve": "CVE-2021-23490",
+      "package": "parse-link-header",
+      "range": "<2.0.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "ReDoS in parse-link-header",
+      "fixedIn": "2.0.0"
+    },
+    {
+      "id": "XRAY-132000",
+      "cve": "CVE-2021-23820",
+      "package": "json-pointer",
+      "range": "<0.6.2",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Prototype pollution in json-pointer",
+      "fixedIn": "0.6.2"
+    },
+    {
+      "id": "XRAY-132100",
+      "cve": "CVE-2022-46175",
+      "package": "webpack-cli",
+      "range": "<4.10.0",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "webpack-cli pulls a json5 range affected by CVE-2022-46175. Informational.",
+      "fixedIn": "4.10.0"
+    },
+    {
+      "id": "XRAY-132200",
+      "cve": "CVE-2022-0355",
+      "package": "simple-get",
+      "range": "<2.8.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Exposure of sensitive information in simple-get (2.x)",
+      "fixedIn": "2.8.2"
+    },
+    {
+      "id": "XRAY-132300",
+      "cve": "CVE-2021-44906",
+      "package": "mkdirp",
+      "range": "<0.5.6",
+      "severity": "Low",
+      "cvss": 3.1,
+      "title": "mkdirp 0.5.x depends on a minimist range affected by CVE-2021-44906. Informational.",
+      "fixedIn": "0.5.6"
+    },
+    {
+      "id": "XRAY-132400",
+      "cve": "CVE-2023-26136",
+      "package": "request-promise",
+      "range": "<=4.2.6",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "request-promise depends on deprecated request and tough-cookie 2.x. No fix.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-132500",
+      "cve": "CVE-2023-28155",
+      "package": "@cypress/request",
+      "range": "<3.0.0",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "SSRF in @cypress/request via cross protocol redirect",
+      "fixedIn": "3.0.0"
+    },
+    {
+      "id": "XRAY-132600",
+      "cve": "CVE-2021-23648",
+      "package": "sanitize-url",
+      "range": "<6.0.0",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "XSS in @braintree/sanitize-url",
+      "fixedIn": "6.0.0"
+    },
+    {
+      "id": "XRAY-132700",
+      "cve": "CVE-2022-46175",
+      "package": "tsconfig-paths",
+      "range": "<3.14.2",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "tsconfig-paths pulls json5 1.x affected by CVE-2022-46175. Informational.",
+      "fixedIn": "3.14.2"
+    },
+    {
+      "id": "XRAY-132800",
+      "cve": "CVE-2024-4068",
+      "package": "@babel/runtime",
+      "range": "<7.26.10",
+      "severity": "Medium",
+      "cvss": 6.2,
+      "title": "Inefficient regex complexity in @babel/runtime named capturing groups transform",
+      "fixedIn": "7.26.10"
+    },
+    {
+      "id": "XRAY-132900",
+      "cve": "CVE-2025-27789",
+      "package": "@babel/helpers",
+      "range": "<7.26.10",
+      "severity": "Medium",
+      "cvss": 6.2,
+      "title": "Inefficient regex complexity in @babel/helpers",
+      "fixedIn": "7.26.10"
+    },
+    {
+      "id": "XRAY-133000",
+      "cve": "CVE-2024-4068",
+      "package": "rollup",
+      "range": ">=3.0.0 <3.29.5",
+      "severity": "High",
+      "cvss": 6.4,
+      "title": "DOM clobbering in rollup bundled code",
+      "fixedIn": "3.29.5"
+    },
+    {
+      "id": "XRAY-133100",
+      "cve": "CVE-2024-4068",
+      "package": "vite",
+      "range": ">=4.0.0 <4.5.4",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "server.fs.deny bypass in vite",
+      "fixedIn": "4.5.4"
+    },
+    {
+      "id": "XRAY-133200",
+      "cve": "CVE-2024-4068",
+      "package": "esbuild",
+      "range": "<0.25.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Dev server allows any website to read responses (GHSA-67mh-4wv8-2f99)",
+      "fixedIn": "0.25.0"
+    },
+    {
+      "id": "XRAY-133300",
+      "cve": "CVE-2024-21529",
+      "package": "dset",
+      "range": "<3.1.4",
+      "severity": "High",
+      "cvss": 8.2,
+      "title": "Prototype pollution in dset",
+      "fixedIn": "3.1.4"
+    },
+    {
+      "id": "XRAY-133400",
+      "cve": "CVE-2024-48949",
+      "package": "elliptic",
+      "range": "<6.5.6",
+      "severity": "Critical",
+      "cvss": 9.1,
+      "title": "Missing signature length check in elliptic EDDSA",
+      "fixedIn": "6.5.6"
+    },
+    {
+      "id": "XRAY-133500",
+      "cve": "CVE-2024-42459",
+      "package": "elliptic",
+      "range": "<6.5.7",
+      "severity": "Low",
+      "cvss": 4.8,
+      "title": "Signature malleability in elliptic EDDSA",
+      "fixedIn": "6.5.7"
+    },
+    {
+      "id": "XRAY-133600",
+      "cve": "CVE-2020-7789",
+      "package": "node-notifier",
+      "range": "<8.0.1",
+      "severity": "Medium",
+      "cvss": 5.6,
+      "title": "OS command injection in node-notifier",
+      "fixedIn": "8.0.1"
+    },
+    {
+      "id": "XRAY-133700",
+      "cve": "CVE-2022-46175",
+      "package": "@angular-devkit/build-angular",
+      "range": "<14.2.11",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "Build tooling pins vulnerable loader-utils / json5 ranges. Informational; fixed in the Angular 14.2.11 CLI patch.",
+      "fixedIn": "14.2.11"
+    },
+    {
+      "id": "XRAY-133800",
+      "cve": "CVE-2023-26159",
+      "package": "http-proxy",
+      "range": "<=1.18.1",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "http-proxy depends on follow-redirects 1.x. Informational; no fix.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-133900",
+      "cve": "CVE-2024-4068",
+      "package": "@angular/core",
+      "range": ">=16.0.0 <16.2.13",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "Angular 16 minor advisories folded into LTS patch. Informational.",
+      "fixedIn": "16.2.13"
+    },
+    {
+      "id": "XRAY-134000",
+      "cve": "GHSA-4w4v-5hc9-xrr2",
+      "package": "@angular/core",
+      "range": ">=17.0.0 <17.3.12",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "Angular 17 minor advisories folded into LTS patch. Informational.",
+      "fixedIn": "17.3.12"
+    },
+    {
+      "id": "XRAY-134100",
+      "cve": "CVE-2019-11358",
+      "package": "jquery",
+      "range": "<3.4.0",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "Prototype pollution in jQuery extend",
+      "fixedIn": "3.4.0"
+    },
+    {
+      "id": "XRAY-134200",
+      "cve": "CVE-2020-11022",
+      "package": "jquery",
+      "range": ">=1.2.0 <3.5.0",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "XSS via htmlPrefilter in jQuery",
+      "fixedIn": "3.5.0"
+    },
+    {
+      "id": "XRAY-134300",
+      "cve": "CVE-2022-24999",
+      "package": "express",
+      "range": "<4.17.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "express depends on a qs range affected by CVE-2022-24999",
+      "fixedIn": "4.17.3"
+    },
+    {
+      "id": "XRAY-134400",
+      "cve": "CVE-2022-24785",
+      "package": "@angular/material-moment-adapter",
+      "range": "<14.0.0",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "Adapter pulls moment ranges affected by CVE-2022-24785. Informational.",
+      "fixedIn": "14.0.0"
+    },
+    {
+      "id": "XRAY-134500",
+      "cve": "CVE-2021-23337",
+      "package": "ngx-bootstrap",
+      "range": "<6.2.0",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "ngx-bootstrap 5.x depends on lodash ranges affected by CVE-2021-23337. Informational.",
+      "fixedIn": "6.2.0"
+    },
+    {
+      "id": "XRAY-134600",
+      "cve": "MERIDIAN-EOL-KARMA",
+      "package": "karma",
+      "range": "<=6.4.4",
+      "severity": "Low",
+      "cvss": null,
+      "title": "karma is deprecated by its maintainers (Apr 2023). Not a vulnerability; flagged for the modernisation register.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-134700",
+      "cve": "MERIDIAN-EOL-PROTRACTOR",
+      "package": "protractor",
+      "range": "<=7.0.0",
+      "severity": "Medium",
+      "cvss": null,
+      "title": "protractor reached end of life with Angular 15 (Aug 2023) and no longer receives fixes.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-134800",
+      "cve": "MERIDIAN-EOL-NGRX",
+      "package": "@ngrx/store",
+      "range": "<15.0.0",
+      "severity": "Low",
+      "cvss": null,
+      "title": "NgRx major tracks Angular major; out of support with Angular 14. Modernisation register.",
+      "fixedIn": "18.1.1"
+    },
+    {
+      "id": "XRAY-134900",
+      "cve": "MERIDIAN-EOL-TYPESCRIPT",
+      "package": "typescript",
+      "range": "<4.9.0",
+      "severity": "Low",
+      "cvss": null,
+      "title": "TypeScript 4.7 and earlier not supported by current Angular CLI. Modernisation register.",
+      "fixedIn": "5.4.5"
+    }
+  ],
+  "maven": [
+    {
+      "id": "XRAY-140100",
+      "cve": "CVE-2022-1471",
+      "package": "org.yaml:snakeyaml",
+      "range": "<2.0",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Deserialization of untrusted data in SnakeYAML Constructor",
+      "fixedIn": "2.0"
+    },
+    {
+      "id": "XRAY-140110",
+      "cve": "CVE-2022-25857",
+      "package": "org.yaml:snakeyaml",
+      "range": "<1.31",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS via nested collections in SnakeYAML",
+      "fixedIn": "1.31"
+    },
+    {
+      "id": "XRAY-140200",
+      "cve": "CVE-2022-42003",
+      "package": "com.fasterxml.jackson.core:jackson-databind",
+      "range": "<2.13.4.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Deep wrapper array nesting resource exhaustion in jackson-databind",
+      "fixedIn": "2.13.4.2"
+    },
+    {
+      "id": "XRAY-140210",
+      "cve": "CVE-2022-42004",
+      "package": "com.fasterxml.jackson.core:jackson-databind",
+      "range": "<2.13.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Unchecked recursion in BeanDeserializer._deserializeFromArray",
+      "fixedIn": "2.13.4"
+    },
+    {
+      "id": "XRAY-140220",
+      "cve": "CVE-2020-36518",
+      "package": "com.fasterxml.jackson.core:jackson-databind",
+      "range": "<2.12.6.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Java StackOverflow via deeply nested objects in jackson-databind",
+      "fixedIn": "2.12.6.1"
+    },
+    {
+      "id": "XRAY-140300",
+      "cve": "CVE-2022-42889",
+      "package": "org.apache.commons:commons-text",
+      "range": ">=1.5 <1.10.0",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Text4Shell: script interpolation in StringSubstitutor",
+      "fixedIn": "1.10.0"
+    },
+    {
+      "id": "XRAY-140400",
+      "cve": "CVE-2021-44228",
+      "package": "org.apache.logging.log4j:log4j-core",
+      "range": ">=2.0 <2.15.0",
+      "severity": "Critical",
+      "cvss": 10.0,
+      "title": "Log4Shell: JNDI lookup remote code execution",
+      "fixedIn": "2.15.0"
+    },
+    {
+      "id": "XRAY-140410",
+      "cve": "CVE-2021-45046",
+      "package": "org.apache.logging.log4j:log4j-core",
+      "range": ">=2.0 <2.16.0",
+      "severity": "Critical",
+      "cvss": 9.0,
+      "title": "Incomplete fix for CVE-2021-44228 in certain non default configurations",
+      "fixedIn": "2.16.0"
+    },
+    {
+      "id": "XRAY-140420",
+      "cve": "CVE-2021-45105",
+      "package": "org.apache.logging.log4j:log4j-core",
+      "range": ">=2.0 <2.17.0",
+      "severity": "High",
+      "cvss": 5.9,
+      "title": "Uncontrolled recursion from self referential lookups in log4j",
+      "fixedIn": "2.17.0"
+    },
+    {
+      "id": "XRAY-140430",
+      "cve": "CVE-2021-44832",
+      "package": "org.apache.logging.log4j:log4j-core",
+      "range": ">=2.0 <2.17.1",
+      "severity": "Medium",
+      "cvss": 6.6,
+      "title": "RCE via JDBC Appender with attacker controlled configuration",
+      "fixedIn": "2.17.1"
+    },
+    {
+      "id": "XRAY-140500",
+      "cve": "CVE-2023-20860",
+      "package": "org.springframework:spring-webmvc",
+      "range": ">=5.3.0 <5.3.26",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Security bypass with mvcRequestMatcher and ** pattern",
+      "fixedIn": "5.3.26"
+    },
+    {
+      "id": "XRAY-140510",
+      "cve": "CVE-2022-22965",
+      "package": "org.springframework:spring-beans",
+      "range": ">=5.3.0 <5.3.18",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Spring4Shell: RCE via data binding on JDK 9+",
+      "fixedIn": "5.3.18"
+    },
+    {
+      "id": "XRAY-140520",
+      "cve": "CVE-2024-22243",
+      "package": "org.springframework:spring-web",
+      "range": ">=5.3.0 <5.3.32",
+      "severity": "High",
+      "cvss": 8.1,
+      "title": "URL parsing with host validation bypass in UriComponentsBuilder",
+      "fixedIn": "5.3.32"
+    },
+    {
+      "id": "XRAY-140530",
+      "cve": "CVE-2024-22262",
+      "package": "org.springframework:spring-web",
+      "range": ">=5.3.0 <5.3.34",
+      "severity": "High",
+      "cvss": 8.1,
+      "title": "URL parsing with host validation bypass in UriComponentsBuilder (second fix)",
+      "fixedIn": "5.3.34"
+    },
+    {
+      "id": "XRAY-140540",
+      "cve": "CVE-2016-1000027",
+      "package": "org.springframework:spring-web",
+      "range": "<6.0.0",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Deserialization of untrusted data via HttpInvokerServiceExporter. Disputed; GIS treats as accepted risk when the exporter is unused (GIS-EX-2021-0042).",
+      "fixedIn": "6.0.0"
+    },
+    {
+      "id": "XRAY-140600",
+      "cve": "CVE-2023-20873",
+      "package": "org.springframework.boot:spring-boot",
+      "range": ">=2.7.0 <2.7.11",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Security bypass with wildcard pattern matching on Cloud Foundry",
+      "fixedIn": "2.7.11"
+    },
+    {
+      "id": "XRAY-140610",
+      "cve": "CVE-2023-20883",
+      "package": "org.springframework.boot:spring-boot-autoconfigure",
+      "range": ">=2.7.0 <2.7.12",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS with Spring MVC and a reverse proxy cache",
+      "fixedIn": "2.7.12"
+    },
+    {
+      "id": "XRAY-140620",
+      "cve": "MERIDIAN-EOL-SPRINGBOOT2",
+      "package": "org.springframework.boot:spring-boot",
+      "range": "<3.0.0",
+      "severity": "High",
+      "cvss": null,
+      "title": "Spring Boot 2.x open source support ended 2023-11-24. Commercial support waiver GIS-EX-2023-0140 expires 2025-08-24.",
+      "fixedIn": "3.2.12"
+    },
+    {
+      "id": "XRAY-140621",
+      "cve": "MERIDIAN-EOL-SPRINGBOOT2",
+      "package": "org.springframework.boot:spring-boot-starter-web",
+      "range": "<3.0.0",
+      "severity": "High",
+      "cvss": null,
+      "title": "Spring Boot 2.x open source support ended 2023-11-24. See GIS-EX-2023-0140.",
+      "fixedIn": "3.2.12"
+    },
+    {
+      "id": "XRAY-140700",
+      "cve": "CVE-2023-46589",
+      "package": "org.apache.tomcat.embed:tomcat-embed-core",
+      "range": ">=9.0.0 <9.0.83",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Request smuggling via trailer header in Tomcat",
+      "fixedIn": "9.0.83"
+    },
+    {
+      "id": "XRAY-140710",
+      "cve": "CVE-2024-24549",
+      "package": "org.apache.tomcat.embed:tomcat-embed-core",
+      "range": ">=9.0.0 <9.0.86",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "HTTP/2 header limit DoS in Tomcat",
+      "fixedIn": "9.0.86"
+    },
+    {
+      "id": "XRAY-140720",
+      "cve": "CVE-2024-34750",
+      "package": "org.apache.tomcat.embed:tomcat-embed-core",
+      "range": ">=9.0.0 <9.0.90",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Improper handling of exceptional conditions in Tomcat HTTP/2",
+      "fixedIn": "9.0.90"
+    },
+    {
+      "id": "XRAY-140730",
+      "cve": "CVE-2024-52316",
+      "package": "org.apache.tomcat.embed:tomcat-embed-core",
+      "range": ">=9.0.0 <9.0.96",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Authentication bypass with custom Jakarta Authentication ServerAuthContext",
+      "fixedIn": "9.0.96"
+    },
+    {
+      "id": "XRAY-140800",
+      "cve": "CVE-2022-45868",
+      "package": "com.h2database:h2",
+      "range": ">=2.0.0 <2.2.220",
+      "severity": "High",
+      "cvss": 7.8,
+      "title": "Password exposure in H2 web console command line",
+      "fixedIn": "2.2.220"
+    },
+    {
+      "id": "XRAY-140810",
+      "cve": "CVE-2021-42392",
+      "package": "com.h2database:h2",
+      "range": "<2.0.206",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "JNDI RCE in H2 console",
+      "fixedIn": "2.0.206"
+    },
+    {
+      "id": "XRAY-140900",
+      "cve": "CVE-2023-2976",
+      "package": "com.google.guava:guava",
+      "range": ">=1.0 <32.0.0-android",
+      "severity": "Medium",
+      "cvss": 5.5,
+      "title": "Temp directory information disclosure in Guava FileBackedOutputStream",
+      "fixedIn": "32.0.0-jre"
+    },
+    {
+      "id": "XRAY-140910",
+      "cve": "CVE-2020-8908",
+      "package": "com.google.guava:guava",
+      "range": "<32.0.0-android",
+      "severity": "Low",
+      "cvss": 3.3,
+      "title": "Temp directory creation permissions in Guava createTempDir",
+      "fixedIn": "32.0.0-jre"
+    },
+    {
+      "id": "XRAY-141000",
+      "cve": "CVE-2023-34062",
+      "package": "io.projectreactor.netty:reactor-netty-http",
+      "range": ">=1.0.0 <1.0.39",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Directory traversal in reactor-netty-http static resources",
+      "fixedIn": "1.0.39"
+    },
+    {
+      "id": "XRAY-141100",
+      "cve": "CVE-2023-44487",
+      "package": "io.netty:netty-codec-http2",
+      "range": "<4.1.100.Final",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "HTTP/2 rapid reset in Netty",
+      "fixedIn": "4.1.100.Final"
+    },
+    {
+      "id": "XRAY-141200",
+      "cve": "CVE-2022-41881",
+      "package": "io.netty:netty-codec-haproxy",
+      "range": "<4.1.86.Final",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "StackOverflow in HAProxyMessageDecoder",
+      "fixedIn": "4.1.86.Final"
+    },
+    {
+      "id": "XRAY-141300",
+      "cve": "CVE-2022-41854",
+      "package": "org.yaml:snakeyaml",
+      "range": "<1.32",
+      "severity": "Medium",
+      "cvss": 6.5,
+      "title": "Stack overflow in SnakeYAML parsing",
+      "fixedIn": "1.32"
+    },
+    {
+      "id": "XRAY-141400",
+      "cve": "CVE-2023-1370",
+      "package": "net.minidev:json-smart",
+      "range": "<2.4.9",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Uncontrolled recursion in json-smart",
+      "fixedIn": "2.4.9"
+    },
+    {
+      "id": "XRAY-141500",
+      "cve": "CVE-2022-45688",
+      "package": "org.json:json",
+      "range": "<20230227",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Stack overflow in XML.toJSONObject",
+      "fixedIn": "20230227"
+    },
+    {
+      "id": "XRAY-141600",
+      "cve": "CVE-2023-3635",
+      "package": "com.squareup.okio:okio",
+      "range": "<3.4.0",
+      "severity": "Medium",
+      "cvss": 5.9,
+      "title": "Signed to unsigned conversion in GzipSource",
+      "fixedIn": "3.4.0"
+    },
+    {
+      "id": "XRAY-141700",
+      "cve": "CVE-2021-22569",
+      "package": "com.google.protobuf:protobuf-java",
+      "range": "<3.16.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS via unknown fields in protobuf-java",
+      "fixedIn": "3.16.1"
+    },
+    {
+      "id": "XRAY-141800",
+      "cve": "CVE-2022-3171",
+      "package": "com.google.protobuf:protobuf-java",
+      "range": "<3.16.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Parsing procedure DoS in protobuf-java",
+      "fixedIn": "3.16.3"
+    },
+    {
+      "id": "XRAY-141900",
+      "cve": "CVE-2023-24998",
+      "package": "commons-fileupload:commons-fileupload",
+      "range": "<1.5",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Unlimited parts in multipart upload",
+      "fixedIn": "1.5"
+    },
+    {
+      "id": "XRAY-142000",
+      "cve": "CVE-2021-37714",
+      "package": "org.jsoup:jsoup",
+      "range": "<1.14.2",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "DoS in jsoup parsing untrusted HTML",
+      "fixedIn": "1.14.2"
+    },
+    {
+      "id": "XRAY-142100",
+      "cve": "CVE-2022-36033",
+      "package": "org.jsoup:jsoup",
+      "range": "<1.15.3",
+      "severity": "Medium",
+      "cvss": 6.1,
+      "title": "XSS via SafeList in jsoup",
+      "fixedIn": "1.15.3"
+    },
+    {
+      "id": "XRAY-142200",
+      "cve": "CVE-2021-29425",
+      "package": "commons-io:commons-io",
+      "range": "<2.7",
+      "severity": "Medium",
+      "cvss": 4.8,
+      "title": "Path traversal in FileNameUtils.normalize",
+      "fixedIn": "2.7"
+    },
+    {
+      "id": "XRAY-142300",
+      "cve": "CVE-2024-25710",
+      "package": "org.apache.commons:commons-compress",
+      "range": "<1.26.0",
+      "severity": "High",
+      "cvss": 8.1,
+      "title": "Infinite loop in commons-compress Dump archive",
+      "fixedIn": "1.26.0"
+    },
+    {
+      "id": "XRAY-142400",
+      "cve": "CVE-2023-35116",
+      "package": "com.fasterxml.jackson.core:jackson-databind",
+      "range": "<2.15.2",
+      "severity": "Medium",
+      "cvss": 4.7,
+      "title": "Cyclic dependency DoS in jackson-databind. Disputed by maintainers; GIS accepted risk.",
+      "fixedIn": "2.15.2"
+    },
+    {
+      "id": "XRAY-142500",
+      "cve": "CVE-2022-31692",
+      "package": "org.springframework.security:spring-security-core",
+      "range": ">=5.7.0 <5.7.5",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Authorization rules bypass via forward or include dispatcher types",
+      "fixedIn": "5.7.5"
+    },
+    {
+      "id": "XRAY-142600",
+      "cve": "CVE-2023-34034",
+      "package": "org.springframework.security:spring-security-web",
+      "range": ">=5.7.0 <5.7.10",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "WebFlux security bypass with ** pattern",
+      "fixedIn": "5.7.10"
+    },
+    {
+      "id": "XRAY-142700",
+      "cve": "CVE-2024-22257",
+      "package": "org.springframework.security:spring-security-core",
+      "range": ">=5.7.0 <5.7.12",
+      "severity": "High",
+      "cvss": 8.2,
+      "title": "Broken access control with AuthenticatedVoter",
+      "fixedIn": "5.7.12"
+    },
+    {
+      "id": "XRAY-142800",
+      "cve": "CVE-2022-25647",
+      "package": "com.google.code.gson:gson",
+      "range": "<2.8.9",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Deserialization of untrusted data in gson writeReplace",
+      "fixedIn": "2.8.9"
+    },
+    {
+      "id": "XRAY-142900",
+      "cve": "CVE-2021-40690",
+      "package": "org.apache.santuario:xmlsec",
+      "range": "<2.2.3",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "XXE via secureValidation bypass in xmlsec",
+      "fixedIn": "2.2.3"
+    },
+    {
+      "id": "XRAY-143000",
+      "cve": "CVE-2022-40152",
+      "package": "com.fasterxml.woodstox:woodstox-core",
+      "range": "<6.4.0",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Stack overflow in woodstox DTD parsing",
+      "fixedIn": "6.4.0"
+    },
+    {
+      "id": "XRAY-143100",
+      "cve": "CVE-2022-40149",
+      "package": "org.codehaus.jettison:jettison",
+      "range": "<1.5.1",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Stack overflow in jettison JSONArray",
+      "fixedIn": "1.5.1"
+    },
+    {
+      "id": "XRAY-143200",
+      "cve": "CVE-2023-33201",
+      "package": "org.bouncycastle:bcprov-jdk15on",
+      "range": "<=1.70",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "LDAP injection in X509LDAPCertStoreSpi. Artifact renamed; migrate to bcprov-jdk18on 1.74.",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-143300",
+      "cve": "CVE-2024-29857",
+      "package": "org.bouncycastle:bcprov-jdk18on",
+      "range": "<1.78",
+      "severity": "Medium",
+      "cvss": 5.9,
+      "title": "Excessive resource use importing EC certificate with crafted F2m parameters",
+      "fixedIn": "1.78"
+    },
+    {
+      "id": "XRAY-143400",
+      "cve": "CVE-2020-13956",
+      "package": "org.apache.httpcomponents:httpclient",
+      "range": "<4.5.13",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Incorrect Authority component handling in httpclient",
+      "fixedIn": "4.5.13"
+    },
+    {
+      "id": "XRAY-143500",
+      "cve": "CVE-2023-4759",
+      "package": "org.eclipse.jgit:org.eclipse.jgit",
+      "range": "<6.6.1",
+      "severity": "High",
+      "cvss": 8.8,
+      "title": "Arbitrary file overwrite via symlinks in JGit",
+      "fixedIn": "6.6.1"
+    },
+    {
+      "id": "XRAY-143600",
+      "cve": "CVE-2023-1436",
+      "package": "org.codehaus.jettison:jettison",
+      "range": "<1.5.4",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Infinite recursion in jettison",
+      "fixedIn": "1.5.4"
+    },
+    {
+      "id": "XRAY-143700",
+      "cve": "CVE-2022-23221",
+      "package": "com.h2database:h2",
+      "range": "<2.0.210",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "RCE via JDBC URL in H2 console",
+      "fixedIn": "2.0.210"
+    },
+    {
+      "id": "XRAY-143800",
+      "cve": "MERIDIAN-EOL-JDK11",
+      "package": "jdk",
+      "range": ">=11 <17",
+      "severity": "Medium",
+      "cvss": null,
+      "title": "OpenJDK 11 premier support ended 2023-09. Reported when the pom targets Java 11.",
+      "fixedIn": "17"
+    },
+    {
+      "id": "XRAY-143900",
+      "cve": "CVE-2023-51074",
+      "package": "com.jayway.jsonpath:json-path",
+      "range": "<2.9.0",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Stack overflow in json-path Criteria.parse",
+      "fixedIn": "2.9.0"
+    },
+    {
+      "id": "XRAY-144000",
+      "cve": "CVE-2023-6378",
+      "package": "ch.qos.logback:logback-classic",
+      "range": "<1.2.13",
+      "severity": "High",
+      "cvss": 7.1,
+      "title": "Serialization vulnerability in logback receiver",
+      "fixedIn": "1.2.13"
+    },
+    {
+      "id": "XRAY-144100",
+      "cve": "CVE-2024-12798",
+      "package": "ch.qos.logback:logback-core",
+      "range": "<1.3.15",
+      "severity": "Medium",
+      "cvss": 5.9,
+      "title": "ACE via JaninoEventEvaluator in logback-core",
+      "fixedIn": "1.3.15"
+    },
+    {
+      "id": "XRAY-144200",
+      "cve": "CVE-2021-28170",
+      "package": "org.glassfish:jakarta.el",
+      "range": "<3.0.4",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Incorrect evaluation of ELParserTokenManager",
+      "fixedIn": "3.0.4"
+    },
+    {
+      "id": "XRAY-144300",
+      "cve": "CVE-2022-42920",
+      "package": "org.apache.bcel:bcel",
+      "range": "<6.6.0",
+      "severity": "Critical",
+      "cvss": 9.8,
+      "title": "Out of bounds writing in BCEL",
+      "fixedIn": "6.6.0"
+    },
+    {
+      "id": "XRAY-144400",
+      "cve": "CVE-2020-13936",
+      "package": "org.apache.velocity:velocity",
+      "range": "<=1.7",
+      "severity": "High",
+      "cvss": 8.8,
+      "title": "Sandbox bypass in Velocity templates",
+      "fixedIn": null
+    },
+    {
+      "id": "XRAY-144500",
+      "cve": "CVE-2023-42503",
+      "package": "org.apache.commons:commons-compress",
+      "range": "<1.24.0",
+      "severity": "Medium",
+      "cvss": 5.5,
+      "title": "DoS via TAR archive with PAX header",
+      "fixedIn": "1.24.0"
+    },
+    {
+      "id": "XRAY-144600",
+      "cve": "CVE-2022-25857",
+      "package": "org.springframework.boot:spring-boot-starter",
+      "range": "<2.7.4",
+      "severity": "Low",
+      "cvss": 3.0,
+      "title": "Starter pulls snakeyaml range affected by CVE-2022-25857. Informational.",
+      "fixedIn": "2.7.4"
+    },
+    {
+      "id": "XRAY-144700",
+      "cve": "CVE-2024-38816",
+      "package": "org.springframework:spring-webmvc",
+      "range": ">=5.3.0 <5.3.40",
+      "severity": "High",
+      "cvss": 7.5,
+      "title": "Path traversal via functional web frameworks serving static resources",
+      "fixedIn": "5.3.40"
+    },
+    {
+      "id": "XRAY-144800",
+      "cve": "CVE-2024-38809",
+      "package": "org.springframework:spring-web",
+      "range": ">=5.3.0 <5.3.38",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "DoS via ETag parsing in spring-web",
+      "fixedIn": "5.3.38"
+    },
+    {
+      "id": "XRAY-144900",
+      "cve": "CVE-2024-38820",
+      "package": "org.springframework:spring-context",
+      "range": ">=5.3.0 <5.3.41",
+      "severity": "Medium",
+      "cvss": 5.3,
+      "title": "Case sensitivity bypass in DataBinder disallowedFields",
+      "fixedIn": "5.3.41"
+    }
+  ]
+}
