@@ -1,0 +1,23 @@
+# prod, CAB required for every change.
+environment: prod
+replicaCount: 3 # INC0048213: was 6, halved after the duplicate-alert incident, do not raise without BCN sign off
+route:
+  enabled: false
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2
+    memory: 1536Mi
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-prod
+autoscaling:
+  enabled: false
+  minReplicas: 3
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 60
+podDisruptionBudget:
+  # MQ consumers are not autoscaled: ordering per customer depends on a fixed consumer count (BCN-1877).
+  minAvailable: "50%"
