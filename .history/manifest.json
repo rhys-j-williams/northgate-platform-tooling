@@ -1,0 +1,1168 @@
+{
+  "component": "platform-tooling",
+  "commits": [
+    {
+      "date": "2020-11-09T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-1 stand up the CSWT Jenkins shared library",
+      "body": "Replaces the copy-pasted Jenkinsfiles in retail-web and business-web with one\ndeclarative pipeline. Registered on the controller as meridian-pipeline, default branch develop.",
+      "paths": [
+        "platform-tooling/.editorconfig",
+        "platform-tooling/.gitattributes",
+        "platform-tooling/.gitignore",
+        "platform-tooling/jenkins-shared-library/vars/meridianNodePipeline.groovy"
+      ]
+    },
+    {
+      "date": "2020-11-10T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-4 pipeline defaults class and agent label inventory",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/src/com/meridian/pipeline/MeridianDefaults.groovy",
+        "platform-tooling/jenkins-shared-library/src/com/meridian/pipeline/AgentLabels.groovy"
+      ]
+    },
+    {
+      "date": "2020-11-12T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-4 spec for AgentLabels, wire up run-tests.sh",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/test/com/meridian/pipeline/AgentLabelsSpec.groovy",
+        "platform-tooling/jenkins-shared-library/run-tests.sh"
+      ]
+    },
+    {
+      "date": "2020-11-16T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-7 sample .npmrc pointing at npm-virtual",
+      "body": "Artifactory is live. Nobody should have registry.npmjs.org in their npmrc after this week.",
+      "paths": [
+        "platform-tooling/registry/npmrc.sample"
+      ]
+    },
+    {
+      "date": "2020-11-17T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-9 npm-login helper script for the registry stage",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/resources/com/meridian/pipeline/scripts/npm-login.sh"
+      ]
+    },
+    {
+      "date": "2020-11-19T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-12 CODEOWNERS, contributing guide, PR template",
+      "paths": [
+        "platform-tooling/CODEOWNERS",
+        "platform-tooling/CONTRIBUTING.md",
+        "platform-tooling/.github/pull_request_template.md"
+      ]
+    },
+    {
+      "date": "2020-11-24T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-15 Maven settings.xml with mirrorOf * to maven-virtual",
+      "paths": [
+        "platform-tooling/registry/settings.xml"
+      ]
+    },
+    {
+      "date": "2020-12-01T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-18 checkout and install stages honour NODE_VERSION parameter",
+      "empty": true
+    },
+    {
+      "date": "2020-12-03T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-20 first cut of the dependency policy",
+      "body": "Written after the third time someone asked why their package 404s. Section 6 came later.",
+      "paths": [
+        "platform-tooling/governance/DEPENDENCY_POLICY.md"
+      ]
+    },
+    {
+      "date": "2020-12-08T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-22 unit test stage archives coverage/lcov.info",
+      "empty": true
+    },
+    {
+      "date": "2020-12-15T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-24 README for the library, controller details and label table",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/README.md"
+      ]
+    },
+    {
+      "date": "2021-01-05T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-31 ScannerReport reader for Checkmarx and Sonar JSON",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/src/com/meridian/pipeline/ScannerReport.groovy",
+        "platform-tooling/jenkins-shared-library/test/com/meridian/pipeline/ScannerReportSpec.groovy"
+      ]
+    },
+    {
+      "date": "2021-01-07T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-31 QualityGate fails the build on high severity findings",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/src/com/meridian/pipeline/QualityGate.groovy",
+        "platform-tooling/jenkins-shared-library/test/com/meridian/pipeline/QualityGateSpec.groovy"
+      ]
+    },
+    {
+      "date": "2021-01-11T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-1502 checkmarx.yml preset and exclusions for the tooling repo",
+      "paths": [
+        "platform-tooling/checkmarx.yml",
+        "platform-tooling/sonar-project.properties"
+      ]
+    },
+    {
+      "date": "2021-01-13T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-33 SECURITY.md against GIS-STD-014 rev 7",
+      "paths": [
+        "platform-tooling/SECURITY.md"
+      ]
+    },
+    {
+      "date": "2021-01-14T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-33 data classification statement",
+      "paths": [
+        "platform-tooling/DATA_CLASSIFICATION.md"
+      ]
+    },
+    {
+      "date": "2021-01-19T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-36 Sonar stage waits for the quality gate",
+      "empty": true
+    },
+    {
+      "date": "2021-01-26T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-40 first Helm chart: retail-web",
+      "body": "Deployment, Service, Route, ConfigMap for env.json. NetworkPolicy to follow once GIS\nagree the egress list.",
+      "paths": [
+        "platform-tooling/helm/retail-web"
+      ]
+    },
+    {
+      "date": "2021-01-28T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-40 business-web chart",
+      "paths": [
+        "platform-tooling/helm/business-web"
+      ]
+    },
+    {
+      "date": "2021-02-02T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-44 meridianJavaPipeline for the Spring services",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/vars/meridianJavaPipeline.groovy"
+      ]
+    },
+    {
+      "date": "2021-02-04T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-44 Java pipeline reads JaCoCo xml for the coverage gate",
+      "empty": true
+    },
+    {
+      "date": "2021-02-09T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-47 charts for bff-retail and bff-business",
+      "paths": [
+        "platform-tooling/helm/bff-retail",
+        "platform-tooling/helm/bff-business"
+      ]
+    },
+    {
+      "date": "2021-02-11T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-49 nginx.conf with GIS-STD-014 headers for the Angular runtime image",
+      "paths": [
+        "platform-tooling/docker/nginx/nginx.conf"
+      ]
+    },
+    {
+      "date": "2021-02-16T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-51 statements-api chart",
+      "paths": [
+        "platform-tooling/helm/statements-api"
+      ]
+    },
+    {
+      "date": "2021-02-18T00:00:00",
+      "author": "p.venkatesan",
+      "message": "DOC-1988 legacy OpenShift template for statements-api dev",
+      "body": "The documents team deploy dev by hand with oc process. This is that, checked in so we can\nat least see it. UAT and prod go through the chart.",
+      "paths": [
+        "platform-tooling/openshift/statements-api-template.yaml",
+        "platform-tooling/openshift/README.md"
+      ]
+    },
+    {
+      "date": "2021-02-23T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-53 Helm package and oc deploy stages",
+      "empty": true
+    },
+    {
+      "date": "2021-02-25T00:00:00",
+      "author": "m.calderon",
+      "message": "TOOL-55 CAB submission template",
+      "paths": [
+        "platform-tooling/governance/CAB_TEMPLATE.md"
+      ]
+    },
+    {
+      "date": "2021-03-04T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.03.1 into main for train 2021.03.1",
+      "empty": true
+    },
+    {
+      "date": "2021-03-09T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-58 meridianNotify step, chat and email on failure",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/vars/meridianNotify.groovy",
+        "platform-tooling/jenkins-shared-library/src/com/meridian/pipeline/Notifier.groovy",
+        "platform-tooling/jenkins-shared-library/test/com/meridian/pipeline/NotifierSpec.groovy"
+      ]
+    },
+    {
+      "date": "2021-03-11T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-60 NetworkPolicy templates for every chart",
+      "paths": [
+        "platform-tooling/helm/README.md"
+      ]
+    },
+    {
+      "date": "2021-03-16T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1611 Vault policies for bff-retail and bff-business",
+      "paths": [
+        "platform-tooling/vault/policies/bff-retail.hcl",
+        "platform-tooling/vault/policies/bff-business.hcl"
+      ]
+    },
+    {
+      "date": "2021-03-17T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1611 jenkins-cswt policy, read-only on the CI paths",
+      "paths": [
+        "platform-tooling/vault/policies/jenkins-cswt.hcl"
+      ]
+    },
+    {
+      "date": "2021-03-18T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1611 vault-agent.hcl and env file templates",
+      "paths": [
+        "platform-tooling/vault/vault-agent.hcl",
+        "platform-tooling/vault/templates"
+      ]
+    },
+    {
+      "date": "2021-03-23T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1611 Vault README: Vault is the source of truth",
+      "paths": [
+        "platform-tooling/vault/README.md"
+      ]
+    },
+    {
+      "date": "2021-03-25T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.03.2 into main for train 2021.03.2",
+      "empty": true
+    },
+    {
+      "date": "2021-04-06T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-66 ReleaseGuard with the quarter-end freeze window",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/src/com/meridian/pipeline/ReleaseGuard.groovy",
+        "platform-tooling/jenkins-shared-library/test/com/meridian/pipeline/ReleaseGuardSpec.groovy"
+      ]
+    },
+    {
+      "date": "2021-04-08T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-66 Jenkinsfile.release requires a CAB reference",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/Jenkinsfile.release"
+      ]
+    },
+    {
+      "date": "2021-04-13T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-70 ansible baseline for the build agents",
+      "paths": [
+        "platform-tooling/ansible/ansible.cfg",
+        "platform-tooling/ansible/build-agent.yml",
+        "platform-tooling/ansible/inventory",
+        "platform-tooling/ansible/group_vars/all.yml",
+        "platform-tooling/ansible/group_vars/build_agents.yml",
+        "platform-tooling/ansible/roles/build_agent_common"
+      ]
+    },
+    {
+      "date": "2021-04-15T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-70 nginx_hardening role for the artifact cache vhost",
+      "paths": [
+        "platform-tooling/ansible/roles/nginx_hardening"
+      ]
+    },
+    {
+      "date": "2021-04-20T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-72 log_forwarder role, Splunk UF with HEC token from Vault",
+      "paths": [
+        "platform-tooling/ansible/roles/log_forwarder",
+        "platform-tooling/ansible/requirements.yml"
+      ]
+    },
+    {
+      "date": "2021-04-22T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-72 ansible README",
+      "paths": [
+        "platform-tooling/ansible/README.md"
+      ]
+    },
+    {
+      "date": "2021-04-29T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.05.1 into main for train 2021.05.1",
+      "empty": true
+    },
+    {
+      "date": "2021-05-11T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-78 keystone-web and ledgerline-web charts",
+      "paths": [
+        "platform-tooling/helm/keystone-web",
+        "platform-tooling/helm/ledgerline-web"
+      ]
+    },
+    {
+      "date": "2021-05-18T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1702 policies for statements-api and documents-service",
+      "paths": [
+        "platform-tooling/vault/policies/statements-api.hcl",
+        "platform-tooling/vault/policies/documents-service.hcl"
+      ]
+    },
+    {
+      "date": "2021-05-25T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-81 coverage threshold parameter, default 80 on new code",
+      "empty": true
+    },
+    {
+      "date": "2021-06-10T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.06.1 into main for train 2021.06.1",
+      "empty": true
+    },
+    {
+      "date": "2021-06-15T00:00:00",
+      "author": "m.calderon",
+      "message": "TOOL-84 freeze dates for H2 in the release calendar",
+      "empty": true
+    },
+    {
+      "date": "2021-06-22T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-86 HPA and PDB for the web charts",
+      "empty": true
+    },
+    {
+      "date": "2021-07-06T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-88 xray audit stage after install, gate on high",
+      "empty": true
+    },
+    {
+      "date": "2021-07-13T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-90 documents-service chart with the statements PVC",
+      "paths": [
+        "platform-tooling/helm/documents-service"
+      ]
+    },
+    {
+      "date": "2021-07-20T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-92 fix: Sonar stage swallowed the exit code when the report was missing",
+      "empty": true
+    },
+    {
+      "date": "2021-07-22T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.07.2 into main for train 2021.07.2",
+      "empty": true
+    },
+    {
+      "date": "2021-08-03T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-95 repositories.json inventory of the Artifactory virtuals",
+      "paths": [
+        "platform-tooling/registry/repositories.json"
+      ]
+    },
+    {
+      "date": "2021-08-10T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-97 formatting sweep across vars and src, no behaviour change",
+      "empty": true
+    },
+    {
+      "date": "2021-08-24T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-99 alerts-preferences-service and txn-posting-service charts",
+      "paths": [
+        "platform-tooling/helm/alerts-preferences-service",
+        "platform-tooling/helm/txn-posting-service"
+      ]
+    },
+    {
+      "date": "2021-09-02T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.09.1 into main for train 2021.09.1",
+      "empty": true
+    },
+    {
+      "date": "2021-09-14T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-612 shared Angular Dockerfile, multi stage, NODE_VERSION from .nvmrc",
+      "body": "ADR-0007. Repositories lose their own Dockerfiles. Runtime is the unprivileged UBI nginx\nfrom docker-redhat-remote, 8080, uid 1001.",
+      "paths": [
+        "platform-tooling/docker/angular/Dockerfile",
+        "platform-tooling/docs/adr/ADR-0007-shared-dockerfiles.md"
+      ]
+    },
+    {
+      "date": "2021-09-16T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-612 java runtime Dockerfile and entrypoint sourcing Vault env files",
+      "paths": [
+        "platform-tooling/docker/java"
+      ]
+    },
+    {
+      "date": "2021-09-21T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-614 security-headers.inc so location blocks keep the headers",
+      "paths": [
+        "platform-tooling/docker/nginx/security-headers.inc"
+      ]
+    },
+    {
+      "date": "2021-09-23T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-615 container build stage uses the shared Dockerfile with -f",
+      "empty": true
+    },
+    {
+      "date": "2021-09-28T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-616 docker README",
+      "paths": [
+        "platform-tooling/docker/README.md"
+      ]
+    },
+    {
+      "date": "2021-09-30T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.10.1 into main for train 2021.10.1",
+      "empty": true
+    },
+    {
+      "date": "2021-10-12T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1820 policies for alerts-preferences, txn-posting, pii-vault, audit-trail",
+      "paths": [
+        "platform-tooling/vault/policies/alerts-preferences-service.hcl",
+        "platform-tooling/vault/policies/txn-posting-service.hcl",
+        "platform-tooling/vault/policies/pii-vault-service.hcl",
+        "platform-tooling/vault/policies/audit-trail-service.hcl"
+      ]
+    },
+    {
+      "date": "2021-10-19T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-620 pii-vault-service and audit-trail-service charts",
+      "paths": [
+        "platform-tooling/helm/pii-vault-service",
+        "platform-tooling/helm/audit-trail-service"
+      ]
+    },
+    {
+      "date": "2021-11-02T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-624 bundle-budget.js, warn when main.js grows more than 5 percent",
+      "paths": [
+        "platform-tooling/jenkins-shared-library/resources/com/meridian/pipeline/scripts/bundle-budget.js"
+      ]
+    },
+    {
+      "date": "2021-11-09T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-627 nodejs16-rhel8 agents added to the inventory",
+      "empty": true
+    },
+    {
+      "date": "2021-11-11T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2021.11.2 into main for train 2021.11.2",
+      "empty": true
+    },
+    {
+      "date": "2021-11-30T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-630 nodejs16 label supported by the Node pipeline",
+      "empty": true
+    },
+    {
+      "date": "2021-12-07T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-632 README: nodejs16-rhel8 is the default label for new repos",
+      "empty": true
+    },
+    {
+      "date": "2022-01-11T00:00:00",
+      "author": "meridian-dependency-bot",
+      "message": "TOOL-640 bump ansible collections community.hashi_vault 3.0.0 -> 3.2.0",
+      "empty": true
+    },
+    {
+      "date": "2022-01-18T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-642 entitlements-service and bedrock-adapter charts",
+      "paths": [
+        "platform-tooling/helm/entitlements-service",
+        "platform-tooling/helm/bedrock-adapter"
+      ]
+    },
+    {
+      "date": "2022-01-25T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-1903 policies for entitlements-service and bedrock-adapter",
+      "paths": [
+        "platform-tooling/vault/policies/entitlements-service.hcl",
+        "platform-tooling/vault/policies/bedrock-adapter.hcl"
+      ]
+    },
+    {
+      "date": "2022-02-03T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2022.02.1 into main for train 2022.02.1",
+      "empty": true
+    },
+    {
+      "date": "2022-02-15T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-648 Checkmarx stage runs incremental on PR builds",
+      "empty": true
+    },
+    {
+      "date": "2022-02-22T00:00:00",
+      "author": "t.nakamura",
+      "message": "Revert \"TOOL-648 Checkmarx stage runs incremental on PR builds\"",
+      "body": "Incremental scans missed the GIS-2418 pattern on retail-web PR 1412. Back to full scans\nuntil Checkmarx support come back to us. TOOL-651.",
+      "empty": true
+    },
+    {
+      "date": "2022-03-08T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-2911 remove ARTIFACTORY_TOKEN build arg, use a BuildKit secret",
+      "body": "The token was visible in docker history on every image built since September. Rotated.\nSee the GIS incident record; this commit is the code half.",
+      "paths": [
+        "platform-tooling/docker/angular/Dockerfile"
+      ]
+    },
+    {
+      "date": "2022-03-09T00:00:00",
+      "author": "t.nakamura",
+      "message": "GIS-2911 pipeline passes .npmrc as --secret id=npmrc",
+      "empty": true
+    },
+    {
+      "date": "2022-03-17T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2022.03.2 into main for train 2022.03.2",
+      "empty": true
+    },
+    {
+      "date": "2022-04-05T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-660 RHEL 7 group_vars: TLS 1.2 only, rsyslog omhttp instead of the UF",
+      "body": "GIS exception GIS-EX-2023-118 was raised for the TLS floor. The UF 9 build does not run on\nRHEL 7 so the nodejs14 agents forward with rsyslog. Not great.",
+      "paths": [
+        "platform-tooling/ansible/group_vars/nodejs14_rhel7.yml"
+      ]
+    },
+    {
+      "date": "2022-04-19T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-663 values-uat.yaml for every chart, replica counts from capacity review",
+      "empty": true
+    },
+    {
+      "date": "2022-05-10T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-668 maven-jdk17-rhel9 label, Java pipeline picks JDK from the pom",
+      "empty": true
+    },
+    {
+      "date": "2022-05-12T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-668 JDK_VERSION build arg on the java Dockerfile",
+      "empty": true
+    },
+    {
+      "date": "2022-05-26T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2022.06.1 into main for train 2022.06.1",
+      "empty": true
+    },
+    {
+      "date": "2022-06-14T00:00:00",
+      "author": "m.calderon",
+      "message": "TOOL-672 release calendar: CAB moves to Tuesday, prod to Thursday",
+      "empty": true
+    },
+    {
+      "date": "2022-06-28T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-675 formatting sweep: four space indent in Groovy, trailing commas",
+      "empty": true
+    },
+    {
+      "date": "2022-07-12T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-678 canopy-showcase and iris-widget charts",
+      "paths": [
+        "platform-tooling/helm/canopy-showcase",
+        "platform-tooling/helm/iris-widget"
+      ]
+    },
+    {
+      "date": "2022-07-26T00:00:00",
+      "author": "meridian-dependency-bot",
+      "message": "TOOL-680 bump ansible collections ansible.posix 1.3.0 -> 1.4.0",
+      "empty": true
+    },
+    {
+      "date": "2022-08-04T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2022.08.1 into main for train 2022.08.1",
+      "empty": true
+    },
+    {
+      "date": "2022-08-16T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-683 iris-orchestrator and exposure-calc charts",
+      "paths": [
+        "platform-tooling/helm/iris-orchestrator",
+        "platform-tooling/helm/exposure-calc"
+      ]
+    },
+    {
+      "date": "2022-08-18T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-2044 policies for iris-orchestrator and exposure-calc",
+      "paths": [
+        "platform-tooling/vault/policies/iris-orchestrator.hcl",
+        "platform-tooling/vault/policies/exposure-calc.hcl"
+      ]
+    },
+    {
+      "date": "2022-09-06T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-686 nodejs18-rhel9 agents in the inventory",
+      "empty": true
+    },
+    {
+      "date": "2022-09-20T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-688 nodejs18 label in AgentLabels",
+      "empty": true
+    },
+    {
+      "date": "2022-09-29T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2022.10.1 into main for train 2022.10.1",
+      "empty": true
+    },
+    {
+      "date": "2022-10-11T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-690 README: nodejs14-rhel7 marked out of support from 2023-04",
+      "body": "Business-web are the only consumer. MBZ-2231 tracks their Node 16 move. Until then the\nlabel stays and the RHEL 7 image does not get refreshed.",
+      "empty": true
+    },
+    {
+      "date": "2022-11-01T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-693 40-csp.sh renders connect-src from the environment",
+      "paths": [
+        "platform-tooling/docker/nginx/40-csp.sh"
+      ]
+    },
+    {
+      "date": "2022-11-15T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-695 CSP_CONNECT_SRC passed through from the chart values",
+      "empty": true
+    },
+    {
+      "date": "2022-11-17T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2022.11.2 into main for train 2022.11.2",
+      "empty": true
+    },
+    {
+      "date": "2022-12-06T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-697 fix: ReleaseGuard treated 31 December as outside the freeze",
+      "empty": true
+    },
+    {
+      "date": "2023-01-17T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-702 Verdaccio config for local development, port 4873",
+      "paths": [
+        "platform-tooling/registry/verdaccio",
+        "platform-tooling/registry/npmrc.local.sample",
+        "platform-tooling/registry/settings.local.xml"
+      ]
+    },
+    {
+      "date": "2023-01-24T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-702 registry README with the common failure modes",
+      "paths": [
+        "platform-tooling/registry/README.md"
+      ]
+    },
+    {
+      "date": "2023-02-02T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2023.02.1 into main for train 2023.02.1",
+      "empty": true
+    },
+    {
+      "date": "2023-02-14T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-706 build-agent.yml asserts the RHEL major and warns on 7",
+      "empty": true
+    },
+    {
+      "date": "2023-03-07T00:00:00",
+      "author": "meridian-dependency-bot",
+      "message": "TOOL-710 bump ansible collections community.hashi_vault 3.2.0 -> 4.2.1",
+      "empty": true
+    },
+    {
+      "date": "2023-03-16T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2023.03.2 into main for train 2023.03.2",
+      "empty": true
+    },
+    {
+      "date": "2023-04-03T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1301 mock-scanners: cx emulation with the GIS regex ruleset",
+      "body": "ADR-0012. Engineers cannot reach Checkmarx from a laptop, so the gate logic had no local\nreproduction. Deterministic, same report shape, same exit codes.",
+      "paths": [
+        "platform-tooling/mock-scanners/bin/cx",
+        "platform-tooling/mock-scanners/lib/common.js",
+        "platform-tooling/docs/adr/ADR-0012-mock-scanners-in-repo.md"
+      ]
+    },
+    {
+      "date": "2023-04-04T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3120 checkmarx-rules.json revision 1, the obvious things list",
+      "paths": [
+        "platform-tooling/mock-scanners/rules/checkmarx-rules.json"
+      ]
+    },
+    {
+      "date": "2023-04-06T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1301 sonar-scanner emulation reading lcov, jacoco and lint output",
+      "paths": [
+        "platform-tooling/mock-scanners/bin/sonar-scanner"
+      ]
+    },
+    {
+      "date": "2023-04-11T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1301 xray emulation over npm and Maven trees",
+      "paths": [
+        "platform-tooling/mock-scanners/bin/xray"
+      ]
+    },
+    {
+      "date": "2023-04-12T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3120 offline advisory mirror for xray",
+      "paths": [
+        "platform-tooling/mock-scanners/rules/advisories.json"
+      ]
+    },
+    {
+      "date": "2023-04-13T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1301 fixtures: an Angular app and a Java service with planted findings",
+      "paths": [
+        "platform-tooling/mock-scanners/fixtures"
+      ]
+    },
+    {
+      "date": "2023-04-18T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1301 run-tests.sh for the scanners, determinism check",
+      "paths": [
+        "platform-tooling/mock-scanners/run-tests.sh"
+      ]
+    },
+    {
+      "date": "2023-04-20T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1301 mock-scanners README",
+      "paths": [
+        "platform-tooling/mock-scanners/README.md"
+      ]
+    },
+    {
+      "date": "2023-04-25T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1305 library resolves cx, sonar-scanner and xray from PATH",
+      "empty": true
+    },
+    {
+      "date": "2023-04-27T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2023.05.1 into main for train 2023.05.1",
+      "empty": true
+    },
+    {
+      "date": "2023-05-16T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3141 rules rev 7: disabled certificate validation in Java and Node clients",
+      "empty": true
+    },
+    {
+      "date": "2023-06-06T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-1312 node service Dockerfile and entrypoint",
+      "paths": [
+        "platform-tooling/docker/node"
+      ]
+    },
+    {
+      "date": "2023-06-13T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3160 rules rev 12: wildcard CORS, disabled CSRF, insecure cookie flags",
+      "empty": true
+    },
+    {
+      "date": "2023-06-15T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2023.06.2 into main for train 2023.06.2",
+      "empty": true
+    },
+    {
+      "date": "2023-07-11T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1320 cx SARIF output for the code scanning upload",
+      "empty": true
+    },
+    {
+      "date": "2023-07-25T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1322 formatting sweep in test specs",
+      "empty": true
+    },
+    {
+      "date": "2023-08-08T00:00:00",
+      "author": "meridian-dependency-bot",
+      "message": "TOOL-1325 bump ansible collections ansible.posix 1.4.0 -> 1.5.4",
+      "empty": true
+    },
+    {
+      "date": "2023-08-22T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3201 rules rev 19: private key material and registry tokens in source",
+      "empty": true
+    },
+    {
+      "date": "2023-09-07T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2023.09.1 into main for train 2023.09.1",
+      "empty": true
+    },
+    {
+      "date": "2023-09-19T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1330 sonar-scanner: coverage on new code, not whole file",
+      "empty": true
+    },
+    {
+      "date": "2023-10-03T00:00:00",
+      "author": "g.mwangi",
+      "message": "TOOL-1334 python Dockerfile on the approved UBI base",
+      "paths": [
+        "platform-tooling/docker/python/Dockerfile"
+      ]
+    },
+    {
+      "date": "2023-10-17T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1336 fix: quality gate counted suppressed findings toward the threshold",
+      "empty": true
+    },
+    {
+      "date": "2023-10-19T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2023.11.1 into main for train 2023.11.1",
+      "empty": true
+    },
+    {
+      "date": "2023-11-07T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-1340 values-prod.yaml: PDB minAvailable and prod HPA ceilings",
+      "empty": true
+    },
+    {
+      "date": "2023-11-21T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3250 rules rev 27: root containers and unpinned base images",
+      "empty": true
+    },
+    {
+      "date": "2023-12-05T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1343 fix: Java pipeline ignored COVERAGE_THRESHOLD when JaCoCo ran per module",
+      "empty": true
+    },
+    {
+      "date": "2024-01-16T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-1350 GIS-EX-2023-118 expiry noted in the RHEL 7 group_vars",
+      "empty": true
+    },
+    {
+      "date": "2024-01-30T00:00:00",
+      "author": "meridian-dependency-bot",
+      "message": "TOOL-1352 bump ansible collections community.hashi_vault 4.2.1 -> 6.2.0",
+      "empty": true
+    },
+    {
+      "date": "2024-02-01T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2024.02.1 into main for train 2024.02.1",
+      "empty": true
+    },
+    {
+      "date": "2024-02-13T00:00:00",
+      "author": "p.venkatesan",
+      "message": "TOOL-1355 beacon-notifications chart",
+      "paths": [
+        "platform-tooling/helm/beacon-notifications"
+      ]
+    },
+    {
+      "date": "2024-02-15T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-3302 beacon-notifications policy",
+      "paths": [
+        "platform-tooling/vault/policies/beacon-notifications.hcl"
+      ]
+    },
+    {
+      "date": "2024-02-27T00:00:00",
+      "author": "f.adeyemi",
+      "message": "GIS-3310 gis-secrets-admin policy and dev-seed.sh with CHANGEME placeholders",
+      "paths": [
+        "platform-tooling/vault/policies/gis-secrets-admin.hcl",
+        "platform-tooling/vault/dev-seed.sh"
+      ]
+    },
+    {
+      "date": "2024-03-14T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2024.03.2 into main for train 2024.03.2",
+      "empty": true
+    },
+    {
+      "date": "2024-04-09T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3355 rules rev 34: debug artefacts and weakened CSP directives",
+      "empty": true
+    },
+    {
+      "date": "2024-04-23T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1362 xray: lifecycle findings for end of life runtimes, informational",
+      "empty": true
+    },
+    {
+      "date": "2024-05-07T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1365 pipeline-quality-gate-failed runbook",
+      "paths": [
+        "platform-tooling/docs/runbooks/pipeline-quality-gate-failed.md"
+      ]
+    },
+    {
+      "date": "2024-05-23T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2024.06.1 into main for train 2024.06.1",
+      "empty": true
+    },
+    {
+      "date": "2024-06-11T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-1370 terraform: Beacon notifications Lambda landing zone stub",
+      "body": "Landing zone only. There is no application code yet and the account is not provisioned.\nAWS provider pinned at 5.31.0 as agreed with cloud platform.",
+      "paths": [
+        "platform-tooling/terraform/modules/notifications-lambda",
+        "platform-tooling/terraform/envs/sandbox"
+      ]
+    },
+    {
+      "date": "2024-06-13T00:00:00",
+      "author": "b.arceneaux",
+      "message": "TOOL-1370 terraform README",
+      "paths": [
+        "platform-tooling/terraform/README.md"
+      ]
+    },
+    {
+      "date": "2024-06-25T00:00:00",
+      "author": "m.calderon",
+      "message": "TOOL-1372 release calendar: 2025 trains and freeze dates",
+      "empty": true
+    },
+    {
+      "date": "2024-07-09T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3401 rules rev 41: sensitive data in log statements",
+      "empty": true
+    },
+    {
+      "date": "2024-07-25T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2024.08.1 into main for train 2024.08.1",
+      "empty": true
+    },
+    {
+      "date": "2024-08-13T00:00:00",
+      "author": "o.lindqvist",
+      "message": "TOOL-1378 fix: cx walked node_modules when checkmarx.yml had no excludes",
+      "empty": true
+    },
+    {
+      "date": "2024-08-27T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1380 formatting sweep across vars, src and test",
+      "empty": true
+    },
+    {
+      "date": "2024-09-10T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-1502 AI-assisted code policy TECH-POL-031 v1.0",
+      "body": "Second line signed off 2024-09-06. Control owners named in section 9. Commit trailer and\nPR template are TOOL-1503 and TOOL-1504.",
+      "paths": [
+        "platform-tooling/governance/AI_ASSISTED_CODE_POLICY.md"
+      ]
+    },
+    {
+      "date": "2024-09-17T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-1504 PR review template for AI-assisted content",
+      "paths": [
+        "platform-tooling/docs/templates/PR_REVIEW_AI.md"
+      ]
+    },
+    {
+      "date": "2024-09-19T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2024.10.1 into main for train 2024.10.1",
+      "empty": true
+    },
+    {
+      "date": "2024-10-08T00:00:00",
+      "author": "m.calderon",
+      "message": "TOOL-1388 release calendar: 2026 trains and quarter-end freezes",
+      "paths": [
+        "platform-tooling/governance/RELEASE_CALENDAR.md"
+      ]
+    },
+    {
+      "date": "2024-10-22T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3442 advisories.json refresh",
+      "empty": true
+    },
+    {
+      "date": "2024-11-05T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-1390 dependency policy v2.4: section 6 and the EOL paragraph",
+      "empty": true
+    },
+    {
+      "date": "2024-11-12T00:00:00",
+      "author": "k.subramani",
+      "message": "TOOL-1393 inventory: nodejs14-rhel7 still present, still out of support",
+      "empty": true
+    },
+    {
+      "date": "2024-11-19T00:00:00",
+      "author": "s.whitfield",
+      "message": "GIS-3460 advisories.json refresh 2024-11-18",
+      "empty": true
+    },
+    {
+      "date": "2024-11-21T00:00:00",
+      "author": "m.calderon",
+      "message": "Merge release/2024.12.1 into main for train 2024.12.1",
+      "empty": true
+    },
+    {
+      "date": "2024-11-26T00:00:00",
+      "author": "d.okafor",
+      "message": "TOOL-1395 top-level README and state of things",
+      "paths": [
+        "platform-tooling/README.md"
+      ]
+    },
+    {
+      "date": "2024-12-03T00:00:00",
+      "author": "t.nakamura",
+      "message": "TOOL-1397 .history manifest for the estate build",
+      "paths": [
+        "platform-tooling/.history"
+      ]
+    }
+  ]
+}
