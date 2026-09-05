@@ -1,0 +1,23 @@
+---
+# Two implementations. splunkforwarder is the standard (GIS-STD-009 requires audit and secure logs
+# in Splunk within five minutes). RHEL 7 uses rsyslog omhttp straight to HEC because SPLK-902.
+
+- name: Fetch HEC token from Vault
+  # Uses the run host's VAULT_TOKEN (Jenkins approle). Falls back to the CHANGEME placeholder in
+  # --check mode so the syntax and template checks work on a laptop.
+  ansible.builtin.set_fact:
+    log_forwarder_hec_token_effective: >-
+      {{ lookup('community.hashi_vault.hashi_vault',
+                log_forwarder_hec_token_vault_path ~ ':token',
+                url=lookup('env', 'VAULT_ADDR') | default('https://vault.meridian.internal', true),
+                errors='ignore')
+         | default(log_forwarder_hec_token, true) }}
+  no_log: true
+
+- name: Include splunkforwarder tasks
+  ansible.builtin.include_tasks: splunkforwarder.yml
+  when: log_forwarder_implementation == 'splunkforwarder'
+
+- name: Include rsyslog tasks
+  ansible.builtin.include_tasks: rsyslog.yml
+  when: log_forwarder_implementation == 'rsyslog'

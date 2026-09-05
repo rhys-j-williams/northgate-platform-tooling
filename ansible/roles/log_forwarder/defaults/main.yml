@@ -1,0 +1,10 @@
+---
+log_forwarder_implementation: splunkforwarder
+log_forwarder_hec_url: https://splunk-hec.meridian.internal:8088/services/collector/event
+log_forwarder_hec_token: CHANGEME-splunk-hec-token
+log_forwarder_hec_token_vault_path: secret/data/cswt/build/splunk/hec-token
+log_forwarder_index: cswt_build
+log_forwarder_sourcetype: jenkins:agent
+log_forwarder_paths: []
+splunkforwarder_package: splunkforwarder
+splunkforwarder_home: /opt/splunkforwarder

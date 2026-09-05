@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Demo estate local equivalent. There is no local Maven proxy; Maven Central is used directly.
+     Real agents cannot do this (DEPENDENCY_POLICY.md), the demo box can. -->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <interactiveMode>false</interactiveMode>
+  <profiles>
+    <profile>
+      <id>meridian-local</id>
+      <properties>
+        <meridian.releases.repo>file://${user.home}/.m2/meridian-local-releases</meridian.releases.repo>
+        <meridian.snapshots.repo>file://${user.home}/.m2/meridian-local-snapshots</meridian.snapshots.repo>
+      </properties>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>meridian-local</activeProfile>
+  </activeProfiles>
+</settings>

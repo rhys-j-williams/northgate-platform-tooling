@@ -1,0 +1,23 @@
+---
+- name: rsyslog omhttp available
+  ansible.builtin.package:
+    name:
+      - rsyslog
+      - rsyslog-omhttp
+    state: present
+
+- name: HEC forwarding rule
+  ansible.builtin.template:
+    src: rsyslog-hec.conf.j2
+    dest: /etc/rsyslog.d/60-meridian-hec.conf
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  notify: restart rsyslog
+
+- name: rsyslog running
+  ansible.builtin.service:
+    name: rsyslog
+    state: started
+    enabled: true

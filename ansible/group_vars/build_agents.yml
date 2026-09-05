@@ -1,0 +1,7 @@
+---
+nginx_package: nginx
+nginx_conf_dir: /etc/nginx
+nginx_tls_protocols: "TLSv1.2 TLSv1.3"
+log_forwarder_implementation: splunkforwarder
+splunkforwarder_package: splunkforwarder
+splunkforwarder_home: /opt/splunkforwarder

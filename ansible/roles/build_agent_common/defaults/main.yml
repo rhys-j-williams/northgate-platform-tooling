@@ -1,0 +1,11 @@
+---
+build_agent_common_packages:
+  - git
+  - jq
+  - unzip
+  - podman
+  - buildah
+  - skopeo
+# .placeholder suffix because the repo gitignores *.pem. The real bundle is dropped in by the
+# Jenkins job from Vault before the play runs, at files/meridian-root-ca.pem.
+build_agent_common_ca_bundle_src: meridian-root-ca.pem.placeholder

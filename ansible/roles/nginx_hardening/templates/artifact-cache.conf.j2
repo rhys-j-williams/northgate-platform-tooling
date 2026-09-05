@@ -1,0 +1,35 @@
+# {{ ansible_managed }}
+# Local read-through cache of Artifactory for this agent. Saves the WAN link during npm ci storms
+# on release day (TOOL-988). Only reachable from the agent itself and the controller.
+server {
+    listen {{ nginx_listen_port }} ssl;
+    server_name {{ nginx_server_name }};
+
+    ssl_certificate     {{ nginx_tls_cert }};
+    ssl_certificate_key {{ nginx_tls_key }};
+    ssl_protocols       {{ nginx_tls_protocols }};
+    ssl_ciphers         {{ nginx_tls_ciphers }};
+    ssl_prefer_server_ciphers on;
+    ssl_session_tickets off;
+
+    include conf.d/security-headers.inc;
+
+    allow 127.0.0.1;
+    allow 10.40.0.0/16;   # build VLAN, {{ meridian_site }}
+    deny  all;
+
+    location /artifacts/ {
+        alias {{ nginx_artifact_cache_root }}/;
+        autoindex off;
+    }
+
+    location = /status {
+        stub_status;
+        access_log off;
+    }
+
+    location = /healthz {
+        return 200 "ok\n";
+        add_header Content-Type text/plain;
+    }
+}

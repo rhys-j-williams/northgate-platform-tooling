@@ -1,0 +1,36 @@
+---
+- name: splunkforwarder installed (internal yum repo, version pinned by the repo)
+  ansible.builtin.package:
+    name: "{{ splunkforwarder_package }}"
+    state: present
+
+- name: inputs.conf
+  ansible.builtin.template:
+    src: inputs.conf.j2
+    dest: "{{ splunkforwarder_home }}/etc/system/local/inputs.conf"
+    owner: splunk
+    group: splunk
+    mode: "0640"
+  notify: restart splunkforwarder
+
+- name: outputs.conf (HEC, not indexer discovery; the build VLAN cannot see the indexers)
+  ansible.builtin.template:
+    src: outputs.conf.j2
+    dest: "{{ splunkforwarder_home }}/etc/system/local/outputs.conf"
+    owner: splunk
+    group: splunk
+    mode: "0600"
+  no_log: true
+  notify: restart splunkforwarder
+
+- name: splunk user can read the forwarded files
+  ansible.builtin.user:
+    name: splunk
+    groups: [adm, nginx, "{{ jenkins_agent_user }}"]
+    append: true
+
+- name: SplunkForwarder enabled
+  ansible.builtin.service:
+    name: SplunkForwarder
+    state: started
+    enabled: true

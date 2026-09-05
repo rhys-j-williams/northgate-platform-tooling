@@ -1,0 +1,56 @@
+---
+# GIS-STD-014 headers on the agent's local nginx. The checks in
+# ../../../../mock-scanners/rules/checkmarx-rules.json (CX-CFG-*) look for the same things in
+# repos; this is the host side.
+
+- name: nginx installed
+  ansible.builtin.package:
+    name: "{{ nginx_package }}"
+    state: present
+
+- name: Remove the distro default server (it listens on 80 and has no headers)
+  ansible.builtin.file:
+    path: "{{ nginx_conf_dir }}/conf.d/default.conf"
+    state: absent
+  notify: reload nginx
+
+- name: Security headers snippet
+  ansible.builtin.template:
+    src: security-headers.conf.j2
+    dest: "{{ nginx_conf_dir }}/conf.d/security-headers.inc"
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "sh -c 'grep -q Strict-Transport-Security %s'"
+  notify: reload nginx
+
+- name: Artifact cache vhost
+  ansible.builtin.template:
+    src: artifact-cache.conf.j2
+    dest: "{{ nginx_conf_dir }}/conf.d/artifact-cache.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload nginx
+
+- name: server_tokens off at http level
+  ansible.builtin.lineinfile:
+    path: "{{ nginx_conf_dir }}/nginx.conf"
+    regexp: '^\s*server_tokens'
+    line: "    server_tokens off;"
+    insertafter: '^\s*http\s*{'
+  notify: reload nginx
+
+- name: Cache root exists
+  ansible.builtin.file:
+    path: "{{ nginx_artifact_cache_root }}"
+    state: directory
+    owner: "{{ jenkins_agent_user }}"
+    group: nginx
+    mode: "0750"
+
+- name: nginx enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

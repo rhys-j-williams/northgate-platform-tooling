@@ -1,0 +1,34 @@
+---
+# Shared across every build agent. Secrets are not here; the Splunk HEC token is pulled from
+# Vault at run time (see log_forwarder role). CHANGEME values are placeholders for local runs.
+meridian_environment: build
+meridian_site: nj-secaucus
+ansible_user: svc-ansible-cswt
+
+# nginx on a build agent serves the local artifact cache and the agent's own status page. It is
+# not internet facing, but GIS-STD-014 applies to anything with an HTTP listener (GIS-3021).
+nginx_listen_port: 8443
+nginx_server_name: "{{ inventory_hostname }}"
+nginx_tls_cert: /etc/pki/tls/certs/{{ inventory_hostname }}.crt
+nginx_tls_key: /etc/pki/tls/private/{{ inventory_hostname }}.key
+nginx_artifact_cache_root: /var/cache/meridian/artifacts
+nginx_hsts_max_age: 31536000
+nginx_csp: "default-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+
+# Log forwarder: splunkforwarder on RHEL 8/9, rsyslog omhttp shim on RHEL 7 because the UF
+# package for 7 was pulled from the internal yum repo (SPLK-902).
+log_forwarder_hec_url: https://splunk-hec.meridian.internal:8088/services/collector/event
+log_forwarder_hec_token_vault_path: secret/data/cswt/build/splunk/hec-token
+log_forwarder_hec_token: CHANGEME-splunk-hec-token
+log_forwarder_index: cswt_build
+log_forwarder_sourcetype: jenkins:agent
+log_forwarder_paths:
+  - /var/log/jenkins-agent/*.log
+  - /var/log/nginx/access.log
+  - /var/log/nginx/error.log
+  - /var/log/audit/audit.log
+  - /var/log/secure
+
+jenkins_agent_user: jenkins
+jenkins_agent_home: /var/lib/jenkins
+jenkins_controller_url: https://jenkins.meridian.internal

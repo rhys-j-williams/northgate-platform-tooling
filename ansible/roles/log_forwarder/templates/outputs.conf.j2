@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+# Token is rendered from Vault ({{ log_forwarder_hec_token_vault_path }}). If you see CHANGEME
+# here on a real host the Vault lookup failed and the play should have been run from Jenkins.
+[httpout]
+httpEventCollectorToken = {{ log_forwarder_hec_token_effective }}
+uri = {{ log_forwarder_hec_url | regex_replace('/services/collector/event$', '') }}
+batchSize = 65536
+batchTimeout = 5
+sslVerifyServerCert = true
+sslRootCAPath = /etc/pki/tls/certs/ca-bundle.crt
