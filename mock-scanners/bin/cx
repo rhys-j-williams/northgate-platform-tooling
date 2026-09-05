@@ -1,0 +1,298 @@
+#!/usr/bin/env node
+'use strict';
+/*
+ * cx - command line compatible stand in for the Checkmarx CLI used by the CSWT Jenkins pipelines.
+ *
+ *   cx scan --config checkmarx.yml --source . --output .cx-reports [--preset NAME] [--rules FILE]
+ *            [--fail-on high|medium|none] [--quiet]
+ *   cx rules [--rules FILE]        list the ruleset
+ *   cx version
+ *
+ * The real CLI submits the source to the Checkmarx server and polls for a result. This one applies
+ * the GIS ruleset in ../rules/checkmarx-rules.json locally. Same report shape, same exit codes
+ * (0 clean, 1 findings over threshold, 2 usage error), deterministic scan ids, sub second on a
+ * front end repository.
+ *
+ * Owner of the CLI: @meridian/platform-engineering. Owner of the rules: @meridian/gis-appsec.
+ */
+
+const fs = require('fs');
+const path = require('path');
+const common = require('../lib/common');
+
+const VERSION = '2.3.7-meridian';
+const HERE = path.dirname(fs.realpathSync(__filename));
+const DEFAULT_RULES = path.join(HERE, '..', 'rules', 'checkmarx-rules.json');
+
+const COMMENT_PREFIX = /^\s*(#|\/\/|\*|\/\*|<!--|;)/;
+
+function usage(code) {
+  const out = code === 0 ? console.log : console.error;
+  out('usage: cx scan --config checkmarx.yml [--source DIR] [--output DIR] [--fail-on high|medium|none]');
+  out('       cx rules');
+  out('       cx version');
+  process.exit(code);
+}
+
+function loadRules(file) {
+  const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+  parsed.rules.forEach((rule) => {
+    rule.re = new RegExp(rule.pattern, rule.flags || '');
+    rule.fileRe = new RegExp(rule.files || '.');
+    rule.negRe = rule.negative ? new RegExp(rule.negative, rule.flags || '') : null;
+  });
+  return parsed;
+}
+
+function loadConfig(file) {
+  const text = common.readIfExists(file);
+  if (text === null) {
+    console.error('cx: config not found: ' + file);
+    process.exit(2);
+  }
+  const cfg = common.parseYamlLite(text);
+  cfg.project = cfg.project || {};
+  cfg.scan = cfg.scan || {};
+  cfg.thresholds = cfg.thresholds || { high: 0, medium: 5 };
+  cfg.report = cfg.report || {};
+  cfg.suppressions = cfg.suppressions || [];
+  return cfg;
+}
+
+function isSuppressed(finding, suppressions) {
+  return suppressions.some((s) => {
+    if (s.ruleId && s.ruleId !== finding.ruleId) return false;
+    if (s.file && !common.globToRegExp(s.file).test(finding.file)) return false;
+    if (s.expires && new Date(s.expires) < new Date(common.timestamp())) return false;
+    return true;
+  });
+}
+
+function scan(root, ruleset, cfg) {
+  const excludes = (cfg.scan.exclude || []).map(String);
+  const files = common.walk(root, { exclude: excludes });
+  const findings = [];
+  let scannedFiles = 0;
+  let scannedLines = 0;
+
+  for (const file of files) {
+    const applicable = ruleset.rules.filter((r) => r.fileRe.test(file.rel));
+    if (applicable.length === 0) continue;
+    const buf = fs.readFileSync(file.full);
+    if (common.isProbablyBinary(buf)) continue;
+    const text = buf.toString('utf8');
+    const lines = text.split(/\r?\n/);
+    scannedFiles++;
+    scannedLines += lines.length;
+
+    lines.forEach((line, i) => {
+      if (line.length > 2000) return; // minified
+      for (const rule of applicable) {
+        const m = rule.re.exec(line);
+        if (!m) continue;
+        if (rule.negRe && (rule.negRe.test(line) || rule.negRe.test(file.rel))) continue;
+        const commented = COMMENT_PREFIX.test(line) || /^\s*[^"'`]*\/\/.*$/.test(line.slice(0, m.index)) && !/['"`]/.test(line.slice(0, m.index));
+        let severity = rule.severity;
+        if (commented) {
+          if (!rule.commentedSeverity) continue;
+          severity = rule.commentedSeverity;
+        }
+        const snippet = line.trim().slice(0, 160);
+        findings.push({
+          id: common.stableId('CXF', file.rel + ':' + (i + 1) + ':' + rule.id),
+          ruleId: rule.id,
+          ruleName: rule.name,
+          severity,
+          cwe: rule.cwe,
+          category: rule.category,
+          file: file.rel,
+          line: i + 1,
+          column: m.index + 1,
+          snippet,
+          commented,
+          description: rule.description,
+          remediation: rule.remediation,
+          status: 'New',
+        });
+      }
+    });
+  }
+
+  const suppressions = cfg.suppressions || [];
+  findings.forEach((f) => {
+    if (isSuppressed(f, suppressions)) {
+      f.status = 'Suppressed';
+    }
+  });
+
+  findings.sort((a, b) =>
+    common.severityRank(a.severity) - common.severityRank(b.severity)
+    || a.file.localeCompare(b.file)
+    || a.line - b.line
+    || a.ruleId.localeCompare(b.ruleId));
+
+  return { findings, scannedFiles, scannedLines };
+}
+
+function summarise(findings) {
+  const summary = { critical: 0, high: 0, medium: 0, low: 0, info: 0, suppressed: 0 };
+  findings.forEach((f) => {
+    if (f.status === 'Suppressed') {
+      summary.suppressed++;
+      return;
+    }
+    summary[f.severity.toLowerCase()]++;
+  });
+  return summary;
+}
+
+function gate(summary, thresholds) {
+  const breaches = [];
+  Object.keys(thresholds).forEach((sev) => {
+    const max = Number(thresholds[sev]);
+    const actual = summary[sev.toLowerCase()] || 0;
+    if (actual > max) breaches.push(sev + ': ' + actual + ' found, threshold ' + max);
+  });
+  return breaches;
+}
+
+function renderHtml(report) {
+  const e = common.escapeHtml;
+  const sevClass = (s) => 'sev-' + s.toLowerCase();
+  const rows = report.findings.map((f) => `
+      <tr class="${sevClass(f.severity)}${f.status === 'Suppressed' ? ' suppressed' : ''}">
+        <td><span class="pill">${e(f.severity)}</span></td>
+        <td><code>${e(f.ruleId)}</code><br><small>${e(f.ruleName)}</small></td>
+        <td>${e(f.cwe)}</td>
+        <td><code>${e(f.file)}:${f.line}</code>${f.commented ? ' <small>(commented out)</small>' : ''}</td>
+        <td><pre>${e(f.snippet)}</pre></td>
+        <td>${e(f.status)}</td>
+      </tr>`).join('');
+  const s = report.summary;
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Checkmarx scan ${e(report.scanId)} - ${e(report.project)}</title>
+<style>
+ body{font:14px/1.4 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:24px;color:#1b1b1b}
+ h1{font-size:20px;margin:0 0 4px} h2{font-size:16px;margin:24px 0 8px}
+ .meta{color:#555;font-size:12px} table{border-collapse:collapse;width:100%;margin-top:12px}
+ th,td{border-bottom:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
+ th{background:#f4f4f4;font-weight:600} pre{margin:0;white-space:pre-wrap;font-size:12px}
+ .pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;color:#fff}
+ .sev-critical .pill{background:#7b1fa2} .sev-high .pill{background:#c62828} .sev-medium .pill{background:#ef6c00}
+ .sev-low .pill{background:#1565c0} .sev-info .pill{background:#616161} .suppressed{opacity:.5}
+ .summary span{display:inline-block;margin-right:16px} .gate-fail{color:#c62828;font-weight:600} .gate-pass{color:#2e7d32;font-weight:600}
+</style></head><body>
+<h1>Checkmarx scan result</h1>
+<div class="meta">Project <b>${e(report.project)}</b> &middot; team ${e(report.team)} &middot; preset ${e(report.preset)} rev ${e(report.rulesetRevision)} &middot; scan ${e(report.scanId)} &middot; ${e(report.timestamp)}</div>
+<div class="meta">${report.stats.scannedFiles} files, ${report.stats.scannedLines} lines, ${report.stats.durationMs} ms. CLI ${e(report.cli)}</div>
+<h2>Summary</h2>
+<div class="summary">
+ <span>Critical: <b>${s.critical}</b></span><span>High: <b>${s.high}</b></span><span>Medium: <b>${s.medium}</b></span>
+ <span>Low: <b>${s.low}</b></span><span>Info: <b>${s.info}</b></span><span>Suppressed: <b>${s.suppressed}</b></span>
+</div>
+<p class="${report.gate.passed ? 'gate-pass' : 'gate-fail'}">Quality gate ${report.gate.passed ? 'PASSED' : 'FAILED'}${report.gate.breaches.length ? ': ' + e(report.gate.breaches.join('; ')) : ''}</p>
+<h2>Findings</h2>
+<table><thead><tr><th>Severity</th><th>Rule</th><th>CWE</th><th>Location</th><th>Snippet</th><th>Status</th></tr></thead>
+<tbody>${rows || '<tr><td colspan="6">No findings.</td></tr>'}</tbody></table>
+<h2>Rules applied</h2>
+<table><thead><tr><th>Rule</th><th>Severity</th><th>CWE</th><th>Description</th></tr></thead><tbody>
+${report.rules.map((r) => `<tr><td><code>${e(r.id)}</code> ${e(r.name)}</td><td>${e(r.severity)}</td><td>${e(r.cwe)}</td><td>${e(r.description)}</td></tr>`).join('')}
+</tbody></table>
+<p class="meta">Suppressions are declared in checkmarx.yml with a GIS exception id and an expiry. High findings cannot be suppressed without one. GIS-STD-014 rev 9.</p>
+</body></html>
+`;
+}
+
+function cmdScan(args) {
+  const started = Date.now();
+  const configPath = path.resolve(args.config || 'checkmarx.yml');
+  const cfg = loadConfig(configPath);
+  const source = path.resolve(args.source || cfg.scan.source || path.dirname(configPath));
+  const output = path.resolve(args.output || cfg.report.output || '.cx-reports');
+  const ruleset = loadRules(args.rules || process.env.CX_RULES || DEFAULT_RULES);
+  const failOn = (args['fail-on'] || 'threshold').toLowerCase();
+
+  if (!fs.existsSync(source)) {
+    console.error('cx: source directory not found: ' + source);
+    process.exit(2);
+  }
+
+  const result = scan(source, ruleset, cfg);
+  const summary = summarise(result.findings);
+  const thresholds = failOn === 'none' ? {} : failOn === 'high' ? { high: 0 } : failOn === 'medium' ? { high: 0, medium: 0 } : cfg.thresholds;
+  const breaches = gate(summary, thresholds);
+  const project = cfg.project.name || path.basename(source);
+  const scanId = common.stableId('cx', project + '|' + result.findings.map((f) => f.id).join(','));
+
+  const report = {
+    cli: 'cx ' + VERSION,
+    scanId,
+    project,
+    team: cfg.project.team || '/CxServer/Meridian/CSWT',
+    preset: args.preset || cfg.scan.preset || ruleset.preset,
+    rulesetRevision: ruleset.revision,
+    source: path.relative(process.cwd(), source) || '.',
+    timestamp: common.timestamp(),
+    stats: { scannedFiles: result.scannedFiles, scannedLines: result.scannedLines, durationMs: 0 },
+    thresholds,
+    summary,
+    gate: { passed: breaches.length === 0, breaches },
+    findings: result.findings,
+    rules: ruleset.rules.map((r) => ({ id: r.id, name: r.name, severity: r.severity, cwe: r.cwe, description: r.description })),
+  };
+  report.stats.durationMs = common.elapsed(started);
+
+  common.ensureDir(output);
+  const formats = (cfg.report.formats || ['json', 'html']).map((f) => String(f).toLowerCase());
+  if (formats.includes('json')) common.writeJson(path.join(output, 'report.json'), report);
+  if (formats.includes('html')) fs.writeFileSync(path.join(output, 'report.html'), renderHtml(report));
+  if (formats.includes('sarif')) common.writeJson(path.join(output, 'report.sarif'), toSarif(report));
+
+  if (!args.quiet) {
+    console.log('Checkmarx CLI ' + VERSION + ' (Meridian build)');
+    console.log('Project: ' + project + '  Preset: ' + report.preset + ' rev ' + ruleset.revision);
+    console.log('Scanned ' + result.scannedFiles + ' files, ' + result.scannedLines + ' lines in ' + report.stats.durationMs + ' ms');
+    console.log('Scan id: ' + scanId);
+    console.log('');
+    console.log('  Critical ' + summary.critical + '  High ' + summary.high + '  Medium ' + summary.medium + '  Low ' + summary.low + '  Info ' + summary.info + '  Suppressed ' + summary.suppressed);
+    console.log('');
+    result.findings.filter((f) => f.status !== 'Suppressed' && common.severityRank(f.severity) <= 2).forEach((f) => {
+      console.log('  [' + f.severity.padEnd(6) + '] ' + f.ruleId + ' ' + f.file + ':' + f.line + (f.commented ? ' (commented out)' : '') + '  ' + f.ruleName);
+    });
+    console.log('');
+    console.log('Reports written to ' + path.relative(process.cwd(), output));
+    console.log(breaches.length ? 'Quality gate FAILED: ' + breaches.join('; ') : 'Quality gate PASSED');
+  }
+  process.exit(breaches.length ? 1 : 0);
+}
+
+function toSarif(report) {
+  return {
+    version: '2.1.0',
+    $schema: 'https://json.schemastore.org/sarif-2.1.0.json',
+    runs: [{
+      tool: { driver: { name: 'Checkmarx (Meridian mock)', version: VERSION, rules: report.rules.map((r) => ({ id: r.id, name: r.name, shortDescription: { text: r.description } })) } },
+      results: report.findings.map((f) => ({
+        ruleId: f.ruleId,
+        level: common.severityRank(f.severity) <= 1 ? 'error' : f.severity === 'Medium' ? 'warning' : 'note',
+        message: { text: f.ruleName },
+        locations: [{ physicalLocation: { artifactLocation: { uri: f.file }, region: { startLine: f.line, startColumn: f.column } } }],
+      })),
+    }],
+  };
+}
+
+function cmdRules(args) {
+  const ruleset = loadRules(args.rules || DEFAULT_RULES);
+  console.log('Preset ' + ruleset.preset + ' revision ' + ruleset.revision + ' (' + ruleset.rules.length + ' rules)');
+  ruleset.rules.forEach((r) => console.log('  ' + r.id.padEnd(14) + r.severity.padEnd(8) + r.cwe.padEnd(9) + r.name));
+}
+
+const args = common.parseArgs(process.argv.slice(2));
+switch (args._[0]) {
+  case 'scan': cmdScan(args); break;
+  case 'rules': cmdRules(args); break;
+  case 'version': console.log('cx ' + VERSION); break;
+  case 'help': case undefined: usage(args._[0] ? 0 : 2); break;
+  default: usage(2);
+}

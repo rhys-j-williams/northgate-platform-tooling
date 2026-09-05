@@ -1,0 +1,17 @@
+
+> sample-angular-app@1.4.2 lint
+> ng lint
+
+Linting "sample-angular-app"...
+
+/workspace/src/app/profile/legacy-session.service.ts
+   9:13  warning  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  15:5   error    eval can be harmful                                no-eval
+  19:5   warning  Unexpected console statement                       no-console
+
+/workspace/src/app/disclosures/disclosure.component.ts
+  22:5   warning  Lifecycle interface 'OnChanges' should be implemented for method 'ngOnChanges'  @angular-eslint/use-lifecycle-interface
+
+✖ 4 problems (1 error, 3 warnings)
+
+Lint errors found in the listed files.

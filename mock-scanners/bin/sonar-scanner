@@ -1,0 +1,441 @@
+#!/usr/bin/env node
+'use strict';
+/*
+ * sonar-scanner - stand in for the SonarQube scanner CLI (sonar-scanner 4.8) used by the CSWT pipelines.
+ *
+ *   sonar-scanner [-Dsonar.projectBaseDir=DIR] [-Dsonar.qualitygate.wait=true] [-Dkey=value ...]
+ *
+ * Reads sonar-project.properties from the base dir exactly like the real scanner, then instead of
+ * uploading to sonar.meridian.internal it:
+ *
+ *   - counts lines of code and computes a handful of measures locally
+ *   - reads real coverage output if present (istanbul coverage-summary.json / lcov.info, JaCoCo xml)
+ *   - reads real lint output if present (eslint json, ng lint / eslint stylish text, checkstyle xml)
+ *   - applies a quality gate modelled on the "Meridian Way" gate on the server
+ *   - writes .sonar-reports/report.json, report.html, quality-gate.json (project_status shape, read by
+ *     the Jenkins shared library) and report-task.txt (the file the Jenkins Sonar plugin polls;
+ *     ceTaskUrl points at the internal server and will not resolve off the bank network)
+ *
+ * Exit codes follow the real scanner with sonar.qualitygate.wait=true: 0 gate passed, 1 gate failed,
+ * 2 usage / configuration problem.
+ *
+ * Owner: @meridian/platform-engineering. The gate thresholds are owned by the Engineering Standards
+ * forum and are changed on the server, not here; this file mirrors gate revision 7 (Feb 2024).
+ */
+
+const fs = require('fs');
+const path = require('path');
+const common = require('../lib/common');
+
+const VERSION = '4.8.1.3023-meridian';
+const SERVER_VERSION = '9.9.4 LTS';
+
+// "Meridian Way" quality gate, revision 7. Conditions on new code where the server has history;
+// we only see the whole project so they are applied overall with the relaxed "legacy" thresholds
+// the standards forum agreed for pre-2022 repositories.
+const GATE = {
+  name: 'Meridian Way',
+  revision: 7,
+  conditions: [
+    { metric: 'coverage', op: 'LT', threshold: 30, unit: '%' },
+    { metric: 'duplicated_lines_density', op: 'GT', threshold: 5, unit: '%' },
+    { metric: 'blocker_violations', op: 'GT', threshold: 0 },
+    { metric: 'critical_violations', op: 'GT', threshold: 0 },
+    { metric: 'security_hotspots_reviewed', op: 'LT', threshold: 100, unit: '%' },
+    { metric: 'reliability_rating', op: 'GT', threshold: 2, rating: true },
+    { metric: 'security_rating', op: 'GT', threshold: 1, rating: true },
+  ],
+};
+
+const RATING = ['A', 'B', 'C', 'D', 'E'];
+
+const SOURCE_EXT = /\.(ts|js|tsx|jsx|java|kt|groovy|py|html|scss|css|sh|go)$/;
+
+function usage(code) {
+  console.error('usage: sonar-scanner [-Dsonar.projectBaseDir=DIR] [-Dsonar.<key>=<value> ...] [-X]');
+  process.exit(code);
+}
+
+function parseProps(argv) {
+  const props = {};
+  let debug = false;
+  argv.forEach((a) => {
+    if (a === '-X' || a === '--debug') { debug = true; return; }
+    if (a === '-h' || a === '--help') usage(0);
+    const m = /^-D([^=]+)=(.*)$/.exec(a);
+    if (!m) { console.error('sonar-scanner: unrecognised argument ' + a); usage(2); }
+    props[m[1]] = m[2];
+  });
+  return { props, debug };
+}
+
+function splitList(v) {
+  return (v || '').split(',').map((s) => s.trim()).filter(Boolean);
+}
+
+function countSources(baseDir, props) {
+  const sources = splitList(props['sonar.sources'] || 'src');
+  const testInclusions = splitList(props['sonar.test.inclusions']).map(common.globToRegExp);
+  const exclusions = splitList(props['sonar.exclusions']).map(common.globToRegExp);
+  const byLang = {};
+  let ncloc = 0;
+  let files = 0;
+  let commentLines = 0;
+  let testFiles = 0;
+  const functionsPerFile = [];
+  const duplicateHashes = new Map();
+  let duplicatedBlocks = 0;
+  let duplicatedLines = 0;
+
+  sources.forEach((src) => {
+    const root = path.resolve(baseDir, src);
+    if (!fs.existsSync(root)) return;
+    common.walk(root, {}).forEach((f) => {
+      const rel = path.relative(baseDir, f.full).split(path.sep).join('/');
+      if (!SOURCE_EXT.test(rel)) return;
+      if (exclusions.some((re) => re.test(rel))) return;
+      if (testInclusions.some((re) => re.test(rel)) || /\.(spec|test)\.[jt]sx?$|Test\.java$|_test\.py$/.test(rel)) {
+        testFiles++;
+        return;
+      }
+      const text = fs.readFileSync(f.full, 'utf8');
+      const lines = text.split(/\r?\n/);
+      let fileNcloc = 0;
+      let fns = 0;
+      const windows = [];
+      lines.forEach((l) => {
+        const t = l.trim();
+        if (!t) return;
+        if (/^(\/\/|\*|\/\*|#|<!--)/.test(t)) { commentLines++; return; }
+        fileNcloc++;
+        if (/\b(function|=>|public|private|protected|def )\b/.test(t) && /[({]/.test(t)) fns++;
+        windows.push(t);
+      });
+      // crude duplication: identical 6 line windows of non trivial code across the project
+      for (let i = 0; i + 6 <= windows.length; i++) {
+        const w = windows.slice(i, i + 6);
+        if (w.join('').length < 120) continue;
+        const h = common.sha1(w.join('\n'));
+        const seen = duplicateHashes.get(h);
+        if (seen && seen !== rel) { duplicatedBlocks++; duplicatedLines += 6; }
+        else duplicateHashes.set(h, rel);
+      }
+      ncloc += fileNcloc;
+      files++;
+      functionsPerFile.push(fns);
+      const lang = path.extname(rel).slice(1);
+      byLang[lang] = (byLang[lang] || 0) + fileNcloc;
+    });
+  });
+
+  return { ncloc, files, testFiles, commentLines, byLang, duplicatedBlocks, duplicatedLines, functions: functionsPerFile.reduce((a, b) => a + b, 0) };
+}
+
+function readCoverage(baseDir, props) {
+  const candidates = [];
+  splitList(props['sonar.javascript.lcov.reportPaths']).forEach((p) => candidates.push({ type: 'lcov', file: path.resolve(baseDir, p) }));
+  splitList(props['sonar.coverage.jacoco.xmlReportPaths']).forEach((p) => candidates.push({ type: 'jacoco', file: path.resolve(baseDir, p) }));
+  candidates.push({ type: 'istanbul-summary', file: path.resolve(baseDir, 'coverage', 'coverage-summary.json') });
+  candidates.push({ type: 'lcov', file: path.resolve(baseDir, 'coverage', 'lcov.info') });
+  candidates.push({ type: 'jacoco', file: path.resolve(baseDir, 'target', 'site', 'jacoco', 'jacoco.xml') });
+  // Angular CLI workspaces put coverage under coverage/<project>/
+  const covRoot = path.resolve(baseDir, 'coverage');
+  if (fs.existsSync(covRoot)) {
+    fs.readdirSync(covRoot).forEach((d) => {
+      candidates.push({ type: 'istanbul-summary', file: path.join(covRoot, d, 'coverage-summary.json') });
+      candidates.push({ type: 'lcov', file: path.join(covRoot, d, 'lcov.info') });
+    });
+  }
+
+  for (const c of candidates) {
+    const text = common.readIfExists(c.file);
+    if (text === null) continue;
+    const rel = path.relative(baseDir, c.file);
+    if (c.type === 'istanbul-summary') {
+      try {
+        const j = JSON.parse(text);
+        const t = j.total || {};
+        return { source: rel, format: 'istanbul', lines: t.lines && t.lines.pct, branches: t.branches && t.branches.pct, statements: t.statements && t.statements.pct, functions: t.functions && t.functions.pct };
+      } catch (e) { continue; }
+    }
+    if (c.type === 'lcov') {
+      let lf = 0, lh = 0, brf = 0, brh = 0;
+      text.split(/\r?\n/).forEach((l) => {
+        const m = /^(LF|LH|BRF|BRH):(\d+)/.exec(l);
+        if (!m) return;
+        const n = Number(m[2]);
+        if (m[1] === 'LF') lf += n; else if (m[1] === 'LH') lh += n; else if (m[1] === 'BRF') brf += n; else brh += n;
+      });
+      if (lf === 0) continue;
+      return { source: rel, format: 'lcov', lines: common.round(lh / lf * 100), branches: brf ? common.round(brh / brf * 100) : null };
+    }
+    if (c.type === 'jacoco') {
+      // last top-level counters win (they are the report totals)
+      const lineCounter = [...text.matchAll(/<counter type="LINE" missed="(\d+)" covered="(\d+)"\/>/g)].pop();
+      const branchCounter = [...text.matchAll(/<counter type="BRANCH" missed="(\d+)" covered="(\d+)"\/>/g)].pop();
+      if (!lineCounter) continue;
+      const missed = Number(lineCounter[1]), covered = Number(lineCounter[2]);
+      return {
+        source: rel, format: 'jacoco',
+        lines: common.round(covered / (missed + covered) * 100),
+        branches: branchCounter ? common.round(Number(branchCounter[2]) / (Number(branchCounter[1]) + Number(branchCounter[2])) * 100) : null,
+      };
+    }
+  }
+  return null;
+}
+
+// Maps lint rule ids onto Sonar-ish issue types and severities. Anything not listed is a MINOR code smell.
+const RULE_MAP = {
+  'no-eval': { type: 'VULNERABILITY', severity: 'CRITICAL', sonarKey: 'javascript:S1523' },
+  'no-implied-eval': { type: 'VULNERABILITY', severity: 'CRITICAL', sonarKey: 'javascript:S1523' },
+  'no-debugger': { type: 'BUG', severity: 'BLOCKER', sonarKey: 'javascript:S1525' },
+  'no-console': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'javascript:S106' },
+  'no-unused-vars': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'javascript:S1481' },
+  '@typescript-eslint/no-unused-vars': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'typescript:S1481' },
+  '@typescript-eslint/no-explicit-any': { type: 'CODE_SMELL', severity: 'MAJOR', sonarKey: 'typescript:S4204' },
+  'no-prototype-builtins': { type: 'BUG', severity: 'MAJOR', sonarKey: 'javascript:S2424' },
+  'eqeqeq': { type: 'BUG', severity: 'MAJOR', sonarKey: 'javascript:S1440' },
+  '@angular-eslint/template/no-any': { type: 'CODE_SMELL', severity: 'MAJOR', sonarKey: 'typescript:S4204' },
+  '@angular-eslint/no-host-metadata-property': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'typescript:S6666' },
+  '@angular-eslint/use-lifecycle-interface': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'typescript:S6667' },
+  'rxjs/no-ignored-subscription': { type: 'BUG', severity: 'MAJOR', sonarKey: 'typescript:S6471' },
+  'MissingJavadocMethodCheck': { type: 'CODE_SMELL', severity: 'INFO', sonarKey: 'java:S1176' },
+  'LineLengthCheck': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'java:S103' },
+  'MagicNumberCheck': { type: 'CODE_SMELL', severity: 'MINOR', sonarKey: 'java:S109' },
+  'EmptyCatchBlockCheck': { type: 'BUG', severity: 'MAJOR', sonarKey: 'java:S2486' },
+};
+
+function classify(ruleId, level) {
+  const base = ruleId.split('.').pop();
+  const mapped = RULE_MAP[ruleId] || RULE_MAP[base];
+  if (mapped) return mapped;
+  return { type: 'CODE_SMELL', severity: level === 'error' ? 'MAJOR' : 'MINOR', sonarKey: 'external:' + ruleId };
+}
+
+function readLint(baseDir, props) {
+  const candidates = [];
+  splitList(props['sonar.eslint.reportPaths']).forEach((p) => candidates.push(path.resolve(baseDir, p)));
+  splitList(props['sonar.java.checkstyle.reportPaths']).forEach((p) => candidates.push(path.resolve(baseDir, p)));
+  ['eslint-report.json', 'lint-report.json', 'lint.log', 'lint.txt', 'reports/eslint.json', 'target/checkstyle-result.xml'].forEach((p) => candidates.push(path.resolve(baseDir, p)));
+
+  const issues = [];
+  let source = null;
+  for (const file of candidates) {
+    const text = common.readIfExists(file);
+    if (text === null) continue;
+    source = path.relative(baseDir, file);
+    if (file.endsWith('.json')) {
+      try {
+        JSON.parse(text).forEach((f) => (f.messages || []).forEach((m) => {
+          if (!m.ruleId) return;
+          const c = classify(m.ruleId, m.severity === 2 ? 'error' : 'warning');
+          issues.push({ file: path.relative(baseDir, f.filePath).split(path.sep).join('/'), line: m.line, rule: c.sonarKey, externalRule: m.ruleId, type: c.type, severity: c.severity, message: m.message });
+        }));
+      } catch (e) { continue; }
+    } else if (file.endsWith('.xml')) {
+      let current = null;
+      text.split(/\r?\n/).forEach((l) => {
+        const fm = /<file name="([^"]+)"/.exec(l);
+        if (fm) { current = fm[1]; return; }
+        const em = /<error line="(\d+)"(?: column="\d+")? severity="(\w+)" message="([^"]*)" source="([^"]+)"/.exec(l);
+        if (em && current) {
+          const c = classify(em[4], em[2]);
+          issues.push({ file: current.split(path.sep).join('/'), line: Number(em[1]), rule: c.sonarKey, externalRule: em[4].split('.').pop(), type: c.type, severity: c.severity, message: em[3] });
+        }
+      });
+    } else {
+      // eslint "stylish" text output as produced by ng lint
+      let current = null;
+      text.split(/\r?\n/).forEach((l) => {
+        if (/^\S.*\.(ts|js|html|tsx|jsx)$/.test(l.trim()) && !/^[>✖]/.test(l.trim())) { current = l.trim(); return; }
+        const m = /^\s+(\d+):(\d+)\s+(error|warning)\s+(.+?)\s{2,}(\S+)\s*$/.exec(l);
+        if (m && current) {
+          const c = classify(m[5], m[3]);
+          let rel = current;
+          const idx = rel.indexOf('/src/');
+          if (idx >= 0) rel = rel.slice(idx + 1);
+          issues.push({ file: rel, line: Number(m[1]), rule: c.sonarKey, externalRule: m[5], type: c.type, severity: c.severity, message: m[4] });
+        }
+      });
+    }
+    break;
+  }
+  issues.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line || a.rule.localeCompare(b.rule));
+  return { source, issues };
+}
+
+function rating(counts, kind) {
+  // Sonar rating scale: A no issues, B minor, C major, D critical, E blocker
+  const sev = counts[kind] || {};
+  if (sev.BLOCKER) return 5;
+  if (sev.CRITICAL) return 4;
+  if (sev.MAJOR) return 3;
+  if (sev.MINOR) return 2;
+  return 1;
+}
+
+function evaluateGate(measures) {
+  const conditions = GATE.conditions.map((c) => {
+    const actual = measures[c.metric];
+    let status = 'OK';
+    if (actual === null || actual === undefined) status = 'NO_VALUE';
+    else if (c.op === 'LT' && actual < c.threshold) status = 'ERROR';
+    else if (c.op === 'GT' && actual > c.threshold) status = 'ERROR';
+    return { metric: c.metric, comparator: c.op, errorThreshold: String(c.threshold), actualValue: actual === null || actual === undefined ? null : String(actual), status };
+  });
+  const failed = conditions.filter((c) => c.status === 'ERROR');
+  return { name: GATE.name, revision: GATE.revision, status: failed.length ? 'ERROR' : 'OK', conditions };
+}
+
+function renderHtml(report) {
+  const e = common.escapeHtml;
+  const m = report.measures;
+  const cond = report.qualityGate.conditions.map((c) => `<tr class="${c.status.toLowerCase()}"><td>${e(c.metric)}</td><td>${e(c.comparator)} ${e(c.errorThreshold)}</td><td>${c.actualValue === null ? '-' : e(c.actualValue)}</td><td>${e(c.status)}</td></tr>`).join('');
+  const issues = report.issues.slice(0, 500).map((i) => `<tr><td>${e(i.severity)}</td><td>${e(i.type)}</td><td><code>${e(i.rule)}</code></td><td><code>${e(i.file)}:${i.line}</code></td><td>${e(i.message)}</td></tr>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>SonarQube - ${e(report.projectKey)}</title>
+<style>body{font:14px/1.4 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:24px;color:#1b1b1b}h1{font-size:20px;margin:0}h2{font-size:16px;margin:24px 0 8px}
+.meta{color:#555;font-size:12px}.cards{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}.card{border:1px solid #ddd;border-radius:4px;padding:10px 14px;min-width:120px}.card b{display:block;font-size:22px}
+table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border-bottom:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f4f4f4}
+.ok td:last-child{color:#2e7d32;font-weight:600}.error td:last-child{color:#c62828;font-weight:600}.gate{font-size:18px;font-weight:600;margin-top:12px}.gate.ERROR{color:#c62828}.gate.OK{color:#2e7d32}</style></head><body>
+<h1>${e(report.projectName)}</h1>
+<div class="meta">${e(report.projectKey)} &middot; version ${e(report.projectVersion)} &middot; analysed ${e(report.analysedAt)} &middot; server ${e(report.serverUrl)} (${e(SERVER_VERSION)}) &middot; scanner ${e(VERSION)}</div>
+<div class="gate ${e(report.qualityGate.status)}">Quality gate: ${report.qualityGate.status === 'OK' ? 'Passed' : 'Failed'} (${e(report.qualityGate.name)} rev ${report.qualityGate.revision})</div>
+<div class="cards">
+ <div class="card">Lines of code<b>${m.ncloc}</b></div>
+ <div class="card">Coverage<b>${m.coverage === null ? '-' : m.coverage + '%'}</b><span class="meta">${e(report.coverage ? report.coverage.source : 'no report found')}</span></div>
+ <div class="card">Duplications<b>${m.duplicated_lines_density}%</b></div>
+ <div class="card">Bugs<b>${m.bugs}</b>${RATING[m.reliability_rating - 1]}</div>
+ <div class="card">Vulnerabilities<b>${m.vulnerabilities}</b>${RATING[m.security_rating - 1]}</div>
+ <div class="card">Code smells<b>${m.code_smells}</b>${RATING[m.sqale_rating - 1]}</div>
+ <div class="card">Security hotspots<b>${m.security_hotspots}</b>${m.security_hotspots_reviewed}% reviewed</div>
+</div>
+<h2>Quality gate conditions</h2>
+<table><thead><tr><th>Metric</th><th>Condition</th><th>Value</th><th>Status</th></tr></thead><tbody>${cond}</tbody></table>
+<h2>Issues (${report.issues.length}, from ${e(report.lint ? report.lint.source : 'no lint report')})</h2>
+<table><thead><tr><th>Severity</th><th>Type</th><th>Rule</th><th>Location</th><th>Message</th></tr></thead><tbody>${issues || '<tr><td colspan="5">No lint report found. Run the lint stage before the scanner so issues are imported.</td></tr>'}</tbody></table>
+<p class="meta">Local analysis. On the bank network the same properties file uploads to ${e(report.serverUrl)} and the gate is evaluated by the server against new code.</p>
+</body></html>
+`;
+}
+
+function main() {
+  const started = Date.now();
+  const { props: cli, debug } = parseProps(process.argv.slice(2));
+  const baseDir = path.resolve(cli['sonar.projectBaseDir'] || process.cwd());
+  const propsFile = path.join(baseDir, 'sonar-project.properties');
+  const fileProps = common.parseProperties(common.readIfExists(propsFile) || '');
+  const props = Object.assign({}, fileProps, cli);
+  if (!props['sonar.projectKey']) {
+    console.error('ERROR: You must define the following mandatory properties for \'Unknown\': sonar.projectKey');
+    console.error('ERROR: (no sonar-project.properties in ' + baseDir + ')');
+    process.exit(2);
+  }
+
+  const outDir = path.resolve(baseDir, props['sonar.working.directory'] || '.sonar-reports');
+  const sources = countSources(baseDir, props);
+  const coverage = readCoverage(baseDir, props);
+  const lint = readLint(baseDir, props);
+
+  const counts = { BUG: {}, VULNERABILITY: {}, CODE_SMELL: {} };
+  const hotspots = [];
+  lint.issues.forEach((i) => {
+    counts[i.type][i.severity] = (counts[i.type][i.severity] || 0) + 1;
+    if (i.type === 'VULNERABILITY') hotspots.push(i);
+  });
+  const total = (t) => Object.values(counts[t]).reduce((a, b) => a + b, 0);
+  const blockers = ['BUG', 'VULNERABILITY', 'CODE_SMELL'].reduce((a, t) => a + (counts[t].BLOCKER || 0), 0);
+  const criticals = ['BUG', 'VULNERABILITY', 'CODE_SMELL'].reduce((a, t) => a + (counts[t].CRITICAL || 0), 0);
+
+  const measures = {
+    ncloc: sources.ncloc,
+    files: sources.files,
+    test_files: sources.testFiles,
+    comment_lines: sources.commentLines,
+    functions: sources.functions,
+    ncloc_language_distribution: Object.keys(sources.byLang).sort().map((k) => k + '=' + sources.byLang[k]).join(';'),
+    coverage: coverage ? (coverage.lines === undefined ? null : coverage.lines) : null,
+    branch_coverage: coverage ? coverage.branches : null,
+    duplicated_blocks: sources.duplicatedBlocks,
+    duplicated_lines: sources.duplicatedLines,
+    duplicated_lines_density: sources.ncloc ? common.round(sources.duplicatedLines / sources.ncloc * 100) : 0,
+    bugs: total('BUG'),
+    vulnerabilities: total('VULNERABILITY'),
+    code_smells: total('CODE_SMELL'),
+    security_hotspots: hotspots.length,
+    security_hotspots_reviewed: hotspots.length ? 0 : 100,
+    blocker_violations: blockers,
+    critical_violations: criticals,
+    reliability_rating: rating(counts, 'BUG'),
+    security_rating: rating(counts, 'VULNERABILITY'),
+    sqale_rating: rating(counts, 'CODE_SMELL'),
+    sqale_index: lint.issues.length * 7, // minutes, roughly what the server's default remediation model gives
+  };
+
+  const qualityGate = evaluateGate(measures);
+  const serverUrl = props['sonar.host.url'] || 'https://sonar.meridian.internal';
+  const analysisId = common.stableId('AY', props['sonar.projectKey'] + '|' + measures.ncloc + '|' + lint.issues.length + '|' + measures.coverage);
+
+  const report = {
+    scanner: 'sonar-scanner ' + VERSION,
+    serverUrl,
+    serverVersion: SERVER_VERSION,
+    projectKey: props['sonar.projectKey'],
+    projectName: props['sonar.projectName'] || props['sonar.projectKey'],
+    projectVersion: props['sonar.projectVersion'] || 'not provided',
+    branch: props['sonar.branch.name'] || process.env.BRANCH_NAME || null,
+    analysedAt: common.timestamp(),
+    analysisId,
+    baseDir: path.relative(process.cwd(), baseDir) || '.',
+    durationMs: 0,
+    coverage,
+    lint: lint.source ? { source: lint.source, issueCount: lint.issues.length } : null,
+    measures,
+    qualityGate,
+    issues: lint.issues,
+  };
+  report.durationMs = common.elapsed(started);
+
+  common.ensureDir(outDir);
+  common.writeJson(path.join(outDir, 'report.json'), report);
+  fs.writeFileSync(path.join(outDir, 'report.html'), renderHtml(report));
+  // Shape of GET /api/qualitygates/project_status, which is what the Jenkins library reads.
+  common.writeJson(path.join(outDir, 'quality-gate.json'), {
+    status: qualityGate.status,
+    projectStatus: { status: qualityGate.status, conditions: qualityGate.conditions, ignoredConditions: false },
+    analysisId,
+    gate: qualityGate.name + ' rev ' + qualityGate.revision,
+  });
+  fs.writeFileSync(path.join(outDir, 'report-task.txt'), [
+    'projectKey=' + report.projectKey,
+    'serverUrl=' + serverUrl,
+    'serverVersion=' + SERVER_VERSION,
+    'dashboardUrl=' + serverUrl + '/dashboard?id=' + encodeURIComponent(report.projectKey),
+    'ceTaskId=' + analysisId,
+    'ceTaskUrl=' + serverUrl + '/api/ce/task?id=' + analysisId,
+    'qualityGateStatus=' + qualityGate.status,
+    '',
+  ].join('\n'));
+
+  const log = (l) => console.log('INFO: ' + l);
+  log('Scanner configuration file: ' + (fs.existsSync(propsFile) ? path.relative(process.cwd(), propsFile) : 'NONE'));
+  log('SonarScanner ' + VERSION);
+  log('Analyzing on SonarQube server ' + SERVER_VERSION + ' (' + serverUrl + ', local mode)');
+  log('Project key: ' + report.projectKey);
+  log('Base dir: ' + baseDir);
+  if (debug) log('Properties: ' + JSON.stringify(props));
+  log(sources.files + ' source files, ' + sources.testFiles + ' test files indexed; ' + measures.ncloc + ' lines of code');
+  log(coverage ? 'Coverage imported from ' + coverage.source + ' (' + coverage.format + '): ' + measures.coverage + '% lines' : 'No coverage report found; coverage will be reported as 0% by the server. Set sonar.javascript.lcov.reportPaths or sonar.coverage.jacoco.xmlReportPaths.');
+  log(lint.source ? lint.issues.length + ' external issues imported from ' + lint.source : 'No lint report found; no external issues imported');
+  log('Bugs ' + measures.bugs + ', Vulnerabilities ' + measures.vulnerabilities + ', Code smells ' + measures.code_smells + ', Duplication ' + measures.duplicated_lines_density + '%');
+  log('Analysis report generated in ' + report.durationMs + 'ms, dir ' + path.relative(process.cwd(), outDir));
+  log('ANALYSIS SUCCESSFUL, you can find the results at: ' + serverUrl + '/dashboard?id=' + encodeURIComponent(report.projectKey));
+  log('QUALITY GATE STATUS: ' + (qualityGate.status === 'OK' ? 'PASSED' : 'FAILED') + ' - View details on ' + serverUrl + '/dashboard?id=' + encodeURIComponent(report.projectKey));
+  qualityGate.conditions.filter((c) => c.status === 'ERROR').forEach((c) => log('  ' + c.metric + ' ' + c.actualValue + ' (threshold ' + c.comparator + ' ' + c.errorThreshold + ')'));
+
+  const wait = String(props['sonar.qualitygate.wait'] || 'false') === 'true';
+  process.exit(wait && qualityGate.status !== 'OK' ? 1 : 0);
+}
+
+main();
