@@ -1,0 +1,19 @@
+apiVersion: v2
+name: iris-orchestrator
+description: iris-orchestrator (NestJS/Express on Node 18) for OpenShift.
+type: application
+version: 2.8.2
+appVersion: "2024.09.4"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/PLAT/repos/platform-services
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: conversational
+    email: conversational@example.com
+annotations:
+  meridian.bank/ticket-key: IRIS
+  meridian.bank/pipeline: meridianNodePipeline
+  meridian.bank/compliance-critical: "false"

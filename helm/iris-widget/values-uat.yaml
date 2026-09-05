@@ -1,0 +1,23 @@
+# uat: cswt-uat. Mirrors prod topology at half the scale. Test data only, see
+# DATA_CLASSIFICATION.md in the app repo before pointing anything real at it.
+environment: uat
+replicaCount: 2
+route:
+  host: iris-widget-uat.apps.ocp-uat.meridian.internal
+env:
+  environment: uat
+  apiBaseUrl: https://iris-orchestrator-uat.apps.ocp-uat.meridian.internal/api/v1
+  idpIssuer: ""
+  lanternCollectorUrl: https://lantern-collector-uat.apps.ocp-uat.meridian.internal/v1/events
+  lanternSiteKey: CHANGEME-lantern-site-key-uat
+  featureFlagsUrl: https://semaphore-uat.apps.ocp-uat.meridian.internal/api/flags
+  sessionTimeoutMinutes: 15
+nginx:
+  extraCspConnectSrc:
+    - https://iris-orchestrator-uat.apps.ocp-uat.meridian.internal
+    - https://lantern-collector-uat.apps.ocp-uat.meridian.internal
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 3

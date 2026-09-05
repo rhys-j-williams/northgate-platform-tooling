@@ -1,0 +1,12 @@
+environment: uat
+replicaCount: 2
+route:
+  enabled: false
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-uat
+    - cswt-uat-tools
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4

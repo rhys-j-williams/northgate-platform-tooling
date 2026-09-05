@@ -1,0 +1,19 @@
+apiVersion: v2
+name: entitlements-service
+description: entitlements-service (Spring Boot, JDK 17) for OpenShift.
+type: application
+version: 2.9.0
+appVersion: "4.1.0"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/PLAT/repos/platform-services
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: identity-platform
+    email: identity-platform@example.com
+annotations:
+  meridian.bank/ticket-key: ENT
+  meridian.bank/pipeline: meridianJavaPipeline
+  meridian.bank/compliance-critical: "false"

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "txn-posting-service.fullname" . }}
+  labels:
+    {{- include "txn-posting-service.labels" . | nindent 4 }}
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: {{ include "txn-posting-service.fullname" . }}-tls
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "txn-posting-service.selectorLabels" . | nindent 4 }}

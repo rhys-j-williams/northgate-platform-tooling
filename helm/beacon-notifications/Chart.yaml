@@ -1,0 +1,19 @@
+apiVersion: v2
+name: beacon-notifications
+description: beacon-notifications (Spring Boot, JDK 11) for OpenShift.
+type: application
+version: 2.31.1
+appVersion: "2.14.3"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/PLAT/repos/platform-services
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: alerts-platform
+    email: alerts-platform@example.com
+annotations:
+  meridian.bank/ticket-key: BCN
+  meridian.bank/pipeline: meridianJavaPipeline
+  meridian.bank/compliance-critical: "false"

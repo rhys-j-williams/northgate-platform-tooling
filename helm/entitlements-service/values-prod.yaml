@@ -1,0 +1,23 @@
+# prod, CAB required for every change.
+environment: prod
+replicaCount: 3
+route:
+  enabled: false
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2
+    memory: 1536Mi
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-prod
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 60
+podDisruptionBudget:
+  # maxUnavailable would be the better knob here but the platform linter wants minAvailable (TOOL-1291).
+  minAvailable: "50%"

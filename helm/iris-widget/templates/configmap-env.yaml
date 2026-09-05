@@ -1,0 +1,20 @@
+# env.json is the only runtime configuration an Angular app gets. Everything else is compiled
+# in. Changing this ConfigMap does not restart the pods; the checksum annotation on the
+# Deployment handles that.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "iris-widget.fullname" . }}-env
+  labels:
+    {{- include "iris-widget.labels" . | nindent 4 }}
+data:
+  env.json: |
+    {{- $env := deepCopy .Values.env }}
+    {{- $_ := set $env "buildInfo" (printf "%s+%s" (.Values.image.tag | default .Chart.AppVersion) (.Release.Revision | toString)) }}
+    {{- range $k, $v := $env }}
+    {{- if kindIs "string" $v }}
+    {{- $_ := set $env $k (tpl $v $) }}
+    {{- end }}
+    {{- end }}
+    {{- $env | toPrettyJson | nindent 4 }}
+  csp-connect-src: {{ printf "%s %s" .Values.nginx.cspConnectSrc (join " " .Values.nginx.extraCspConnectSrc) | trim | quote }}

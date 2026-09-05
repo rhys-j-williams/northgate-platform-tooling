@@ -1,0 +1,19 @@
+apiVersion: v2
+name: bedrock-adapter
+description: bedrock-adapter (Spring Boot, JDK 11) for OpenShift.
+type: application
+version: 2.38.2
+appVersion: "5.7.12"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/PLAT/repos/platform-services
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: core-integration
+    email: core-integration@example.com
+annotations:
+  meridian.bank/ticket-key: BRK
+  meridian.bank/pipeline: meridianJavaPipeline
+  meridian.bank/compliance-critical: "false"

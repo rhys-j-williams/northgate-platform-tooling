@@ -1,0 +1,25 @@
+# dev: shared developer namespace cswt-dev, one replica, no autoscaling, verbose everything.
+environment: dev
+replicaCount: 1
+image:
+  pullPolicy: Always
+route:
+  host: business-web-dev.apps.ocp-dev.meridian.internal
+env:
+  environment: dev
+  apiBaseUrl: https://bff-business-dev.apps.ocp-dev.meridian.internal/api/v1
+  idpIssuer: https://keystone-dev.apps.ocp-dev.meridian.internal/realms/meridian
+  lanternCollectorUrl: https://lantern-collector-dev.apps.ocp-dev.meridian.internal/v1/events
+  lanternSiteKey: CHANGEME-lantern-site-key-dev
+  featureFlagsUrl: https://semaphore-dev.apps.ocp-dev.meridian.internal/api/flags
+  sessionTimeoutMinutes: 60
+nginx:
+  extraCspConnectSrc:
+    - https://bff-business-dev.apps.ocp-dev.meridian.internal
+    - https://lantern-collector-dev.apps.ocp-dev.meridian.internal
+    - https://keystone-dev.apps.ocp-dev.meridian.internal
+podDisruptionBudget:
+  enabled: false
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-dev-tools

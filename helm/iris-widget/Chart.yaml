@@ -1,0 +1,19 @@
+apiVersion: v2
+name: iris-widget
+description: Iris assistant widget (embedded). Static Angular bundle served by unprivileged nginx on OpenShift.
+type: application
+version: 1.7.0
+appVersion: "2024.09.4"
+kubeVersion: ">=1.24.0-0"
+home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+sources:
+  - https://bitbucket.meridian.internal/projects/CSWT/repos/iris-widget
+maintainers:
+  - name: Platform Engineering
+    email: platform-engineering@example.com
+  - name: conversational
+    email: conversational@example.com
+annotations:
+  meridian.bank/ticket-key: IRIS
+  meridian.bank/pipeline: meridianNodePipeline
+  meridian.bank/node-version: "16.20.2"

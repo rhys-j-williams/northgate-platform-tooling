@@ -1,0 +1,37 @@
+# prod: cswt-prod. Changes here go through CAB (governance/CAB_TEMPLATE.md) and the release
+# calendar. Do not edit on a freeze day, the pipeline will refuse anyway.
+environment: prod
+replicaCount: 3
+route:
+  host: login.meridiantrust.example.com
+  timeout: 20s
+  annotations:
+    # Prod ingress is fronted by the WAF; the router only sees the WAF's egress range.
+    haproxy.router.openshift.io/ip_whitelist: 10.140.8.0/22 10.140.12.0/22
+env:
+  environment: prod
+  apiBaseUrl: ""
+  idpIssuer: https://login.meridiantrust.example.com/realms/meridian
+  lanternCollectorUrl: https://lantern.meridiantrust.example.com/v1/events
+  lanternSiteKey: CHANGEME-lantern-site-key-prod
+  featureFlagsUrl: https://flags.meridiantrust.example.com/api/flags
+  sessionTimeoutMinutes: 10
+nginx:
+  extraCspConnectSrc:
+    - https://flags.meridiantrust.example.com
+    - https://lantern.meridiantrust.example.com
+    - https://login.meridiantrust.example.com
+resources:
+  requests:
+    cpu: 100m
+    memory: 96Mi
+  limits:
+    cpu: 500m
+    memory: 192Mi
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 60
+podDisruptionBudget:
+  minAvailable: "50%"

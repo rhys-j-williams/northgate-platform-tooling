@@ -1,0 +1,15 @@
+environment: dev
+replicaCount: 1
+image:
+  pullPolicy: Always
+route:
+  enabled: false
+env:
+  SPRING_PROFILES_ACTIVE: openshift,dev
+  SPRING_FLYWAY_CLEAN_DISABLED: "false"
+podDisruptionBudget:
+  enabled: false
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-dev
+    - cswt-dev-tools

@@ -1,0 +1,109 @@
+# Default values for retail-web. Environment files override these; do not put environment specific
+# hosts in here, the dev/uat/prod split exists for a reason (TOOL-982).
+environment: dev
+partOf: meridian-online
+
+cmdb:
+  appId: "APP-10442"
+  owner: retail-digital
+  dataClassification: internal
+
+replicaCount: 2
+
+image:
+  registry: artifactory.meridian.internal/docker-cswt-local
+  repository: retail-web
+  # Left empty so appVersion is used. The pipeline passes --set image.tag=<build> anyway.
+  tag: ""
+  pullPolicy: IfNotPresent
+imagePullSecrets:
+  - name: artifactory-pull
+
+containerPort: 8080
+
+service:
+  port: 8080
+
+route:
+  enabled: true
+  host: ""
+  path: ""
+  timeout: 30s
+  tls:
+    termination: edge
+  annotations: {}
+
+# Rendered to /opt/app-root/src/env.json and read by the app at bootstrap. Keys must match
+# src/assets/env.json in the application repository; the app does not validate them.
+env:
+  environment: dev
+  apiBaseUrl: "https://retail-web-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/api"
+  idpIssuer: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian
+  idpClientId: retail-web
+  lanternCollectorUrl: https://lantern-collector-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/v1/events
+  lanternSiteKey: CHANGEME-lantern-site-key
+  splunkHecUrl: ""
+  featureFlagsUrl: https://semaphore-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/api/flags
+  defaultLocale: en-US
+  supportedLocales: [en-US, es]
+  sessionTimeoutMinutes: 15
+  buildInfo: ""
+
+# nginx.conf is baked into the image (platform-tooling/docker/nginx). Only the CSP connect-src
+# list is templated because it differs per environment.
+nginx:
+  cspConnectSrc: "'self'"
+  extraCspConnectSrc: []
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 0
+  scaleDownStabilizationSeconds: 300
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+  maxUnavailable: ""
+
+networkPolicy:
+  enabled: true
+  allowFromNamespaces: []
+  egress: []
+  egressCidrs: []
+
+podAnnotations:
+  # Static content, nothing to scrape. Kept so the platform linter does not complain (TOOL-1291).
+  prometheus.io/scrape: "false"
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: retail-web

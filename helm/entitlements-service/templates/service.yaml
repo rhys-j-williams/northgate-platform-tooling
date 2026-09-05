@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "entitlements-service.fullname" . }}
+  labels:
+    {{- include "entitlements-service.labels" . | nindent 4 }}
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: {{ include "entitlements-service.fullname" . }}-tls
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "entitlements-service.selectorLabels" . | nindent 4 }}

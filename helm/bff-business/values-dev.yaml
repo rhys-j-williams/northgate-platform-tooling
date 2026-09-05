@@ -1,0 +1,15 @@
+environment: dev
+replicaCount: 1
+image:
+  pullPolicy: Always
+route:
+  host: bff-business-dev.apps.ocp-dev.meridian.internal
+env:
+  LOG_LEVEL: debug
+  LOG_SAMPLING: "off"
+podDisruptionBudget:
+  enabled: false
+networkPolicy:
+  allowFromNamespaces:
+    - cswt-dev
+    - cswt-dev-tools
