@@ -1,0 +1,8 @@
+build/
+.cx-reports/
+.sonar-reports/
+.xray-reports/
+.helm-out/
+.terraform/
+*.tfstate*
+.terraform.lock.hcl
