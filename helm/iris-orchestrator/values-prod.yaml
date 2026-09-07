@@ -2,7 +2,7 @@
 environment: prod
 replicaCount: 4
 route:
-  host: api.meridiantrust.example.com
+  host: api.northgatetrust.example.com
   path: /orchestrator
   timeout: 15s
 resources:

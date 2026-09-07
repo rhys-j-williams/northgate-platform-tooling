@@ -9,7 +9,7 @@ cmdb:
 replicaCount: 2
 
 image:
-  registry: artifactory.meridian.internal/docker-cswt-local
+  registry: artifactory.northgate.internal/docker-cswt-local
   repository: platform-services/bff-business
   tag: ""
   pullPolicy: IfNotPresent
@@ -44,8 +44,8 @@ env:
   NODE_OPTIONS: --max-old-space-size=384
   LOG_FORMAT: json
   REDIS_URL: redis://redis.cswt-shared.svc.cluster.local:6379/0
-  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/services/collector
-  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian/protocol/openid-connect/certs
+  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/services/collector
+  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/realms/northgate/protocol/openid-connect/certs
   FEATURE_FLAGS_URL: http://semaphore.cswt-shared.svc.cluster.local:8080/api/flags
 
 vault:

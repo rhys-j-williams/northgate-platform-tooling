@@ -15,12 +15,12 @@ ARG NGINX_TAG=1-30
 
 # ---- stage 1: build --------------------------------------------------------------------------
 # Pulled through Artifactory (docker-remote). The internal registry mirror is the only one the
-# build agents can reach. Locally, replace the prefix or log in to artifactory.meridian.internal.
-FROM artifactory.meridian.internal/docker-remote/library/node:${NODE_VERSION}-bullseye-slim AS build
+# build agents can reach. Locally, replace the prefix or log in to artifactory.northgate.internal.
+FROM artifactory.northgate.internal/docker-remote/library/node:${NODE_VERSION}-bullseye-slim AS build
 
 ARG APP
 ARG BUILD_CONFIG=production
-ARG NPM_REGISTRY=https://artifactory.meridian.internal/artifactory/api/npm/npm-virtual/
+ARG NPM_REGISTRY=https://artifactory.northgate.internal/artifactory/api/npm/npm-virtual/
 ENV CI=true \
     NG_CLI_ANALYTICS=false \
     NODE_OPTIONS=--max-old-space-size=4096
@@ -51,19 +51,19 @@ RUN npx ng build --configuration "${BUILD_CONFIG}" && \
 # ---- stage 2: runtime ------------------------------------------------------------------------
 # Unprivileged, uid 1001, listens on 8080. Red Hat's image, pulled through the Artifactory mirror
 # of registry.access.redhat.com. GIS-STD-021 forbids docker.io/nginx.
-FROM artifactory.meridian.internal/docker-redhat-remote/ubi9/nginx-124:${NGINX_TAG} AS runtime
+FROM artifactory.northgate.internal/docker-redhat-remote/ubi9/nginx-124:${NGINX_TAG} AS runtime
 
 ARG APP
 ARG BUILD_TAG=local
 ARG GIT_SHA=unknown
 
 LABEL org.opencontainers.image.title="${APP}" \
-      org.opencontainers.image.vendor="Meridian Trust Bank, CSWT" \
+      org.opencontainers.image.vendor="Northgate Trust Bank, CSWT" \
       org.opencontainers.image.revision="${GIT_SHA}" \
       org.opencontainers.image.version="${BUILD_TAG}" \
-      meridian.bank/app="${APP}" \
-      meridian.bank/base-image="ubi9/nginx-124" \
-      meridian.bank/scan-policy="GIS-STD-021"
+      northgate.bank/app="${APP}" \
+      northgate.bank/base-image="ubi9/nginx-124" \
+      northgate.bank/scan-policy="GIS-STD-021"
 
 USER 0
 COPY platform-tooling/docker/nginx/nginx.conf /etc/nginx/nginx.conf

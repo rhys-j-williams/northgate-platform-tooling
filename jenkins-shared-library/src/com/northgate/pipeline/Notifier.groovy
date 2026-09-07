@@ -1,7 +1,7 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 /**
- * Notification payload builder. Pure so it can be tested; the sending is in vars/meridianNotify.
+ * Notification payload builder. Pure so it can be tested; the sending is in vars/northgateNotify.
  */
 class Notifier implements Serializable {
 

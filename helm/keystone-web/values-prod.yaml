@@ -3,7 +3,7 @@
 environment: prod
 replicaCount: 3
 route:
-  host: login.meridiantrust.example.com
+  host: login.northgatetrust.example.com
   timeout: 20s
   annotations:
     # Prod ingress is fronted by the WAF; the router only sees the WAF's egress range.
@@ -11,16 +11,16 @@ route:
 env:
   environment: prod
   apiBaseUrl: ""
-  idpIssuer: https://login.meridiantrust.example.com/realms/meridian
-  lanternCollectorUrl: https://lantern.meridiantrust.example.com/v1/events
+  idpIssuer: https://login.northgatetrust.example.com/realms/northgate
+  lanternCollectorUrl: https://lantern.northgatetrust.example.com/v1/events
   lanternSiteKey: CHANGEME-lantern-site-key-prod
-  featureFlagsUrl: https://flags.meridiantrust.example.com/api/flags
+  featureFlagsUrl: https://flags.northgatetrust.example.com/api/flags
   sessionTimeoutMinutes: 10
 nginx:
   extraCspConnectSrc:
-    - https://flags.meridiantrust.example.com
-    - https://lantern.meridiantrust.example.com
-    - https://login.meridiantrust.example.com
+    - https://flags.northgatetrust.example.com
+    - https://lantern.northgatetrust.example.com
+    - https://login.northgatetrust.example.com
 resources:
   requests:
     cpu: 100m

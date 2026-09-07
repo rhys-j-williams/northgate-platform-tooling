@@ -1,4 +1,4 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 import groovy.test.GroovyTestCase
 
@@ -50,7 +50,7 @@ class QualityGateSpec extends GroovyTestCase {
 
     void testJacocoParsingUsesReportLevelCounter() {
         String xml = '''<report name="beacon-notifications">
-          <package name="com/meridian/beacon"><counter type="LINE" missed="10" covered="90"/></package>
+          <package name="com/northgate/beacon"><counter type="LINE" missed="10" covered="90"/></package>
           <counter type="INSTRUCTION" missed="500" covered="200"/>
           <counter type="LINE" missed="750" covered="250"/>
         </report>'''

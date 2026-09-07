@@ -11,7 +11,7 @@ cmdb:
 replicaCount: 2
 
 image:
-  registry: artifactory.meridian.internal/docker-cswt-local
+  registry: artifactory.northgate.internal/docker-cswt-local
   repository: canopy-showcase
   # Left empty so appVersion is used. The pipeline passes --set image.tag=<build> anyway.
   tag: ""
@@ -40,10 +40,10 @@ env:
   apiBaseUrl: ""
   idpIssuer: ""
   idpClientId: ""
-  lanternCollectorUrl: https://lantern-collector-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/v1/events
+  lanternCollectorUrl: https://lantern-collector-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/v1/events
   lanternSiteKey: CHANGEME-lantern-site-key
   splunkHecUrl: ""
-  featureFlagsUrl: https://semaphore-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/api/flags
+  featureFlagsUrl: https://semaphore-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/api/flags
   defaultLocale: en-US
   supportedLocales: [en-US]
   sessionTimeoutMinutes: 15

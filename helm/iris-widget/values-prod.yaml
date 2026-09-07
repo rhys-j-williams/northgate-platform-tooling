@@ -3,23 +3,23 @@
 environment: prod
 replicaCount: 3
 route:
-  host: iris.meridiantrust.example.com
+  host: iris.northgatetrust.example.com
   timeout: 20s
   annotations:
     # Prod ingress is fronted by the WAF; the router only sees the WAF's egress range.
     haproxy.router.openshift.io/ip_whitelist: 10.140.8.0/22 10.140.12.0/22
 env:
   environment: prod
-  apiBaseUrl: https://iris.meridiantrust.example.com/orchestrator/v1
+  apiBaseUrl: https://iris.northgatetrust.example.com/orchestrator/v1
   idpIssuer: ""
-  lanternCollectorUrl: https://lantern.meridiantrust.example.com/v1/events
+  lanternCollectorUrl: https://lantern.northgatetrust.example.com/v1/events
   lanternSiteKey: CHANGEME-lantern-site-key-prod
-  featureFlagsUrl: https://flags.meridiantrust.example.com/api/flags
+  featureFlagsUrl: https://flags.northgatetrust.example.com/api/flags
   sessionTimeoutMinutes: 15
 nginx:
   extraCspConnectSrc:
-    - https://iris.meridiantrust.example.com
-    - https://lantern.meridiantrust.example.com
+    - https://iris.northgatetrust.example.com
+    - https://lantern.northgatetrust.example.com
 
 resources:
   requests:

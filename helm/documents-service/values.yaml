@@ -9,7 +9,7 @@ cmdb:
 replicaCount: 2
 
 image:
-  registry: artifactory.meridian.internal/docker-cswt-local
+  registry: artifactory.northgate.internal/docker-cswt-local
   repository: platform-services/documents-service
   tag: ""
   pullPolicy: IfNotPresent
@@ -43,8 +43,8 @@ env:
   NODE_ENV: production
   NODE_OPTIONS: --max-old-space-size=384
   LOG_FORMAT: json
-  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/services/collector
-  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian/protocol/openid-connect/certs
+  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/services/collector
+  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/realms/northgate/protocol/openid-connect/certs
   FEATURE_FLAGS_URL: http://semaphore.cswt-shared.svc.cluster.local:8080/api/flags
 
 vault:
@@ -106,7 +106,7 @@ persistence:
   enabled: true
   size: 20Gi
   storageClass: ocs-storagecluster-cephfs
-  mountPath: /var/lib/meridian/documents
+  mountPath: /var/lib/northgate/documents
 
 podAnnotations:
   prometheus.io/scrape: "true"

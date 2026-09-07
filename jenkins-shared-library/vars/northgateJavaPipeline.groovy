@@ -1,9 +1,9 @@
 #!/usr/bin/env groovy
 /*
- * meridianJavaPipeline - standard pipeline for Spring Boot services in platform-services.
+ * northgateJavaPipeline - standard pipeline for Spring Boot services in platform-services.
  *
- *   @Library('meridian-pipeline@v3') _
- *   meridianJavaPipeline(
+ *   @Library('northgate-pipeline@v3') _
+ *   northgateJavaPipeline(
  *     agentLabel:        'maven-jdk11-rhel8',
  *     appName:           'beacon-notifications',
  *     modulePath:        'beacon-notifications',
@@ -20,16 +20,16 @@
  *   - xray reads the Maven dependency tree instead of running npm audit
  *   - the container build uses the JDK base image from the Red Hat registry, not nginx
  *
- * Owner: @meridian/platform-engineering. Java 17 agents: TOOL-1034.
+ * Owner: @northgate/platform-engineering. Java 17 agents: TOOL-1034.
  */
 
-import com.meridian.pipeline.MeridianDefaults
-import com.meridian.pipeline.QualityGate
-import com.meridian.pipeline.ScannerReport
-import com.meridian.pipeline.AgentLabels
+import com.northgate.pipeline.NorthgateDefaults
+import com.northgate.pipeline.QualityGate
+import com.northgate.pipeline.ScannerReport
+import com.northgate.pipeline.AgentLabels
 
 def call(Map userConfig = [:]) {
-    Map config = MeridianDefaults.java() + userConfig
+    Map config = NorthgateDefaults.java() + userConfig
 
     AgentLabels.validate(config.agentLabel)
 
@@ -241,9 +241,9 @@ def call(Map userConfig = [:]) {
         }
 
         post {
-            success  { meridianNotify.success(config) }
-            unstable { meridianNotify.unstable(config) }
-            failure  { meridianNotify.failure(config) }
+            success  { northgateNotify.success(config) }
+            unstable { northgateNotify.unstable(config) }
+            failure  { northgateNotify.failure(config) }
             always   { cleanWs(deleteDirs: true, notFailBuild: true) }
         }
     }

@@ -24,7 +24,7 @@
  * Emits .xray-reports/report.json, report.html and violations.txt. Exit 0 when nothing at or above
  * --fail-on (default: high), 1 otherwise, 2 for usage errors. Deterministic without --online.
  *
- * Owner: @meridian/platform-engineering. Advisory mirror: @meridian/gis-appsec.
+ * Owner: @northgate/platform-engineering. Advisory mirror: @northgate/gis-appsec.
  */
 
 const fs = require('fs');
@@ -32,10 +32,10 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const common = require('../lib/common');
 
-const VERSION = '3.9.4-meridian';
+const VERSION = '3.9.4-northgate';
 const HERE = path.dirname(fs.realpathSync(__filename));
 const ADVISORIES = path.join(HERE, '..', 'rules', 'advisories.json');
-const WATCH = 'meridian-cswt-prod';
+const WATCH = 'northgate-cswt-prod';
 const POLICY = 'GIS-STD-021 dependency hygiene, rev 6';
 
 function usage(code) {
@@ -196,7 +196,7 @@ function match(deps, advisories, ecosystem) {
           fixedIn: a.fixedIn,
           dev: meta.dev,
           origin: 'advisory mirror',
-          policy: /^MERIDIAN-/.test(a.cve) ? 'lifecycle' : 'security',
+          policy: /^NORTHGATE-/.test(a.cve) ? 'lifecycle' : 'security',
         });
       });
     });
@@ -249,7 +249,7 @@ table{border-collapse:collapse;width:100%;margin-top:8px}th,td{border-bottom:1px
 ${report.warnings.length ? '<p class="meta">' + report.warnings.map(e).join('<br>') + '</p>' : ''}
 <h2>Violations</h2>
 <table><thead><tr><th>Severity</th><th>Component</th><th>Id</th><th>Summary</th><th>Fixed in</th><th>Type</th></tr></thead><tbody>${rows || '<tr><td colspan="6">No violations.</td></tr>'}</tbody></table>
-<p class="meta">Lifecycle entries (MERIDIAN-EOL-*) are not CVEs. They are GIS-STD-021 section 3 end of life rules and fail the gate at High like any other High. Waivers are recorded in the GIS exception register and applied on the Xray server, not here.</p>
+<p class="meta">Lifecycle entries (NORTHGATE-EOL-*) are not CVEs. They are GIS-STD-021 section 3 end of life rules and fail the gate at High like any other High. Waivers are recorded in the GIS exception register and applied on the Xray server, not here.</p>
 </body></html>
 `;
 }
@@ -361,7 +361,7 @@ function cmdAudit(args) {
   fs.writeFileSync(path.join(output, 'violations.txt'), findings.map((f) => [f.severity.toUpperCase().padEnd(8), f.id.padEnd(13), (f.package + '@' + f.version).padEnd(48), f.cve, f.fixedIn ? 'fix ' + f.fixedIn : 'no fix', f.title].join('  ')).join('\n') + '\n');
 
   if (!args.quiet) {
-    console.log('Xray ' + VERSION + ' (Meridian offline mirror ' + advisories.revision + (online ? ', plus npm audit' : '') + ')');
+    console.log('Xray ' + VERSION + ' (Northgate offline mirror ' + advisories.revision + (online ? ', plus npm audit' : '') + ')');
     console.log('Project ' + project + ' [' + ecosystem + '] watch ' + WATCH);
     console.log('Scanned ' + components + ' components from ' + sources.join(', ') + (runtime ? '; runtime ' + runtime.name + ' ' + runtime.version : '') + ' in ' + report.durationMs + ' ms');
     warnings.forEach((w) => console.log('WARN ' + w));

@@ -1,4 +1,4 @@
-package com.meridian.sample;
+package com.northgate.sample;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

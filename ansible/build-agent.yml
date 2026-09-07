@@ -41,7 +41,7 @@
   post_tasks:
     - name: Record baseline run
       ansible.builtin.copy:
-        dest: /etc/meridian/baseline-applied
+        dest: /etc/northgate/baseline-applied
         content: |
           applied={{ ansible_date_time.iso8601 }}
           label={{ jenkins_label }}

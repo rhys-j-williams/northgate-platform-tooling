@@ -16,9 +16,9 @@
  * the build log matches the one in the CAB minutes.
  */
 
-@Library('meridian-pipeline@v3') _
+@Library('northgate-pipeline@v3') _
 
-import com.meridian.pipeline.ReleaseGuard
+import com.northgate.pipeline.ReleaseGuard
 
 properties([
     parameters([
@@ -61,7 +61,7 @@ node(params.AGENT_LABEL) {
 
 // Everything below is the ordinary pipeline. The release specific bits are the two stages above
 // and the fact that TARGET_ENV may be prod, which the normal Jenkinsfile does not allow.
-meridianNodePipeline(
+northgateNodePipeline(
     agentLabel:        params.AGENT_LABEL,
     nodeVersion:       params.NODE_VERSION,
     coverageThreshold: params.COVERAGE_THRESHOLD as Integer,

@@ -1,7 +1,7 @@
 {
   "source": "Artifactory Xray vulnerability feed mirror, curated by GIS for the CSWT estate",
   "revision": "2024-11-18",
-  "note": "Offline snapshot. The real Xray instance consults the vendor feed and the NVD; this file carries the advisories that actually matter to the Meridian dependency tree so that a scan is deterministic and works on a build agent with no egress. Ranges use plain comparison operators, one range per entry. XRAY-* identifiers are the bank's internal tracking ids; the CVE column is the upstream reference.",
+  "note": "Offline snapshot. The real Xray instance consults the vendor feed and the NVD; this file carries the advisories that actually matter to the Northgate dependency tree so that a scan is deterministic and works on a build agent with no egress. Ranges use plain comparison operators, one range per entry. XRAY-* identifiers are the bank's internal tracking ids; the CVE column is the upstream reference.",
   "npm": [
     {
       "id": "XRAY-119231",
@@ -905,7 +905,7 @@
     },
     {
       "id": "XRAY-127300",
-      "cve": "MERIDIAN-EOL-NODE14",
+      "cve": "NORTHGATE-EOL-NODE14",
       "package": "node",
       "range": "<16.0.0",
       "severity": "High",
@@ -915,7 +915,7 @@
     },
     {
       "id": "XRAY-127310",
-      "cve": "MERIDIAN-EOL-NODE16",
+      "cve": "NORTHGATE-EOL-NODE16",
       "package": "node",
       "range": ">=16.0.0 <18.0.0",
       "severity": "Medium",
@@ -925,7 +925,7 @@
     },
     {
       "id": "XRAY-127400",
-      "cve": "MERIDIAN-EOL-ANGULAR",
+      "cve": "NORTHGATE-EOL-ANGULAR",
       "package": "@angular/core",
       "range": "<15.0.0",
       "severity": "High",
@@ -935,7 +935,7 @@
     },
     {
       "id": "XRAY-127401",
-      "cve": "MERIDIAN-EOL-ANGULAR",
+      "cve": "NORTHGATE-EOL-ANGULAR",
       "package": "@angular/core",
       "range": ">=15.0.0 <17.0.0",
       "severity": "Medium",
@@ -945,7 +945,7 @@
     },
     {
       "id": "XRAY-127500",
-      "cve": "MERIDIAN-EOL-RXJS",
+      "cve": "NORTHGATE-EOL-RXJS",
       "package": "rxjs",
       "range": "<7.0.0",
       "severity": "Low",
@@ -955,7 +955,7 @@
     },
     {
       "id": "XRAY-127600",
-      "cve": "MERIDIAN-EOL-TSLINT",
+      "cve": "NORTHGATE-EOL-TSLINT",
       "package": "tslint",
       "range": "<=6.1.3",
       "severity": "Low",
@@ -965,7 +965,7 @@
     },
     {
       "id": "XRAY-127700",
-      "cve": "MERIDIAN-EOL-MOMENT",
+      "cve": "NORTHGATE-EOL-MOMENT",
       "package": "moment",
       "range": "<=2.30.1",
       "severity": "Low",
@@ -975,7 +975,7 @@
     },
     {
       "id": "XRAY-127800",
-      "cve": "MERIDIAN-DEPRECATED-REQUEST",
+      "cve": "NORTHGATE-DEPRECATED-REQUEST",
       "package": "request",
       "range": "<=2.88.2",
       "severity": "Low",
@@ -985,7 +985,7 @@
     },
     {
       "id": "XRAY-127900",
-      "cve": "MERIDIAN-LICENSE-GPL",
+      "cve": "NORTHGATE-LICENSE-GPL",
       "package": "node-ipc",
       "range": ">=10.1.1 <10.1.3",
       "severity": "Critical",
@@ -1645,7 +1645,7 @@
     },
     {
       "id": "XRAY-134600",
-      "cve": "MERIDIAN-EOL-KARMA",
+      "cve": "NORTHGATE-EOL-KARMA",
       "package": "karma",
       "range": "<=6.4.4",
       "severity": "Low",
@@ -1655,7 +1655,7 @@
     },
     {
       "id": "XRAY-134700",
-      "cve": "MERIDIAN-EOL-PROTRACTOR",
+      "cve": "NORTHGATE-EOL-PROTRACTOR",
       "package": "protractor",
       "range": "<=7.0.0",
       "severity": "Medium",
@@ -1665,7 +1665,7 @@
     },
     {
       "id": "XRAY-134800",
-      "cve": "MERIDIAN-EOL-NGRX",
+      "cve": "NORTHGATE-EOL-NGRX",
       "package": "@ngrx/store",
       "range": "<15.0.0",
       "severity": "Low",
@@ -1675,7 +1675,7 @@
     },
     {
       "id": "XRAY-134900",
-      "cve": "MERIDIAN-EOL-TYPESCRIPT",
+      "cve": "NORTHGATE-EOL-TYPESCRIPT",
       "package": "typescript",
       "range": "<4.9.0",
       "severity": "Low",
@@ -1857,7 +1857,7 @@
     },
     {
       "id": "XRAY-140620",
-      "cve": "MERIDIAN-EOL-SPRINGBOOT2",
+      "cve": "NORTHGATE-EOL-SPRINGBOOT2",
       "package": "org.springframework.boot:spring-boot",
       "range": "<3.0.0",
       "severity": "High",
@@ -1867,7 +1867,7 @@
     },
     {
       "id": "XRAY-140621",
-      "cve": "MERIDIAN-EOL-SPRINGBOOT2",
+      "cve": "NORTHGATE-EOL-SPRINGBOOT2",
       "package": "org.springframework.boot:spring-boot-starter-web",
       "range": "<3.0.0",
       "severity": "High",
@@ -2237,7 +2237,7 @@
     },
     {
       "id": "XRAY-143800",
-      "cve": "MERIDIAN-EOL-JDK11",
+      "cve": "NORTHGATE-EOL-JDK11",
       "package": "jdk",
       "range": ">=11 <17",
       "severity": "Medium",

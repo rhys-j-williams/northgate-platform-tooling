@@ -9,7 +9,7 @@ cmdb:
 replicaCount: 2
 
 image:
-  registry: artifactory.meridian.internal/docker-cswt-local
+  registry: artifactory.northgate.internal/docker-cswt-local
   repository: platform-services/audit-trail-service
   tag: ""
   pullPolicy: IfNotPresent
@@ -45,11 +45,11 @@ env:
     -Dlog4j2.formatMsgNoLookups=true
   SPRING_PROFILES_ACTIVE: openshift
   MANAGEMENT_SERVER_PORT: "8081"
-  MERIDIAN_CORRELATION_HEADER: X-Meridian-Correlation-Id
+  NORTHGATE_CORRELATION_HEADER: X-Northgate-Correlation-Id
   KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka.cswt-shared.svc.cluster.local:9092
-  SPRING_DATASOURCE_URL: jdbc:db2://db2-{{ .Values.environment }}.core.meridian.internal:50000/AUDIT
-  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/services/collector
-  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian/protocol/openid-connect/certs
+  SPRING_DATASOURCE_URL: jdbc:db2://db2-{{ .Values.environment }}.core.northgate.internal:50000/AUDIT
+  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/services/collector
+  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/realms/northgate/protocol/openid-connect/certs
   FEATURE_FLAGS_URL: http://semaphore.cswt-shared.svc.cluster.local:8080/api/flags
 
 vault:

@@ -3,7 +3,7 @@
 # jobs (statements batch, exposure-calc nightly) and by developers running a service locally
 # against the dev Vault namespace.
 #
-#   VAULT_ADDR=https://vault.meridian.internal SERVICE=bff-retail NAMESPACE=cswt-dev \
+#   VAULT_ADDR=https://vault.northgate.internal SERVICE=bff-retail NAMESPACE=cswt-dev \
 #     vault agent -config=platform-tooling/vault/vault-agent.hcl
 #
 # Owner: GIS Secrets Management. Template changes go through a TOOL ticket with a GIS reviewer.
@@ -12,9 +12,9 @@
 pid_file = "/tmp/vault-agent.pid"
 
 vault {
-  address         = "https://vault.meridian.internal"
+  address         = "https://vault.northgate.internal"
   namespace       = "cswt"
-  ca_cert         = "/etc/pki/tls/certs/meridian-root-ca.pem"
+  ca_cert         = "/etc/pki/tls/certs/northgate-root-ca.pem"
   tls_skip_verify = false
   retry {
     num_retries = 5
