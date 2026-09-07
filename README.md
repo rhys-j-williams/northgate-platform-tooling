@@ -24,7 +24,7 @@ If you are here because you were told the agent label is out of support:
 | `vault/` | per-service policies, agent config, secret templates | GIS Secrets Management |
 | `registry/` | Artifactory configuration samples and inventory; local Verdaccio equivalent | Platform Eng |
 | `terraform/` | Beacon landing zone stub. No application code. | Platform Eng for the Beacon programme |
-| `governance/` | release calendar, CAB template, AI-assisted code policy, dependency policy | Release Mgmt / Platform Eng / Tech Risk |
+| `governance/` | release calendar, CAB template, AI-assisted code policy, dependency policy, supported software standard (GIS-STD-022) | Release Mgmt / Platform Eng / Tech Risk / GIS |
 | `docs/` | ADRs, runbooks, PR templates | |
 
 ## How the pieces connect

@@ -120,8 +120,8 @@ a line that should not.
 From the repository root:
 
 ```
-platform-tooling/mock-scanners/bin/cx scan --config canopy-ui/checkmarx.yml --source canopy-ui
-platform-tooling/mock-scanners/bin/sonar-scanner -Dsonar.projectBaseDir=canopy-ui
+platform-tooling/mock-scanners/bin/cx scan --config retail-web/checkmarx.yml --source retail-web
+platform-tooling/mock-scanners/bin/sonar-scanner -Dsonar.projectBaseDir=retail-web
 platform-tooling/mock-scanners/bin/xray audit --dir platform-services/libs/ts/domain-fixtures
 ```
 

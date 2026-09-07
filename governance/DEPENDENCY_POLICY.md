@@ -72,7 +72,8 @@ DOM outside the framework).
   (`MERIDIAN-EOL-*` in the Xray mirror). It does not block the build by itself but it appears in
   the CAB record section 5 and the CAB has started asking. Node 14 and Angular 14 are the
   well-known cases; see the estate roadmap. This document does not require the upgrade. It
-  requires that the risk is visible.
+  requires that the risk is visible. Whether the deployable may keep running on it is GIS-STD-022
+  (`FRAMEWORK_SUPPORT_STANDARD.md`), which does set a ceiling.
 
 ## 5. Exceptions
 
