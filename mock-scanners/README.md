@@ -7,7 +7,7 @@ Local, offline, deterministic stand-ins for the three security tools every CSWT 
 the Checkmarx CLI (`cx`), the SonarQube scanner (`sonar-scanner`) and the Xray dependency audit
 (`xray`). The Jenkins shared library calls whatever is at `MERIDIAN_SCANNER_BIN` (default
 `/opt/meridian/scanners/bin`). On the bank network that mount holds the vendor CLIs. Everywhere
-else (developer laptops, the demo environment, the DR rehearsal cluster) the agent image sets it to
+else (developer laptops, kind clusters, the DR rehearsal cluster) the agent image sets it to
 a checkout of `platform-tooling/mock-scanners/bin` and gets these. Nobody should need to
 change a `Jenkinsfile` to move between the two; if you do, that is a TOOL bug.
 
@@ -21,7 +21,7 @@ build, and the findings they raise are real findings in the code, not canned one
 
 Node 14 or later, nothing else. `lib/common.js` has no dependencies on purpose; the agents
 running `nodejs14-rhel7` cannot install anything from the public registry and the internal
-registry mirror is not reachable from the demo boxes. Do not add a `package.json` here.
+registry mirror is not reachable from the DR rehearsal cluster. Do not add a `package.json` here.
 
 Everything is deterministic: identifiers are SHA-1 of the finding's location and rule, ordering
 is fixed, timestamps come from `SOURCE_DATE_EPOCH` when it is set (the Jenkins library sets it to
@@ -100,7 +100,7 @@ Boot 2, JDK 11 and friends) mixed in and reported at the severity GIS assigned t
 target is read from `.nvmrc`, `engines.node` or the pom's compiler target and audited the same way.
 
 `--online` additionally runs `npm audit --json` and merges its output. On the bank network
-Artifactory proxies the audit endpoint so this works; on a demo box it usually does not, and the
+Artifactory proxies the audit endpoint so this works; off the VLAN it usually does not, and the
 scanner says so and carries on. Determinism only holds offline.
 
 Default gate: any Critical or High fails. Waivers are applied on the Xray server against the

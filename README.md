@@ -65,5 +65,4 @@ ansible-playbook -i ansible/inventory/build-agents.ini ansible/build-agent.yml -
 ```
 
 Ticket history for this directory starts at TOOL-1 (2020-11, "stand up Jenkins shared library")
-and the interesting parts are in `git log`. The build log for the demo estate build is in
-`_demo-notes/build/logs/platform-tooling.md`.
+and the interesting parts are in `git log`.

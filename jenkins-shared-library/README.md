@@ -20,7 +20,7 @@ Controller: `jenkins.meridian.internal`, Jenkins LTS **2.440.3** (upgraded from 
 TOOL-1102, February 2026; the plugin freeze from that upgrade is still in place, ask before you
 request a plugin). The library is registered globally under **Manage Jenkins > System > Global
 Pipeline Libraries** as `meridian-pipeline`, source `ssh://git@bitbucket.meridian.internal:7999/tool/jenkins-shared-library.git`
-in the bank, and this directory in the demo estate. Implicit load is **off**. Default version is
+on the build VLAN, and this directory when running the pipeline locally. Implicit load is **off**. Default version is
 `v3`, which is a branch, not a tag; `v3` moves. Pin a tag (`v3.14.0`) in your Jenkinsfile if you
 need reproducibility for an audit build, and expect to be asked why at the architecture forum.
 
@@ -101,7 +101,7 @@ Cluster URLs, registry hosts and credential ids are deliberately not overridable
 ### Scanners
 
 On a real agent the scanners are the vendor CLIs at `/opt/meridian/scanners/bin`. The library
-finds them through `MERIDIAN_SCANNER_BIN`. In the demo estate that variable points at
+finds them through `MERIDIAN_SCANNER_BIN`. Off the build VLAN that variable points at
 `platform-tooling/mock-scanners/bin`, which has command line compatible emulations that read the
 same `checkmarx.yml` and `sonar-project.properties` and write the same report shapes. The quality
 gates cannot tell the difference, which is the point.
@@ -165,8 +165,8 @@ Read the first `[gate]` line in the console. Then:
   code" period is 30 days, so this catches up with you.
 - Build hangs on `Install` for a Node 14 job — the RHEL 7 agent has 2 CPUs and npm 6. It is slow.
   It is not hung. Twenty minutes is normal. See the `nodejs14-rhel7` paragraph above, again.
-- `TS2304: Cannot find name 'Disposable'` — your `@types/node` floated. Pin it to `16.18.11`.
-  BUILD_LOG.md at the workspace root explains why.
+- `TS2304: Cannot find name 'Disposable'` — your `@types/node` floated. Pin it to `16.18.11`
+  (TOOL-1201).
 
 ## Known issues
 
