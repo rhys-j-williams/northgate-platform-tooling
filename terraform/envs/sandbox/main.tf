@@ -25,7 +25,7 @@ provider "aws" {
   }
   default_tags {
     tags = {
-      "meridian:repo" = "meridian-cswt-estate/platform-tooling/terraform"
+      "meridian:repo" = "meridian-platform-tooling/terraform"
     }
   }
 }
