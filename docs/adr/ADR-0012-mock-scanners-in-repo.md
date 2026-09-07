@@ -1,4 +1,4 @@
-# ADR-0012: Scanner CLIs are emulated in-repo for local and demo builds
+# ADR-0012: Scanner CLIs are emulated in-repo for local builds
 
 Status: Accepted, 2023-04-03. Owners: Platform Engineering with GIS AppSec. Ticket TOOL-1301.
 
@@ -6,8 +6,8 @@ Status: Accepted, 2023-04-03. Owners: Platform Engineering with GIS AppSec. Tick
 
 The Checkmarx, SonarQube and Xray services are reachable only from the build VLAN. Engineers could
 not reproduce a failed quality gate locally, and the shared library's gate logic had no tests
-because it needed a live scanner. Separately, the estate demonstration environment needs the
-pipeline to run end to end on a laptop.
+because it needed a live scanner. Separately, the DR rehearsal cluster and developer laptops need
+the pipeline to run end to end without the build VLAN.
 
 ## Decision
 

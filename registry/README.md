@@ -9,7 +9,7 @@ and `governance/DEPENDENCY_POLICY.md` is why.
 - `repositories.json` — inventory of the Artifactory repositories the estate uses, with the notes
   that are not in Artifactory itself (why Confluent is there, why the npm cache is 365 days, which
   repo audit reads).
-- `npmrc.local.sample`, `settings.local.xml`, `verdaccio/` — the demo estate's local stand-ins.
+- `npmrc.local.sample`, `settings.local.xml`, `verdaccio/` — local stand-ins for working off the VLAN.
   Verdaccio on `:4873` (PORTS.md) replaces `npm-virtual`; Maven goes to Central directly because
   nobody wanted to run Nexus on a laptop.
 

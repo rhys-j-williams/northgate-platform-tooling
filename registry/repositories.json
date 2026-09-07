@@ -147,7 +147,7 @@
     }
   ],
   "local": {
-    "$comment": "Demo estate equivalents. Verdaccio on the port from PORTS.md stands in for npm-virtual; there is no local Maven or Docker proxy.",
+    "$comment": "Local development equivalents. Verdaccio on the port from PORTS.md stands in for npm-virtual; there is no local Maven or Docker proxy.",
     "npm": {
       "url": "http://localhost:4873/",
       "implementation": "verdaccio",

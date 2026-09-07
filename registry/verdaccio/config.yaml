@@ -1,4 +1,4 @@
-# Verdaccio config for the demo estate. Stands in for Artifactory npm-virtual (see
+# Verdaccio config for local development. Stands in for Artifactory npm-virtual (see
 # ../repositories.json "local"). Port 4873 is allocated in PORTS.md; do not change it here.
 #
 #   npx verdaccio@5.29.2 --config platform-tooling/registry/verdaccio/config.yaml
