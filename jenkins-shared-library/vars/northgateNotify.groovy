@@ -8,10 +8,10 @@
  * there is one place to change.
  */
 
-import com.meridian.pipeline.Notifier
+import com.northgate.pipeline.Notifier
 
 def stageStarted(String stageName) {
-    echo "[meridian] stage ${stageName} started at ${new Date().format('HH:mm:ss')}"
+    echo "[northgate] stage ${stageName} started at ${new Date().format('HH:mm:ss')}"
 }
 
 def success(Map config) {
@@ -32,12 +32,12 @@ def failure(Map config) {
 
 private void send(Map config, Map payload) {
     if (!config.notifyChannel) {
-        echo '[meridian] no notifyChannel configured, skipping notification'
+        echo '[northgate] no notifyChannel configured, skipping notification'
         return
     }
     withCredentials([string(credentialsId: config.notifyWebhookCredentialsId, variable: 'WEBHOOK')]) {
         writeJSON file: '.notify-payload.json', json: payload + [channel: config.notifyChannel]
-        sh 'curl -sS -f -X POST -H "Content-Type: application/json" --data @.notify-payload.json "$WEBHOOK" || echo "[meridian] notification failed, not failing the build"'
+        sh 'curl -sS -f -X POST -H "Content-Type: application/json" --data @.notify-payload.json "$WEBHOOK" || echo "[northgate] notification failed, not failing the build"'
         sh 'rm -f .notify-payload.json'
     }
 }

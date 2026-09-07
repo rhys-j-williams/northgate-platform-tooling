@@ -1,19 +1,19 @@
 apiVersion: v2
 name: retail-web
-description: Meridian Online (retail internet banking). Static Angular bundle served by unprivileged nginx on OpenShift.
+description: Northgate Online (retail internet banking). Static Angular bundle served by unprivileged nginx on OpenShift.
 type: application
 version: 1.18.0
 appVersion: "2024.11.2"
 kubeVersion: ">=1.24.0-0"
-home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+home: https://confluence.northgate.internal/display/PLAT/Helm+charts
 sources:
-  - https://bitbucket.meridian.internal/projects/CSWT/repos/retail-web
+  - https://bitbucket.northgate.internal/projects/CSWT/repos/retail-web
 maintainers:
   - name: Platform Engineering
     email: platform-engineering@example.com
   - name: retail-digital
     email: retail-digital@example.com
 annotations:
-  meridian.bank/ticket-key: MOL
-  meridian.bank/pipeline: meridianNodePipeline
-  meridian.bank/node-version: "16.20.2"
+  northgate.bank/ticket-key: MOL
+  northgate.bank/pipeline: northgateNodePipeline
+  northgate.bank/node-version: "16.20.2"

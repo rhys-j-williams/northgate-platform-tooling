@@ -24,7 +24,7 @@ application receives. The CSP `connect-src` list is templated from values becaus
 environment; the rest of `nginx.conf` is baked into the image.
 
 Back end charts render the same `env` map twice: as individual ConfigMap keys consumed through
-`envFrom`, and as `env.json` mounted at `/etc/meridian/env.json` for the Node services that read a
+`envFrom`, and as `env.json` mounted at `/etc/northgate/env.json` for the Node services that read a
 file. Secrets are never in values. Vault Agent renders them to `/vault/secrets/*.env` and the
 container sources them before exec'ing the image entrypoint. See `../vault/README.md`.
 
@@ -41,7 +41,7 @@ the cluster team (OCP-2201), not by these charts.
 
 ## Conventions and gotchas
 
-- `meridian.bank/app-id` must match the CMDB record. The CMDB feed reads that label and nothing
+- `northgate.bank/app-id` must match the CMDB record. The CMDB feed reads that label and nothing
   else (CMDB-4410). If a chart has the wrong id the service disappears from the DR inventory.
 - `readOnlyRootFilesystem: true` on the nginx charts needs the three emptyDir mounts in the
   Deployment. Removing one breaks the pod on start with a confusing permission error (OCP-3318).

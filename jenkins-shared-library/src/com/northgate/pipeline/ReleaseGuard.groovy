@@ -1,4 +1,4 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 import java.time.LocalDate
 import java.time.ZoneId

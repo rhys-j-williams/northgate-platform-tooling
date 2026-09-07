@@ -4,10 +4,10 @@
 terraform {
   required_version = ">= 1.5.0, < 2.0.0"
   backend "s3" {
-    bucket         = "CHANGEME-meridian-tfstate-beacon-sbx"
+    bucket         = "CHANGEME-northgate-tfstate-beacon-sbx"
     key            = "platform-tooling/notifications-lambda/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "CHANGEME-meridian-tfstate-lock"
+    dynamodb_table = "CHANGEME-northgate-tfstate-lock"
     encrypt        = true
   }
   required_providers {
@@ -25,7 +25,7 @@ provider "aws" {
   }
   default_tags {
     tags = {
-      "meridian:repo" = "meridian-platform-tooling/terraform"
+      "northgate:repo" = "northgate-platform-tooling/terraform"
     }
   }
 }
@@ -35,7 +35,7 @@ module "notifications_target" {
   environment = "sbx"
   name        = "mtb-sbx-beacon-notifications-target"
   tags = {
-    "meridian:ticket" = "BCN-201"
+    "northgate:ticket" = "BCN-201"
   }
 }
 

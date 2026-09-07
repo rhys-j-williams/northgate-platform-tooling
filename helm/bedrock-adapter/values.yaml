@@ -9,7 +9,7 @@ cmdb:
 replicaCount: 2
 
 image:
-  registry: artifactory.meridian.internal/docker-cswt-local
+  registry: artifactory.northgate.internal/docker-cswt-local
   repository: platform-services/bedrock-adapter
   tag: ""
   pullPolicy: IfNotPresent
@@ -45,12 +45,12 @@ env:
     -Dlog4j2.formatMsgNoLookups=true
   SPRING_PROFILES_ACTIVE: openshift
   MANAGEMENT_SERVER_PORT: "8081"
-  MERIDIAN_CORRELATION_HEADER: X-Meridian-Correlation-Id
-  IBM_MQ_QUEUE_MANAGER: QM.MERIDIAN.01
-  IBM_MQ_CHANNEL: MERIDIAN.SVRCONN
-  IBM_MQ_CONN_NAME: mq-{{ .Values.environment }}.core.meridian.internal(1414)
-  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/services/collector
-  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian/protocol/openid-connect/certs
+  NORTHGATE_CORRELATION_HEADER: X-Northgate-Correlation-Id
+  IBM_MQ_QUEUE_MANAGER: QM.NORTHGATE.01
+  IBM_MQ_CHANNEL: NORTHGATE.SVRCONN
+  IBM_MQ_CONN_NAME: mq-{{ .Values.environment }}.core.northgate.internal(1414)
+  SPLUNK_HEC_URL: https://splunk-hec-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/services/collector
+  KEYSTONE_JWKS_URL: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/realms/northgate/protocol/openid-connect/certs
   FEATURE_FLAGS_URL: http://semaphore.cswt-shared.svc.cluster.local:8080/api/flags
 
 vault:

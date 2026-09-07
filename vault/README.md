@@ -8,7 +8,7 @@ anything under `policies/` needs a GIS reviewer and, for prod, a CAB record (see
 ## Vault is the source of truth
 
 HashiCorp Vault Enterprise (1.15.x, the `cswt` namespace on the shared enterprise cluster at
-`vault.meridian.internal`) is the system of record for every application secret in CSWT. This is
+`vault.northgate.internal`) is the system of record for every application secret in CSWT. This is
 bank standard GIS-STD-030, not a team preference. Consequences:
 
 - Nothing is created directly in a cloud secrets manager, a Kubernetes Secret, a Jenkins

@@ -9,7 +9,7 @@
     log_forwarder_hec_token_effective: >-
       {{ lookup('community.hashi_vault.hashi_vault',
                 log_forwarder_hec_token_vault_path ~ ':token',
-                url=lookup('env', 'VAULT_ADDR') | default('https://vault.meridian.internal', true),
+                url=lookup('env', 'VAULT_ADDR') | default('https://vault.northgate.internal', true),
                 errors='ignore')
          | default(log_forwarder_hec_token, true) }}
   no_log: true

@@ -17,17 +17,17 @@
 
   <servers>
     <server>
-      <id>meridian-maven-virtual</id>
+      <id>northgate-maven-virtual</id>
       <username>CHANGEME-artifactory-username</username>
       <password>{CHANGEME-artifactory-encrypted-token}</password>
     </server>
     <server>
-      <id>meridian-maven-cswt-local</id>
+      <id>northgate-maven-cswt-local</id>
       <username>CHANGEME-artifactory-username</username>
       <password>{CHANGEME-artifactory-encrypted-token}</password>
     </server>
     <server>
-      <id>meridian-maven-snapshots-local</id>
+      <id>northgate-maven-snapshots-local</id>
       <username>CHANGEME-artifactory-username</username>
       <password>{CHANGEME-artifactory-encrypted-token}</password>
     </server>
@@ -35,36 +35,36 @@
 
   <mirrors>
     <mirror>
-      <id>meridian-maven-virtual</id>
+      <id>northgate-maven-virtual</id>
       <name>Artifactory maven-virtual (all external and internal)</name>
-      <url>https://artifactory.meridian.internal/artifactory/maven-virtual</url>
+      <url>https://artifactory.northgate.internal/artifactory/maven-virtual</url>
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
 
   <profiles>
     <profile>
-      <id>meridian</id>
+      <id>northgate</id>
       <repositories>
         <repository>
-          <id>meridian-maven-virtual</id>
-          <url>https://artifactory.meridian.internal/artifactory/maven-virtual</url>
+          <id>northgate-maven-virtual</id>
+          <url>https://artifactory.northgate.internal/artifactory/maven-virtual</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled><updatePolicy>always</updatePolicy></snapshots>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>meridian-maven-virtual</id>
-          <url>https://artifactory.meridian.internal/artifactory/maven-virtual</url>
+          <id>northgate-maven-virtual</id>
+          <url>https://artifactory.northgate.internal/artifactory/maven-virtual</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
       </pluginRepositories>
       <properties>
         <!-- distributionManagement ids in the parent poms -->
-        <meridian.releases.repo>https://artifactory.meridian.internal/artifactory/maven-cswt-local</meridian.releases.repo>
-        <meridian.snapshots.repo>https://artifactory.meridian.internal/artifactory/maven-snapshots-local</meridian.snapshots.repo>
+        <northgate.releases.repo>https://artifactory.northgate.internal/artifactory/maven-cswt-local</northgate.releases.repo>
+        <northgate.snapshots.repo>https://artifactory.northgate.internal/artifactory/maven-snapshots-local</northgate.snapshots.repo>
         <!-- JDK 11 line still needs this or the TLS handshake to Artifactory fails on RHEL 8 agents (TOOL-1207) -->
         <https.protocols>TLSv1.2,TLSv1.3</https.protocols>
       </properties>
@@ -72,6 +72,6 @@
   </profiles>
 
   <activeProfiles>
-    <activeProfile>meridian</activeProfile>
+    <activeProfile>northgate</activeProfile>
   </activeProfiles>
 </settings>

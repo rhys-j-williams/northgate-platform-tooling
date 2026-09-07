@@ -6,7 +6,7 @@ nginx_tls_protocols: "TLSv1.2 TLSv1.3"
 nginx_tls_ciphers: "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256"
 nginx_hsts_max_age: 31536000
 nginx_csp: "default-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
-nginx_artifact_cache_root: /var/cache/meridian/artifacts
+nginx_artifact_cache_root: /var/cache/northgate/artifacts
 nginx_security_headers:
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

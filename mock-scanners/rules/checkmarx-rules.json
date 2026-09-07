@@ -1,7 +1,7 @@
 {
-  "preset": "Meridian-High-And-Medium",
+  "preset": "Northgate-High-And-Medium",
   "revision": 41,
-  "owner": "@meridian/gis-appsec",
+  "owner": "@northgate/gis-appsec",
   "note": "Rule set maintained by GIS application security. Changes go through GIS-STD-014 change control; the ruleset revision is quoted in every Checkmarx report. Patterns are JavaScript regular expressions applied per line. A rule with commentedSeverity fires at that lower severity when the match is inside a comment, because a commented out strict-ssl=false is still a strict-ssl=false waiting to happen.",
   "rules": [
     {
@@ -145,7 +145,7 @@
       "pattern": "Access-Control-Allow-Origin['\"]?\\s*[:,]\\s*['\"]\\*['\"]|@CrossOrigin\\s*(\\(\\s*\\)|\\(\\s*origins?\\s*=\\s*\"\\*\"|\\(\\s*\"\\*\")|origin\\s*:\\s*['\"]\\*['\"]|allowedOrigins\\s*\\(\\s*\"\\*\"|add_header\\s+Access-Control-Allow-Origin\\s+\\*",
       "files": "\\.(ts|js|java|py|conf|yml|yaml)$",
       "description": "A wildcard CORS origin on an authenticated API.",
-      "remediation": "List the Meridian origins explicitly; the BFF only serves the front ends in PORTS.md and their production hostnames."
+      "remediation": "List the Northgate origins explicitly; the BFF only serves the front ends in PORTS.md and their production hostnames."
     },
     {
       "id": "CX-WEB-002",
@@ -200,11 +200,11 @@
       "severity": "Low",
       "cwe": "CWE-829",
       "category": "Inclusion of Functionality from Untrusted Control Sphere",
-      "pattern": "^\\s*FROM\\s+(?!registry\\.access\\.redhat\\.com|registry\\.redhat\\.io|registry\\.meridian\\.internal|artifactory\\.meridian\\.internal|\\$\\{?[A-Z_]+)[a-z0-9./-]+(:latest)?\\s*(AS\\s+\\w+)?\\s*$",
+      "pattern": "^\\s*FROM\\s+(?!registry\\.access\\.redhat\\.com|registry\\.redhat\\.io|registry\\.northgate\\.internal|artifactory\\.northgate\\.internal|\\$\\{?[A-Z_]+)[a-z0-9./-]+(:latest)?\\s*(AS\\s+\\w+)?\\s*$",
       "flags": "i",
       "files": "(^|/)Dockerfile(\\.[a-z]+)?$|(^|/)Containerfile$",
       "description": "Base image pulled from outside the approved Red Hat and internal registries, or with the latest tag. DEPENDENCY_POLICY.md section 3.",
-      "remediation": "Pull through registry.meridian.internal/redhat-proxy or use the UBI images."
+      "remediation": "Pull through registry.northgate.internal/redhat-proxy or use the UBI images."
     },
     {
       "id": "CX-GEN-002",

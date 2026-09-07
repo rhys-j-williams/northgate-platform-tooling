@@ -15,7 +15,7 @@ cat > .npmrc <<NPMRC
 registry=${NPM_CONFIG_REGISTRY}
 //${registry_host}:_auth=$(printf '%s:%s' "${NPM_USER}" "${NPM_TOKEN}" | base64 -w0)
 //${registry_host}:always-auth=true
-@meridian:registry=${NPM_CONFIG_REGISTRY}
+@northgate:registry=${NPM_CONFIG_REGISTRY}
 fund=false
 audit=false
 NPMRC

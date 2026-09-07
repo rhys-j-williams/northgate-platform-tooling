@@ -13,14 +13,14 @@
  * (0 clean, 1 findings over threshold, 2 usage error), deterministic scan ids, sub second on a
  * front end repository.
  *
- * Owner of the CLI: @meridian/platform-engineering. Owner of the rules: @meridian/gis-appsec.
+ * Owner of the CLI: @northgate/platform-engineering. Owner of the rules: @northgate/gis-appsec.
  */
 
 const fs = require('fs');
 const path = require('path');
 const common = require('../lib/common');
 
-const VERSION = '2.3.7-meridian';
+const VERSION = '2.3.7-northgate';
 const HERE = path.dirname(fs.realpathSync(__filename));
 const DEFAULT_RULES = path.join(HERE, '..', 'rules', 'checkmarx-rules.json');
 
@@ -228,7 +228,7 @@ function cmdScan(args) {
     cli: 'cx ' + VERSION,
     scanId,
     project,
-    team: cfg.project.team || '/CxServer/Meridian/CSWT',
+    team: cfg.project.team || '/CxServer/Northgate/CSWT',
     preset: args.preset || cfg.scan.preset || ruleset.preset,
     rulesetRevision: ruleset.revision,
     source: path.relative(process.cwd(), source) || '.',
@@ -249,7 +249,7 @@ function cmdScan(args) {
   if (formats.includes('sarif')) common.writeJson(path.join(output, 'report.sarif'), toSarif(report));
 
   if (!args.quiet) {
-    console.log('Checkmarx CLI ' + VERSION + ' (Meridian build)');
+    console.log('Checkmarx CLI ' + VERSION + ' (Northgate build)');
     console.log('Project: ' + project + '  Preset: ' + report.preset + ' rev ' + ruleset.revision);
     console.log('Scanned ' + result.scannedFiles + ' files, ' + result.scannedLines + ' lines in ' + report.stats.durationMs + ' ms');
     console.log('Scan id: ' + scanId);
@@ -271,7 +271,7 @@ function toSarif(report) {
     version: '2.1.0',
     $schema: 'https://json.schemastore.org/sarif-2.1.0.json',
     runs: [{
-      tool: { driver: { name: 'Checkmarx (Meridian mock)', version: VERSION, rules: report.rules.map((r) => ({ id: r.id, name: r.name, shortDescription: { text: r.description } })) } },
+      tool: { driver: { name: 'Checkmarx (Northgate mock)', version: VERSION, rules: report.rules.map((r) => ({ id: r.id, name: r.name, shortDescription: { text: r.description } })) } },
       results: report.findings.map((f) => ({
         ruleId: f.ruleId,
         level: common.severityRank(f.severity) <= 1 ? 'error' : f.severity === 'Medium' ? 'warning' : 'note',

@@ -1,6 +1,6 @@
 ---
 log_forwarder_implementation: splunkforwarder
-log_forwarder_hec_url: https://splunk-hec.meridian.internal:8088/services/collector/event
+log_forwarder_hec_url: https://splunk-hec.northgate.internal:8088/services/collector/event
 log_forwarder_hec_token: CHANGEME-splunk-hec-token
 log_forwarder_hec_token_vault_path: secret/data/cswt/build/splunk/hec-token
 log_forwarder_index: cswt_build

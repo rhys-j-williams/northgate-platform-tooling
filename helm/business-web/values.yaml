@@ -1,7 +1,7 @@
 # Default values for business-web. Environment files override these; do not put environment specific
 # hosts in here, the dev/uat/prod split exists for a reason (TOOL-982).
 environment: dev
-partOf: meridian-business
+partOf: northgate-business
 
 cmdb:
   appId: "APP-10443"
@@ -14,7 +14,7 @@ replicaCount: 2
 # Nothing in this chart cares about the Node version but the pipeline does.
 
 image:
-  registry: artifactory.meridian.internal/docker-cswt-local
+  registry: artifactory.northgate.internal/docker-cswt-local
   repository: business-web
   # Left empty so appVersion is used. The pipeline passes --set image.tag=<build> anyway.
   tag: ""
@@ -40,13 +40,13 @@ route:
 # src/assets/env.json in the application repository; the app does not validate them.
 env:
   environment: dev
-  apiBaseUrl: "https://business-web-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/api"
-  idpIssuer: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/realms/meridian
+  apiBaseUrl: "https://business-web-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/api"
+  idpIssuer: https://keystone-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/realms/northgate
   idpClientId: business-web
-  lanternCollectorUrl: https://lantern-collector-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/v1/events
+  lanternCollectorUrl: https://lantern-collector-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/v1/events
   lanternSiteKey: CHANGEME-lantern-site-key
   splunkHecUrl: ""
-  featureFlagsUrl: https://semaphore-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.meridian.internal/api/flags
+  featureFlagsUrl: https://semaphore-{{ .Values.environment }}.apps.ocp-{{ .Values.environment }}.northgate.internal/api/flags
   defaultLocale: en-US
   supportedLocales: [en-US]
   sessionTimeoutMinutes: 15

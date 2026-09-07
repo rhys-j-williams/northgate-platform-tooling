@@ -19,8 +19,8 @@ and `governance/DEPENDENCY_POLICY.md` is why.
   -> the package -> Xray tab. Raise a GIS exception if you need it, see DEPENDENCY_POLICY.md s5.
 - `legacy-peer-deps` goes in the component's own `.npmrc`, not in `~/.npmrc` and not on the
   command line. Agents run with a clean `~/.npmrc` from `npmrc.sample`.
-- The `@meridian` scope is reserved in Artifactory and in Verdaccio and never proxies. If
-  `@meridian/canopy-ui@x.y.z` 404s, it was not published, full stop (GIS-2601).
+- The `@northgate` scope is reserved in Artifactory and in Verdaccio and never proxies. If
+  `@northgate/canopy-ui@x.y.z` 404s, it was not published, full stop (GIS-2601).
 - Publishing from a laptop was removed in TOOL-1122. Only `jenkins-cswt` can deploy to
   `npm-cswt-local` and `maven-cswt-local`.
 - Artifactory identity tokens expire at 90 days. The symptom is a 401 on the Monday of week 13.

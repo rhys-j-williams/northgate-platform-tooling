@@ -6,12 +6,12 @@
  *   sonar-scanner [-Dsonar.projectBaseDir=DIR] [-Dsonar.qualitygate.wait=true] [-Dkey=value ...]
  *
  * Reads sonar-project.properties from the base dir exactly like the real scanner, then instead of
- * uploading to sonar.meridian.internal it:
+ * uploading to sonar.northgate.internal it:
  *
  *   - counts lines of code and computes a handful of measures locally
  *   - reads real coverage output if present (istanbul coverage-summary.json / lcov.info, JaCoCo xml)
  *   - reads real lint output if present (eslint json, ng lint / eslint stylish text, checkstyle xml)
- *   - applies a quality gate modelled on the "Meridian Way" gate on the server
+ *   - applies a quality gate modelled on the "Northgate Way" gate on the server
  *   - writes .sonar-reports/report.json, report.html, quality-gate.json (project_status shape, read by
  *     the Jenkins shared library) and report-task.txt (the file the Jenkins Sonar plugin polls;
  *     ceTaskUrl points at the internal server and will not resolve off the bank network)
@@ -19,7 +19,7 @@
  * Exit codes follow the real scanner with sonar.qualitygate.wait=true: 0 gate passed, 1 gate failed,
  * 2 usage / configuration problem.
  *
- * Owner: @meridian/platform-engineering. The gate thresholds are owned by the Engineering Standards
+ * Owner: @northgate/platform-engineering. The gate thresholds are owned by the Engineering Standards
  * forum and are changed on the server, not here; this file mirrors gate revision 7 (Feb 2024).
  */
 
@@ -27,14 +27,14 @@ const fs = require('fs');
 const path = require('path');
 const common = require('../lib/common');
 
-const VERSION = '4.8.1.3023-meridian';
+const VERSION = '4.8.1.3023-northgate';
 const SERVER_VERSION = '9.9.4 LTS';
 
-// "Meridian Way" quality gate, revision 7. Conditions on new code where the server has history;
+// "Northgate Way" quality gate, revision 7. Conditions on new code where the server has history;
 // we only see the whole project so they are applied overall with the relaxed "legacy" thresholds
 // the standards forum agreed for pre-2022 repositories.
 const GATE = {
-  name: 'Meridian Way',
+  name: 'Northgate Way',
   revision: 7,
   conditions: [
     { metric: 'coverage', op: 'LT', threshold: 30, unit: '%' },
@@ -374,7 +374,7 @@ function main() {
   };
 
   const qualityGate = evaluateGate(measures);
-  const serverUrl = props['sonar.host.url'] || 'https://sonar.meridian.internal';
+  const serverUrl = props['sonar.host.url'] || 'https://sonar.northgate.internal';
   const analysisId = common.stableId('AY', props['sonar.projectKey'] + '|' + measures.ncloc + '|' + lint.issues.length + '|' + measures.coverage);
 
   const report = {

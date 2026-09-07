@@ -1,4 +1,4 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 /**
  * Default pipeline configuration. Applications override individual keys from their Jenkinsfile.
@@ -8,14 +8,14 @@ package com.meridian.pipeline
  * without touching forty repositories. TOOL-712 was the last time we did that and it took a
  * quarter because half the Jenkinsfiles had hard coded the old API host.
  */
-class MeridianDefaults implements Serializable {
+class NorthgateDefaults implements Serializable {
 
     private static final long serialVersionUID = 1L
 
-    static final String ARTIFACTORY_HOST = 'artifactory.meridian.internal'
-    static final String IMAGE_REGISTRY = 'registry.meridian.internal'
-    static final String SONAR_HOST = 'https://sonar.meridian.internal'
-    static final String OPENSHIFT_API = 'https://api.ocp-cswt-east.meridian.internal:6443'
+    static final String ARTIFACTORY_HOST = 'artifactory.northgate.internal'
+    static final String IMAGE_REGISTRY = 'registry.northgate.internal'
+    static final String SONAR_HOST = 'https://sonar.northgate.internal'
+    static final String OPENSHIFT_API = 'https://api.ocp-cswt-east.northgate.internal:6443'
 
     static Map common() {
         return [
@@ -25,13 +25,13 @@ class MeridianDefaults implements Serializable {
             imageRepository            : 'cswt',
             imageRegistryCredentialsId : 'registry-cswt-pusher',
             sonarHostUrl               : SONAR_HOST,
-            sonarServerName            : 'sonar-meridian',
+            sonarServerName            : 'sonar-northgate',
             openshiftApi               : OPENSHIFT_API,
             openshiftCredentialsPrefix : 'ocp-cswt-deployer',
             openshiftProjectPrefix     : 'cswt',
             // Scanner binaries. On real agents these are the vendor CLIs installed under /opt.
             // In the demo estate the same names resolve to platform-tooling/mock-scanners/bin.
-            scannerBin                 : System.getenv('MERIDIAN_SCANNER_BIN') ?: '/opt/meridian/scanners/bin',
+            scannerBin                 : System.getenv('NORTHGATE_SCANNER_BIN') ?: '/opt/northgate/scanners/bin',
             checkmarxThresholds        : [high: 0, medium: 5],
             xrayThresholds             : [critical: 0, high: 0],
             notifyChannel              : null,
