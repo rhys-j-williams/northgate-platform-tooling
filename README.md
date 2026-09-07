@@ -61,7 +61,7 @@ mock-scanners/run-tests.sh                   # scanner fixtures, determinism
 for c in helm/*/; do for e in dev uat prod; do helm lint --strict "$c" -f "$c/values-$e.yaml"; done; done
 ansible-playbook -i ansible/inventory/build-agents.ini ansible/build-agent.yml --syntax-check
 (cd terraform/modules/notifications-lambda && terraform init -backend=false && terraform validate)
-../scripts/check-forbidden-strings.sh worktree
+../meridian-cswt-estate/scripts/check-forbidden-strings.sh worktree
 ```
 
 Ticket history for this directory starts at TOOL-1 (2020-11, "stand up Jenkins shared library")
