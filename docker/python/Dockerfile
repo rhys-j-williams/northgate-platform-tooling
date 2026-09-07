@@ -1,12 +1,12 @@
 # statements-api and exposure-calc. No pipeline (TOOL-1444), built by the Makefile in
 # platform-services. Kept here so at least the base image is the approved one.
-FROM artifactory.meridian.internal/docker-redhat-remote/ubi9/python-311:1-66 AS runtime
+FROM artifactory.northgate.internal/docker-redhat-remote/ubi9/python-311:1-66 AS runtime
 ARG SERVICE
 ARG BUILD_TAG=local
 LABEL org.opencontainers.image.title="${SERVICE}" \
       org.opencontainers.image.version="${BUILD_TAG}" \
-      meridian.bank/scan-policy="GIS-STD-021"
-ENV PIP_INDEX_URL=https://artifactory.meridian.internal/artifactory/api/pypi/pypi-virtual/simple \
+      northgate.bank/scan-policy="GIS-STD-021"
+ENV PIP_INDEX_URL=https://artifactory.northgate.internal/artifactory/api/pypi/pypi-virtual/simple \
     PIP_NO_CACHE_DIR=1 \
     PYTHONUNBUFFERED=1
 USER 1001

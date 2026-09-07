@@ -4,13 +4,13 @@
 #
 # Only npm-virtual is allowed. See governance/DEPENDENCY_POLICY.md. Pointing npm at
 # registry.npmjs.org does not work from the build VLAN anyway.
-registry=https://artifactory.meridian.internal/artifactory/api/npm/npm-virtual/
-//artifactory.meridian.internal/artifactory/api/npm/npm-virtual/:_authToken=CHANGEME-artifactory-identity-token
-//artifactory.meridian.internal/artifactory/api/npm/npm-virtual/:always-auth=true
+registry=https://artifactory.northgate.internal/artifactory/api/npm/npm-virtual/
+//artifactory.northgate.internal/artifactory/api/npm/npm-virtual/:_authToken=CHANGEME-artifactory-identity-token
+//artifactory.northgate.internal/artifactory/api/npm/npm-virtual/:always-auth=true
 always-auth=true
 
-# Scoped packages: @meridian goes to the same virtual, which resolves it from npm-cswt-local.
-@meridian:registry=https://artifactory.meridian.internal/artifactory/api/npm/npm-virtual/
+# Scoped packages: @northgate goes to the same virtual, which resolves it from npm-cswt-local.
+@northgate:registry=https://artifactory.northgate.internal/artifactory/api/npm/npm-virtual/
 
 strict-ssl=true
 cafile=/etc/pki/tls/certs/ca-bundle.crt

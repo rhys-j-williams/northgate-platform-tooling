@@ -6,7 +6,7 @@ section 6. TECH-STD-044 (dependency policy) refers to this document for the end 
 
 ## 1. The rule
 
-Software that Meridian Trust Bank runs in production, or that produces artefacts which run in
+Software that Northgate Trust Bank runs in production, or that produces artefacts which run in
 production, must be within vendor or community security support. This applies to application
 frameworks (Angular, Spring Boot), language runtimes (Node.js, JDK, Python), operating system
 images and the build toolchain that produces the deployable.
@@ -40,7 +40,7 @@ and CAB will not approve non-security changes to it until it is either upgraded 
 framework's end of life date, as an ADR in the repository, and keep it current. "Deferred" is an
 acceptable plan if the ADR says until when and why.
 
-**Shared library owners** (Canopy, Lantern, `@meridian/common-starter`) publish a supported
+**Shared library owners** (Canopy, Lantern, `@northgate/common-starter`) publish a supported
 version of their library for the target framework major before the first consumer needs it, and
 keep the previous major in security support until the last consumer has moved or ninety days,
 whichever is later. A library upgrade that breaks a consumer's build at the consumer's pinned
@@ -52,7 +52,7 @@ against any deployable that appears in the inventory as out of support without a
 ## 4. What counts as production
 
 Anything customer facing, anything an associate uses to act on customer data, and anything in
-the build path for either. Meridian Online, Meridian Business, Keystone, Iris, Ledgerline and
+the build path for either. Northgate Online, Northgate Business, Keystone, Iris, Ledgerline and
 their BFFs are all in scope. The Canopy showcase is not customer facing but the library it
 demonstrates ships inside every one of the above, so Canopy is in scope. Local mocks under
 `mock-external/` are out of scope.
@@ -77,11 +77,11 @@ advisories) remain acceptable for renewal but do not extend the thirty-six month
 
 | Deployable | Framework / runtime | Upstream end of life | Acceptance | Expires | Plan |
 |---|---|---|---|---|---|
-| Meridian Online (retail-web) | Angular 14.3 / Node 16 | 2023-11-18 / 2023-09-11 | TR-1188 (GIS-2207), renewed twice | **2026-11-18** — ceiling, cannot be renewed | retail-web ADR 0014, epic MOL-4471 |
-| Meridian Business (business-web) | Angular 14.2 / Node 14 | 2023-11-18 / 2023-04-30 | TR-1190 (GIS-2209), renewed twice | **2026-11-18** — ceiling | business-web ADR 0004, epic MBZ-2140 |
-| Canopy (`@meridian/canopy-ui` 3.x) | Angular 14.3 / Material 14 | 2023-11-18 | TR-1188, TR-1190 (covered through consumers) | with consumers | CNPY-2140, Canopy 4 |
+| Northgate Online (retail-web) | Angular 14.3 / Node 16 | 2023-11-18 / 2023-09-11 | TR-1188 (GIS-2207), renewed twice | **2026-11-18** — ceiling, cannot be renewed | retail-web ADR 0014, epic MOL-4471 |
+| Northgate Business (business-web) | Angular 14.2 / Node 14 | 2023-11-18 / 2023-04-30 | TR-1190 (GIS-2209), renewed twice | **2026-11-18** — ceiling | business-web ADR 0004, epic MBZ-2140 |
+| Canopy (`@northgate/canopy-ui` 3.x) | Angular 14.3 / Material 14 | 2023-11-18 | TR-1188, TR-1190 (covered through consumers) | with consumers | CNPY-2140, Canopy 4 |
 | Iris widget | Angular 14.3 | 2023-11-18 | TR-1203 | 2026-11-18 — ceiling | IRIS-0900, follows retail-web |
-| Lantern SDK wrapper (`@meridian/lantern-sdk` 2.x) | Angular 12.2, View Engine | 2022-11-12 | TR-1102 | **expired 2025-11-12** — see GIS-2618 | LNTN-401; vendor Ivy build LNTN-140 |
+| Lantern SDK wrapper (`@northgate/lantern-sdk` 2.x) | Angular 12.2, View Engine | 2022-11-12 | TR-1102 | **expired 2025-11-12** — see GIS-2618 | LNTN-401; vendor Ivy build LNTN-140 |
 | Keystone (keystone-web) | Angular 15.2 / Node 16 | 2024-05-18 / 2023-09-11 | TR-1301 (GIS-2410) | 2027-05-18 | KEY-2210 MDC migration then 17+ |
 | Ledgerline (ledgerline-web) | Angular 16.2 / Node 18 | 2024-11-08 / 2025-04-30 | TR-1355 | 2026-11-08 | LDG-1350 |
 | Retail BFF, Business BFF | Spring Boot 2.7 / JDK 11 | 2023-11-24 (OSS) | TR-1240, commercial support to 2026-12 | 2026-12 | PLAT-2600 |
@@ -90,7 +90,7 @@ GIS-2618 (Lantern) is open as a High. The wrapper is in the build path of every 
 that reports analytics, so the Lantern line is what stops the retail-web and business-web
 acceptances from being the only clock that matters. See LNTN-401.
 
-The Angular 14 acceptances for Meridian Online and Meridian Business reach the thirty-six month
+The Angular 14 acceptances for Northgate Online and Northgate Business reach the thirty-six month
 ceiling in the 2026.11 train. Both product owners have been told in writing (2026-01-22, TR review
 minutes) that there is no further renewal path; the upgrade lands before the 2026.11.2 code freeze
 or the deployables are non-compliant and frozen for non-security change under section 3. The

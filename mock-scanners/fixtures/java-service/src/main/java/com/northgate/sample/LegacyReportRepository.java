@@ -1,4 +1,4 @@
-package com.meridian.sample;
+package com.northgate.sample;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

@@ -52,7 +52,7 @@ echo "== xray"
 check "xray npm exits 1"                 "[ $rc -eq 1 ]"
 R=fixtures/angular-app/.xray-reports/report.json
 check "xray finds minimist"              "[ \"\$(jq_ $R 'r.findings.some(f=>f.package===\"minimist\")')\" = true ]"
-check "xray flags Angular 14 lifecycle"  "[ \"\$(jq_ $R 'r.findings.some(f=>f.cve===\"MERIDIAN-EOL-ANGULAR\")')\" = true ]"
+check "xray flags Angular 14 lifecycle"  "[ \"\$(jq_ $R 'r.findings.some(f=>f.cve===\"NORTHGATE-EOL-ANGULAR\")')\" = true ]"
 check "xray does not flag typescript"    "[ \"\$(jq_ $R 'r.findings.some(f=>f.package===\"typescript\"&&f.policy===\"security\")')\" = false ]"
 "$BIN/xray" scan --type maven --tree target/dependency-tree.txt --dir fixtures/java-service --quiet && rc=0 || rc=$?
 check "xray maven via library verb"      "[ $rc -eq 1 ]"

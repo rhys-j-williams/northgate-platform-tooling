@@ -15,7 +15,7 @@ server {
     include conf.d/security-headers.inc;
 
     allow 127.0.0.1;
-    allow 10.40.0.0/16;   # build VLAN, {{ meridian_site }}
+    allow 10.40.0.0/16;   # build VLAN, {{ northgate_site }}
     deny  all;
 
     location /artifacts/ {

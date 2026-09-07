@@ -1,6 +1,6 @@
 {{/*
-Standard labels. app.kubernetes.io/* for the platform dashboards, meridian.bank/* for the CMDB
-feed (CMDB-4410: the feed reads meridian.bank/app-id and nothing else, do not rename it).
+Standard labels. app.kubernetes.io/* for the platform dashboards, northgate.bank/* for the CMDB
+feed (CMDB-4410: the feed reads northgate.bank/app-id and nothing else, do not rename it).
 */}}
 {{- define "pii-vault-service.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
@@ -21,10 +21,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/part-of: {{ .Values.partOf }}
-meridian.bank/app-id: {{ .Values.cmdb.appId | quote }}
-meridian.bank/owner: {{ .Values.cmdb.owner }}
-meridian.bank/data-classification: {{ .Values.cmdb.dataClassification }}
-meridian.bank/environment: {{ .Values.environment }}
+northgate.bank/app-id: {{ .Values.cmdb.appId | quote }}
+northgate.bank/owner: {{ .Values.cmdb.owner }}
+northgate.bank/data-classification: {{ .Values.cmdb.dataClassification }}
+northgate.bank/environment: {{ .Values.environment }}
 {{- end -}}
 
 {{- define "pii-vault-service.selectorLabels" -}}

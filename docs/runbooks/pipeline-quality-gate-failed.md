@@ -41,7 +41,7 @@ under the build's artifacts (`.cx-reports/`, `.sonar-reports/`, `.xray-reports/`
 
 1. `report.json` lists advisories by package and version, with the path through the tree for
    transitives.
-2. High or Critical fails. `MERIDIAN-EOL-*` findings are informational and do not fail; they do
+2. High or Critical fails. `NORTHGATE-EOL-*` findings are informational and do not fail; they do
    appear in section 5 of the CAB record.
 3. Fix by upgrading the direct dependency within the estate version map, by an `overrides` entry
    with a ticket and expiry, or by a GIS exception (`governance/DEPENDENCY_POLICY.md` s5). Not by

@@ -1,4 +1,4 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 /**
  * The build agent labels that exist on the CSWT Jenkins controller. If a Jenkinsfile asks for a

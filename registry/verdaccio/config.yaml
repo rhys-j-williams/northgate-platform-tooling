@@ -4,7 +4,7 @@
 #   npx verdaccio@5.29.2 --config platform-tooling/registry/verdaccio/config.yaml
 #   npm publish --registry http://localhost:4873/     (from canopy-ui, iris-widget, domain-fixtures)
 #
-# Mirrors the Artifactory shape: @meridian resolves locally and never proxies (GIS-2601), everything
+# Mirrors the Artifactory shape: @northgate resolves locally and never proxies (GIS-2601), everything
 # else proxies to npmjs. There is no Xray here so nothing is blocked; that is the one behaviour the
 # local setup cannot reproduce.
 
@@ -13,7 +13,7 @@ plugins: ./plugins
 
 web:
   enable: true
-  title: Meridian npm (local stand-in for npm-virtual)
+  title: Northgate npm (local stand-in for npm-virtual)
 
 auth:
   htpasswd:
@@ -30,7 +30,7 @@ uplinks:
     fail_timeout: 5m
 
 packages:
-  '@meridian/*':
+  '@northgate/*':
     access: $all
     publish: $authenticated
     unpublish: $authenticated

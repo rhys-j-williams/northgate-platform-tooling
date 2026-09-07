@@ -1,12 +1,12 @@
 #!/usr/bin/env groovy
 /*
- * meridianNodePipeline - the standard pipeline for Angular applications, Angular libraries and
+ * northgateNodePipeline - the standard pipeline for Angular applications, Angular libraries and
  * Node services in the CSWT organisation.
  *
  * Usage from a Jenkinsfile:
  *
- *   @Library('meridian-pipeline@v3') _
- *   meridianNodePipeline(
+ *   @Library('northgate-pipeline@v3') _
+ *   northgateNodePipeline(
  *     agentLabel:        'nodejs16-rhel8',
  *     nodeVersion:       '16.20.2',
  *     appName:           'retail-web',
@@ -17,7 +17,7 @@
  *     buildCommand:      'npm run build -- --configuration production'
  *   )
  *
- * Every parameter has a default in MeridianDefaults. Applications override the ones they need and
+ * Every parameter has a default in NorthgateDefaults. Applications override the ones they need and
  * nothing else; if you find yourself overriding more than five, raise a TOOL ticket, the defaults
  * are probably wrong for your shape of repository.
  *
@@ -26,13 +26,13 @@
  * the GIS-2291 audit finding. TOOL-880 Node 18 agents.
  */
 
-import com.meridian.pipeline.MeridianDefaults
-import com.meridian.pipeline.QualityGate
-import com.meridian.pipeline.ScannerReport
-import com.meridian.pipeline.AgentLabels
+import com.northgate.pipeline.NorthgateDefaults
+import com.northgate.pipeline.QualityGate
+import com.northgate.pipeline.ScannerReport
+import com.northgate.pipeline.AgentLabels
 
 def call(Map userConfig = [:]) {
-    Map config = MeridianDefaults.node() + userConfig
+    Map config = NorthgateDefaults.node() + userConfig
 
     AgentLabels.validate(config.agentLabel)
 
@@ -81,7 +81,7 @@ def call(Map userConfig = [:]) {
                         env.IMAGE_TAG = "${env.GIT_SHORT}-${env.BUILD_NUMBER}"
                         currentBuild.displayName = "#${env.BUILD_NUMBER} ${env.BRANCH_NAME} ${env.GIT_SHORT}"
                     }
-                    meridianNotify.stageStarted('Checkout')
+                    northgateNotify.stageStarted('Checkout')
                 }
             }
 
@@ -92,7 +92,7 @@ def call(Map userConfig = [:]) {
                     withCredentials([usernamePassword(credentialsId: config.registryCredentialsId,
                                                       usernameVariable: 'NPM_USER',
                                                       passwordVariable: 'NPM_TOKEN')]) {
-                        sh label: 'write scoped npmrc', script: libraryResource('com/meridian/pipeline/scripts/npm-login.sh')
+                        sh label: 'write scoped npmrc', script: libraryResource('com/northgate/pipeline/scripts/npm-login.sh')
                     }
                 }
             }
@@ -150,7 +150,7 @@ def call(Map userConfig = [:]) {
                     """
                     // Webpack stats are parsed by the bundle budget step. TOOL-1207: this breaks
                     // if anyone moves to the esbuild builder, the stats.json shape is different.
-                    sh 'test -f dist/**/stats.json && node platform-tooling/jenkins-shared-library/resources/com/meridian/pipeline/scripts/bundle-budget.js dist || true'
+                    sh 'test -f dist/**/stats.json && node platform-tooling/jenkins-shared-library/resources/com/northgate/pipeline/scripts/bundle-budget.js dist || true'
                     archiveArtifacts artifacts: 'dist/**', fingerprint: false, allowEmptyArchive: true
                 }
             }
@@ -261,13 +261,13 @@ def call(Map userConfig = [:]) {
 
         post {
             success {
-                meridianNotify.success(config)
+                northgateNotify.success(config)
             }
             unstable {
-                meridianNotify.unstable(config)
+                northgateNotify.unstable(config)
             }
             failure {
-                meridianNotify.failure(config)
+                northgateNotify.failure(config)
             }
             always {
                 cleanWs(deleteDirs: true, notFailBuild: true,

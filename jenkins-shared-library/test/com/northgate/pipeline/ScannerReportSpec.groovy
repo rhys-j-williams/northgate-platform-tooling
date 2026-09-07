@@ -1,4 +1,4 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 import groovy.test.GroovyTestCase
 
@@ -6,7 +6,7 @@ class ScannerReportSpec extends GroovyTestCase {
 
     static final String SAMPLE = '''{
       "scanId": "cx-20260901-000123",
-      "project": "meridian-retail-web",
+      "project": "northgate-retail-web",
       "findings": [
         {"ruleId": "CX-ANG-001", "severity": "High", "file": "src/app/disclosure.component.ts", "line": 41, "cwe": "CWE-79"},
         {"ruleId": "CX-NPM-002", "severity": "Medium", "file": ".npmrc", "line": 6, "cwe": "CWE-295"},

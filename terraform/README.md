@@ -32,7 +32,7 @@ cd envs/sandbox && terraform init -backend=false && terraform validate
 `init -backend=false` because the state bucket does not exist yet. Provider is pinned to
 `5.31.0` in both places; bumping it is a TOOL ticket like any other dependency
 (`../governance/DEPENDENCY_POLICY.md` applies to providers, the internal Terraform registry mirror
-is `artifactory.meridian.internal/artifactory/api/terraform/terraform-virtual`).
+is `artifactory.northgate.internal/artifactory/api/terraform/terraform-virtual`).
 
 ## Decisions so far
 

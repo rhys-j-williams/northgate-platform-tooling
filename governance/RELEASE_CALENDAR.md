@@ -75,7 +75,7 @@ before assuming something is out of scope.
 
 uat and dev deploys continue during freezes. The Jenkins library refuses the prod deploy stage
 when `ReleaseGuard.inFreeze()` is true unless the `CAB_REFERENCE` is an emergency change number
-(`CHGnnnnnnnE`, see `jenkins-shared-library/src/com/meridian/pipeline/ReleaseGuard.groovy`). That
+(`CHGnnnnnnnE`, see `jenkins-shared-library/src/com/northgate/pipeline/ReleaseGuard.groovy`). That
 class approximates the table as "the last fourteen days of March, June, September and December",
 which is close enough for Q1 to Q3 and wrong for the first week of the following month and for
 the long Q4 window. Release Management knows; TOOL-1155 is the ticket to read the dates from

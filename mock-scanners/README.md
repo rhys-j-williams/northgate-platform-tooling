@@ -1,12 +1,12 @@
 # mock-scanners
 
-Owner: Platform Engineering (`@meridian/platform-engineering`). Rule content: GIS Application
-Security (`@meridian/gis-appsec`), see `CODEOWNERS` at the component root.
+Owner: Platform Engineering (`@northgate/platform-engineering`). Rule content: GIS Application
+Security (`@northgate/gis-appsec`), see `CODEOWNERS` at the component root.
 
 Local, offline, deterministic stand-ins for the three security tools every CSWT pipeline calls:
 the Checkmarx CLI (`cx`), the SonarQube scanner (`sonar-scanner`) and the Xray dependency audit
-(`xray`). The Jenkins shared library calls whatever is at `MERIDIAN_SCANNER_BIN` (default
-`/opt/meridian/scanners/bin`). On the bank network that mount holds the vendor CLIs. Everywhere
+(`xray`). The Jenkins shared library calls whatever is at `NORTHGATE_SCANNER_BIN` (default
+`/opt/northgate/scanners/bin`). On the bank network that mount holds the vendor CLIs. Everywhere
 else (developer laptops, kind clusters, the DR rehearsal cluster) the agent image sets it to
 a checkout of `platform-tooling/mock-scanners/bin` and gets these. Nobody should need to
 change a `Jenkinsfile` to move between the two; if you do, that is a TOOL bug.
@@ -70,7 +70,7 @@ coverage from whatever it finds first: `sonar.javascript.lcov.reportPaths`,
 Lint stage tees. ESLint rule ids are mapped onto the Sonar rule keys that the server would assign
 (`no-eval` is `javascript:S1523`, a CRITICAL vulnerability, and so on; the table is in the script).
 
-Quality gate is the "Meridian Way" gate, revision 7, as configured on `sonar.meridian.internal`:
+Quality gate is the "Northgate Way" gate, revision 7, as configured on `sonar.northgate.internal`:
 coverage below 30 percent, duplication over 5 percent, any blocker or critical, any unreviewed
 security hotspot, reliability worse than B or security worse than A fails it. With
 `sonar.qualitygate.wait=true` a failed gate exits 1, which is what the Jenkins library relies on.
@@ -95,7 +95,7 @@ Reads `package-lock.json` (any lockfile version) or `target/dependency-tree.txt`
 dependencies in `package.json` or `pom.xml` with a warning. Resolves every installed version
 against `rules/advisories.json`, an offline snapshot of the Xray feed curated by GIS for the
 components actually present in the CSWT estate. About 170 npm advisories and 70 Maven ones, with
-the bank's own `MERIDIAN-EOL-*` lifecycle rules from GIS-STD-021 (Node 14, Angular 14, Spring
+the bank's own `NORTHGATE-EOL-*` lifecycle rules from GIS-STD-021 (Node 14, Angular 14, Spring
 Boot 2, JDK 11 and friends) mixed in and reported at the severity GIS assigned them. The runtime
 target is read from `.nvmrc`, `engines.node` or the pom's compiler target and audited the same way.
 
@@ -104,7 +104,7 @@ Artifactory proxies the audit endpoint so this works; off the VLAN it usually do
 scanner says so and carries on. Determinism only holds offline.
 
 Default gate: any Critical or High fails. Waivers are applied on the Xray server against the
-`meridian-cswt-prod` watch, not here, so a waived finding still shows in the local report. That is
+`northgate-cswt-prod` watch, not here, so a waived finding still shows in the local report. That is
 intentional and has been argued about (TOOL-1510). The lifecycle rules are the ones the
 modernisation programme will want to look at first.
 

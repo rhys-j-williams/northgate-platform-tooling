@@ -1,7 +1,7 @@
 ---
-- name: Ensure meridian config directory
+- name: Ensure northgate config directory
   ansible.builtin.file:
-    path: /etc/meridian
+    path: /etc/northgate
     state: directory
     owner: root
     group: root
@@ -25,7 +25,7 @@
 - name: Internal root CA in the system trust store
   ansible.builtin.copy:
     src: "{{ build_agent_common_ca_bundle_src }}"
-    dest: /etc/pki/ca-trust/source/anchors/meridian-root-ca.pem
+    dest: /etc/pki/ca-trust/source/anchors/northgate-root-ca.pem
     owner: root
     group: root
     mode: "0644"
@@ -48,7 +48,7 @@
   ansible.builtin.copy:
     dest: /etc/motd
     content: |
-      Meridian Trust Bank - CSWT build agent ({{ jenkins_label }})
+      Northgate Trust Bank - CSWT build agent ({{ jenkins_label }})
       Managed by platform-tooling/ansible. Manual changes are overwritten weekly.
       Authorised users only. Activity is logged and forwarded (GIS-STD-009).
     mode: "0644"

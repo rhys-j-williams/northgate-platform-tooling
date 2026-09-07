@@ -5,15 +5,15 @@ type: application
 version: 2.38.2
 appVersion: "5.7.12"
 kubeVersion: ">=1.24.0-0"
-home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+home: https://confluence.northgate.internal/display/PLAT/Helm+charts
 sources:
-  - https://bitbucket.meridian.internal/projects/PLAT/repos/platform-services
+  - https://bitbucket.northgate.internal/projects/PLAT/repos/platform-services
 maintainers:
   - name: Platform Engineering
     email: platform-engineering@example.com
   - name: core-integration
     email: core-integration@example.com
 annotations:
-  meridian.bank/ticket-key: BRK
-  meridian.bank/pipeline: meridianJavaPipeline
-  meridian.bank/compliance-critical: "false"
+  northgate.bank/ticket-key: BRK
+  northgate.bank/pipeline: northgateJavaPipeline
+  northgate.bank/compliance-critical: "false"

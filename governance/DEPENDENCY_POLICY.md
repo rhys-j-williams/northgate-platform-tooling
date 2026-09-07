@@ -9,7 +9,7 @@ want.
 
 All third party software consumed by a CSWT build — npm packages, Maven artifacts, Python
 packages, container base images, Helm charts, Terraform providers and modules, Jenkins plugins,
-tool binaries — is obtained from the bank's internal Artifactory (`artifactory.meridian.internal`)
+tool binaries — is obtained from the bank's internal Artifactory (`artifactory.northgate.internal`)
 and from nowhere else. The repositories are listed in `platform-tooling/registry/repositories.json`.
 
 Nothing else. Not the public registry "just for this one package", not a GitHub release tarball,
@@ -69,7 +69,7 @@ DOM outside the framework).
   upgrade of the direct dependency that pulls it, an `overrides` entry with a ticket reference and
   an expiry comment, or an exception (section 5). Not `npm audit fix --force`.
 - **End of life.** A direct dependency whose upstream is end of life is a finding
-  (`MERIDIAN-EOL-*` in the Xray mirror). It does not block the build by itself but it appears in
+  (`NORTHGATE-EOL-*` in the Xray mirror). It does not block the build by itself but it appears in
   the CAB record section 5 and the CAB has started asking. Node 14 and Angular 14 are the
   well-known cases; see the estate roadmap. This document does not require the upgrade. It
   requires that the risk is visible. Whether the deployable may keep running on it is GIS-STD-022

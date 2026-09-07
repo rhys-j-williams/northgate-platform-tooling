@@ -1,8 +1,8 @@
 project:
-  name: meridian-sample-angular-app
-  team: /CxServer/Meridian/CSWT
+  name: northgate-sample-angular-app
+  team: /CxServer/Northgate/CSWT
 scan:
-  preset: Meridian-High-And-Medium
+  preset: Northgate-High-And-Medium
   incremental: false
   language: typescript
   source: .

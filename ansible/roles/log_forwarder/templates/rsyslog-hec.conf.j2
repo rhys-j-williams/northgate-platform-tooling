@@ -4,7 +4,7 @@ module(load="omhttp")
 module(load="imfile")
 
 {% for path in log_forwarder_paths if '*' not in path %}
-input(type="imfile" File="{{ path }}" Tag="meridian-build" Severity="info" Facility="local6")
+input(type="imfile" File="{{ path }}" Tag="northgate-build" Severity="info" Facility="local6")
 {% endfor %}
 
 template(name="hec" type="list") {

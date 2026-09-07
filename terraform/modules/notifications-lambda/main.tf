@@ -5,12 +5,12 @@
 
 locals {
   mandatory_tags = {
-    "meridian:app-id"              = "APP-13300"
-    "meridian:owner"               = "beacon"
-    "meridian:cost-centre"         = "CC-4471"
-    "meridian:data-classification" = "internal"
-    "meridian:environment"         = var.environment
-    "meridian:managed-by"          = "terraform/platform-tooling"
+    "northgate:app-id"              = "APP-13300"
+    "northgate:owner"               = "beacon"
+    "northgate:cost-centre"         = "CC-4471"
+    "northgate:data-classification" = "internal"
+    "northgate:environment"         = var.environment
+    "northgate:managed-by"          = "terraform/platform-tooling"
   }
   tags = merge(local.mandatory_tags, var.tags)
 }
@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "assume" {
 resource "aws_iam_role" "lambda" {
   name                 = "${var.name}-role"
   assume_role_policy   = data.aws_iam_policy_document.assume.json
-  permissions_boundary = "arn:aws:iam::000000000000:policy/CHANGEME-meridian-permissions-boundary"
+  permissions_boundary = "arn:aws:iam::000000000000:policy/CHANGEME-northgate-permissions-boundary"
   tags                 = local.tags
 }
 
@@ -78,7 +78,7 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      MERIDIAN_ENVIRONMENT = var.environment
+      NORTHGATE_ENVIRONMENT = var.environment
       LOG_LEVEL            = "info"
       # Placeholder. The real value comes from Vault -> Secrets Manager sync (BCN-233).
       NOTIFICATIONS_API_KEY_REF = "CHANGEME-secretsmanager-arn"

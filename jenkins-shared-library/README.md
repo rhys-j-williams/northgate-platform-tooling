@@ -1,14 +1,14 @@
-# meridian-pipeline — Jenkins shared library
+# northgate-pipeline — Jenkins shared library
 
-Owner: @meridian/platform-engineering. On call: `platform-eng-oncall` rota in the paging tool,
+Owner: @northgate/platform-engineering. On call: `platform-eng-oncall` rota in the paging tool,
 business hours only, the CI is not a Sev 1 service whatever the release desk says on a Thursday.
 Chat: `#platform-engineering`. Tickets: `TOOL` project, component `jenkins-shared-library`.
 
 This is the library every `Jenkinsfile` in the CSWT organisation loads:
 
 ```groovy
-@Library('meridian-pipeline@v3') _
-meridianNodePipeline(agentLabel: 'nodejs16-rhel8', nodeVersion: '16.20.2', appName: 'retail-web', ...)
+@Library('northgate-pipeline@v3') _
+northgateNodePipeline(agentLabel: 'nodejs16-rhel8', nodeVersion: '16.20.2', appName: 'retail-web', ...)
 ```
 
 If you are here because your build is red and you did not change anything, skip to
@@ -16,10 +16,10 @@ If you are here because your build is red and you did not change anything, skip 
 
 ## Where it is registered
 
-Controller: `jenkins.meridian.internal`, Jenkins LTS **2.440.3** (upgraded from 2.401.1 in
+Controller: `jenkins.northgate.internal`, Jenkins LTS **2.440.3** (upgraded from 2.401.1 in
 TOOL-1102, February 2026; the plugin freeze from that upgrade is still in place, ask before you
 request a plugin). The library is registered globally under **Manage Jenkins > System > Global
-Pipeline Libraries** as `meridian-pipeline`, source `ssh://git@bitbucket.meridian.internal:7999/tool/jenkins-shared-library.git`
+Pipeline Libraries** as `northgate-pipeline`, source `ssh://git@bitbucket.northgate.internal:7999/tool/jenkins-shared-library.git`
 on the build VLAN, and this directory when running the pipeline locally. Implicit load is **off**. Default version is
 `v3`, which is a branch, not a tag; `v3` moves. Pin a tag (`v3.14.0`) in your Jenkinsfile if you
 need reproducibility for an audit build, and expect to be asked why at the architecture forum.
@@ -30,7 +30,7 @@ stragglers). `v2` gets security fixes only. `v1` was removed in October 2024.
 ## Build agents
 
 Agents are OpenShift pods from the `cswt-jenkins-agents` namespace, one per build, image built by
-`platform-tooling/ansible` and pushed to `registry.meridian.internal/cswt/jenkins-agent-*`.
+`platform-tooling/ansible` and pushed to `registry.northgate.internal/cswt/jenkins-agent-*`.
 
 | Label | Runtime | Base OS | Status | Who uses it |
 |---|---|---|---|---|
@@ -59,7 +59,7 @@ copy it as a pattern.
 
 ## What the pipelines do
 
-Both `meridianNodePipeline` and `meridianJavaPipeline` run the same stage list; the commands
+Both `northgateNodePipeline` and `northgateJavaPipeline` run the same stage list; the commands
 differ.
 
 | Stage | Node | Java | Gate |
@@ -95,13 +95,13 @@ Every job gets these whether it asked or not:
 | `TARGET_ENV` | dev | `dev` or `uat`; `prod` is only in `Jenkinsfile.release` |
 
 Configuration keys the Jenkinsfile can pass are listed in
-[`src/com/meridian/pipeline/MeridianDefaults.groovy`](src/com/meridian/pipeline/MeridianDefaults.groovy).
+[`src/com/northgate/pipeline/NorthgateDefaults.groovy`](src/com/northgate/pipeline/NorthgateDefaults.groovy).
 Cluster URLs, registry hosts and credential ids are deliberately not overridable per repository.
 
 ### Scanners
 
-On a real agent the scanners are the vendor CLIs at `/opt/meridian/scanners/bin`. The library
-finds them through `MERIDIAN_SCANNER_BIN`. Off the build VLAN that variable points at
+On a real agent the scanners are the vendor CLIs at `/opt/northgate/scanners/bin`. The library
+finds them through `NORTHGATE_SCANNER_BIN`. Off the build VLAN that variable points at
 `platform-tooling/mock-scanners/bin`, which has command line compatible emulations that read the
 same `checkmarx.yml` and `sonar-project.properties` and write the same report shapes. The quality
 gates cannot tell the difference, which is the point.
@@ -110,20 +110,20 @@ gates cannot tell the difference, which is the point.
 
 ```
 vars/
-  meridianNodePipeline.groovy    the Node pipeline (Angular apps, libraries, NestJS)
-  meridianJavaPipeline.groovy    the Java pipeline (Spring Boot)
-  meridianNotify.groovy          chat notifications
-src/com/meridian/pipeline/
-  MeridianDefaults.groovy        every default, every cluster and registry address
+  northgateNodePipeline.groovy    the Node pipeline (Angular apps, libraries, NestJS)
+  northgateJavaPipeline.groovy    the Java pipeline (Spring Boot)
+  northgateNotify.groovy          chat notifications
+src/com/northgate/pipeline/
+  NorthgateDefaults.groovy        every default, every cluster and registry address
   AgentLabels.groovy             the label table, validated at load
   QualityGate.groovy             gate decisions, pure functions plus thin pipeline wrappers
   ScannerReport.groovy           typed view over Checkmarx and Xray JSON
   ReleaseGuard.groovy            CAB reference, branch and freeze checks for Jenkinsfile.release
   Notifier.groovy                notification payloads
-resources/com/meridian/pipeline/scripts/
+resources/com/northgate/pipeline/scripts/
   npm-login.sh                   writes the scoped .npmrc from injected credentials
   bundle-budget.js               initial bundle size from Webpack stats.json
-test/com/meridian/pipeline/      JUnit 4 specs over the pure classes
+test/com/northgate/pipeline/      JUnit 4 specs over the pure classes
 Jenkinsfile.release              the production release variant
 run-tests.sh                     what CI runs
 ```
@@ -143,7 +143,7 @@ file, also run it against the `platform-tooling-sandbox` job on the controller b
 because `groovyc` accepting it proves nothing about the sandbox accepting it.
 
 Branch from `develop`, `feature/TOOL-<n>-...`, PR needs one platform engineering approval and
-@meridian/gis-appsec if you touched a gate threshold or a credential id. Merge to `develop`, and
+@northgate/gis-appsec if you touched a gate threshold or a credential id. Merge to `develop`, and
 `develop` is fast forwarded to `v3` on the Thursday of a train by the release desk. Tag
 `v3.<minor>.<patch>` at the same time.
 
@@ -156,7 +156,7 @@ Read the first `[gate]` line in the console. Then:
   failed and it is your team's threshold, set in your own Jenkinsfile. Lowering it needs a comment
   in the PR and the release desk will notice.
 - `Checkmarx gate: high: 1 found` — open the Checkmarx HTML report on the build page. High findings
-  are not negotiable; a false positive needs a GIS exception (`gis-appsec-intake@meridian.internal`,
+  are not negotiable; a false positive needs a GIS exception (`gis-appsec-intake@northgate.internal`,
   quote the rule id) and the exception id goes in `checkmarx.yml` under `suppressions`.
 - `Xray gate: high: N found` — a dependency advisory. `npm audit` locally will show it. Overrides in
   `package.json` are acceptable for transitive advisories where the direct dependency has no fix;

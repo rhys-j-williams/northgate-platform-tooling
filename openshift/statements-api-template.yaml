@@ -14,13 +14,13 @@ metadata:
   annotations:
     description: statements-api (FastAPI, reportlab) statement PDF generator. Legacy template, see header.
     openshift.io/display-name: statements-api
-    tags: meridian,documents,python
-    meridian.bank/owner: documents
-    meridian.bank/ticket-key: DOC
+    tags: northgate,documents,python
+    northgate.bank/owner: documents
+    northgate.bank/ticket-key: DOC
 labels:
   app: statements-api
   template: statements-api
-  meridian.bank/app-id: APP-12087
+  northgate.bank/app-id: APP-12087
 parameters:
   - name: NAME
     value: statements-api
@@ -30,7 +30,7 @@ parameters:
     value: dev
     required: true
   - name: IMAGE_REGISTRY
-    value: artifactory.meridian.internal/docker-cswt-local
+    value: artifactory.northgate.internal/docker-cswt-local
   - name: IMAGE_TAG
     description: Build tag from Jenkins. Never latest.
     required: true
@@ -49,7 +49,7 @@ parameters:
   - name: BEDROCK_ADAPTER_URL
     value: http://bedrock-adapter:8080
   - name: SPLUNK_HEC_URL
-    value: https://splunk-hec-dev.apps.ocp-dev.meridian.internal/services/collector
+    value: https://splunk-hec-dev.apps.ocp-dev.northgate.internal/services/collector
   - name: VAULT_ROLE
     value: statements-api
 objects:
@@ -76,7 +76,7 @@ objects:
       DOCUMENTS_SERVICE_URL: ${DOCUMENTS_SERVICE_URL}
       BEDROCK_ADAPTER_URL: ${BEDROCK_ADAPTER_URL}
       SPLUNK_HEC_URL: ${SPLUNK_HEC_URL}
-      STATEMENTS_OUTPUT_DIR: /var/lib/meridian/statements
+      STATEMENTS_OUTPUT_DIR: /var/lib/northgate/statements
       # The FastAPI app reads env.json for parity with the Node services; it only uses two keys.
       env.json: |
         {
@@ -106,11 +106,11 @@ objects:
       name: ${NAME}
       labels:
         app: ${NAME}
-        meridian.bank/environment: ${ENVIRONMENT}
+        northgate.bank/environment: ${ENVIRONMENT}
       annotations:
         # ImageChange trigger was removed after INC0039920 (dev redeployed itself off a retagged
         # image during a release). ConfigChange stays so a cm edit rolls the pods.
-        meridian.bank/notes: triggers reduced to ConfigChange only, see INC0039920
+        northgate.bank/notes: triggers reduced to ConfigChange only, see INC0039920
     spec:
       replicas: ${{REPLICAS}}
       revisionHistoryLimit: 3
@@ -196,9 +196,9 @@ objects:
                   drop: [ALL]
               volumeMounts:
                 - name: data
-                  mountPath: /var/lib/meridian/statements
+                  mountPath: /var/lib/northgate/statements
                 - name: env
-                  mountPath: /etc/meridian/env.json
+                  mountPath: /etc/northgate/env.json
                   subPath: env.json
                   readOnly: true
                 - name: tmp

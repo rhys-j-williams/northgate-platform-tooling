@@ -15,7 +15,7 @@ If you are here because you were told the agent label is out of support:
 
 | directory | what | owner |
 |---|---|---|
-| `jenkins-shared-library/` | `meridianNodePipeline` and `meridianJavaPipeline`, `Jenkinsfile.release`, the classes behind the quality gates, and the agent label inventory | Platform Eng |
+| `jenkins-shared-library/` | `northgateNodePipeline` and `northgateJavaPipeline`, `Jenkinsfile.release`, the classes behind the quality gates, and the agent label inventory | Platform Eng |
 | `mock-scanners/` | `cx`, `sonar-scanner`, `xray` emulations the library calls when the real ones are unreachable (ADR-0012); GIS-maintained ruleset and advisory mirror | Platform Eng / GIS |
 | `helm/` | one chart per deployable, values for dev, uat, prod | Platform Eng, charts co-owned by the service team |
 | `openshift/` | the one remaining `DeploymentConfig` template (statements-api, dev only) | Documents team, reluctantly |
@@ -29,7 +29,7 @@ If you are here because you were told the agent label is out of support:
 
 ## How the pieces connect
 
-A repository's `Jenkinsfile` is three lines calling `meridianNodePipeline` with an agent label, a
+A repository's `Jenkinsfile` is three lines calling `northgateNodePipeline` with an agent label, a
 Node version and a coverage threshold. The library runs the stages, calls `cx`, `sonar-scanner`
 and `xray` from `PATH` (real binaries on the build VLAN, `mock-scanners/bin` elsewhere), reads
 their reports through `ScannerReport` and fails on `QualityGate`, builds the image with the
@@ -61,7 +61,7 @@ mock-scanners/run-tests.sh                   # scanner fixtures, determinism
 for c in helm/*/; do for e in dev uat prod; do helm lint --strict "$c" -f "$c/values-$e.yaml"; done; done
 ansible-playbook -i ansible/inventory/build-agents.ini ansible/build-agent.yml --syntax-check
 (cd terraform/modules/notifications-lambda && terraform init -backend=false && terraform validate)
-../meridian-cswt-workspace/scripts/check-forbidden-strings.sh worktree
+../northgate-cswt-workspace/scripts/check-forbidden-strings.sh worktree
 ```
 
 Ticket history for this directory starts at TOOL-1 (2020-11, "stand up Jenkins shared library")

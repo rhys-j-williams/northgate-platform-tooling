@@ -112,7 +112,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: env
-              mountPath: /etc/meridian/env.json
+              mountPath: /etc/northgate/env.json
               subPath: env.json
               readOnly: true
             - name: tmp

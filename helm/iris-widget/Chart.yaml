@@ -5,15 +5,15 @@ type: application
 version: 1.7.0
 appVersion: "2024.09.4"
 kubeVersion: ">=1.24.0-0"
-home: https://confluence.meridian.internal/display/PLAT/Helm+charts
+home: https://confluence.northgate.internal/display/PLAT/Helm+charts
 sources:
-  - https://bitbucket.meridian.internal/projects/CSWT/repos/iris-widget
+  - https://bitbucket.northgate.internal/projects/CSWT/repos/iris-widget
 maintainers:
   - name: Platform Engineering
     email: platform-engineering@example.com
   - name: conversational
     email: conversational@example.com
 annotations:
-  meridian.bank/ticket-key: IRIS
-  meridian.bank/pipeline: meridianNodePipeline
-  meridian.bank/node-version: "16.20.2"
+  northgate.bank/ticket-key: IRIS
+  northgate.bank/pipeline: northgateNodePipeline
+  northgate.bank/node-version: "16.20.2"

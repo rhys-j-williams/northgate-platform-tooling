@@ -1,4 +1,4 @@
-package com.meridian.pipeline
+package com.northgate.pipeline
 
 import groovy.json.JsonSlurperClassic
 

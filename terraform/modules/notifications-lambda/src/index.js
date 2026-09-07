@@ -11,7 +11,7 @@ exports.handler = async (event) => {
       messageId: msg.MessageId,
       subject: msg.Subject,
       attributes: Object.keys(msg.MessageAttributes || {}),
-      environment: process.env.MERIDIAN_ENVIRONMENT,
+      environment: process.env.NORTHGATE_ENVIRONMENT,
     }));
   }
   return { statusCode: 200, body: JSON.stringify({ received: records.length }) };
